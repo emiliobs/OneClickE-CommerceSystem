@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="OneClick.Backend/OneClick.Backend.csproj" />
+  <Project Path="OneClick.Frontend/OneClick.Frontend.csproj" />
+  <Project Path="OneClick.Shared/OneClick.Shared.csproj" />
+</Solution>
