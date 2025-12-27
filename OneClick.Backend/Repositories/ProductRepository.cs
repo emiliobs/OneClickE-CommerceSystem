@@ -1,46 +1,77 @@
-﻿using OneClick.Shared.Entities;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
+using OneClick.Backend.Data;
+using OneClick.Shared.Entities;
 
 namespace OneClick.Backend.Repositories;
 
 public class ProductRepository : IProductRepository
 {
-    public Task<Product> AddProductAsync(Product product)
+    private readonly OneClickDbContext _context;
+
+    public ProductRepository(OneClickDbContext context)
     {
-        throw new NotImplementedException();
+        this._context = context;
     }
 
-    public Task<bool> CategoryExistsAsync(int categoryId)
+    public async Task<Product> GetProductByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == id);
     }
 
-    public Task DeleteProductAsync(int id)
+    public async Task<IEnumerable<Product>> GetAllProductsAsync()
     {
-        throw new NotImplementedException();
+        return await _context.Products.Include(p => p.Category).OrderBy(p => p.Name).ToListAsync();
     }
 
-    public Task<bool> ExistsProductAsync(int id)
+    public async Task<IEnumerable<Product>> GetProductByCategoryIdAsync(int categoryId)
     {
-        throw new NotImplementedException();
+        return await _context.Products
+            .Include(p => p.Category)
+            .Where(p => p.CategoryId == categoryId)
+            .OrderBy(p => p.Name)
+            .ToListAsync();
     }
 
-    public Task<IEnumerable<Product>> GetAllProductsAsync()
+    public async Task<Product> AddProductAsync(Product product)
     {
-        throw new NotImplementedException();
+        // Verify category exist
+        var categoryExist = await _context.Categories.AnyAsync(c => c.Id == product.CategoryId);
+
+        if (!categoryExist)
+        {
+            throw new InvalidOperationException($"Category with ID {product.CategoryId} does not exist.");
+        }
+
+        _context.Products.Add(product);
+        await _context.SaveChangesAsync();
+
+        // Reload with category for response
+        await _context.Entry(product).Reference(p => p.Category).LoadAsync();
+
+        return product;
     }
 
-    public Task<IEnumerable<Product>> GetByIdProductAsync(int categoryId)
+    public async Task UpdateProductAsync(Product product)
     {
-        throw new NotImplementedException();
+        // Verify category exsit
+        var categoryExist = await _context.Categories.AnyAsync(c => c.Id == product.CategoryId);
+        if (!categoryExist)
+        {
+            throw new InvalidOperationException($"Category with ID {product.CategoryId} does not exist.");
+        }
+
+        _context.Products.Update(product);
+        await _context.SaveChangesAsync();
     }
 
-    public Task<Product> GetProductByIdAsync(int id)
+    public async Task DeleteProductAsync(int id)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task UpdateProductAsync(Product product)
-    {
-        throw new NotImplementedException();
+        var existProduct = await GetProductByIdAsync(id);
+        if (existProduct is not null)
+        {
+            _context.Products.Remove(existProduct);
+            await _context.SaveChangesAsync();
+        }
     }
 }

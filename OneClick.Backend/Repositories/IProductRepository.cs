@@ -8,15 +8,11 @@ public interface IProductRepository
 
     Task<IEnumerable<Product>> GetAllProductsAsync();
 
-    Task<IEnumerable<Product>> GetByIdProductAsync(int categoryId);
+    Task<IEnumerable<Product>> GetProductByCategoryIdAsync(int categoryId);
 
     Task<Product> AddProductAsync(Product product);
 
     Task UpdateProductAsync(Product product);
 
     Task DeleteProductAsync(int id);
-
-    Task<bool> ExistsProductAsync(int id);
-
-    Task<bool> CategoryExistsAsync(int categoryId);
 }
