@@ -16,14 +16,112 @@ namespace OneClick.Backend.Controllers
             this._categoryRepository = categoryRepository;
         }
 
-        // GET: api/Categories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetAllCategories()
+        public async Task<ActionResult<IEnumerable<Category>>> GetAllCategoriesAsync()
         {
             try
             {
                 var categories = await _categoryRepository.GetAllAsync();
                 return Ok(categories);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Category>> GetByIdCategoryAsync(int id)
+        {
+            try
+            {
+                var category = await _categoryRepository.GetByIdAsync(id);
+
+                if (category is null)
+                {
+                    return NotFound($"Category with ID {id} not found");
+                }
+
+                return Ok(category);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostCategoryAsync(Category category)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var createCategory = await _categoryRepository.AddAsync(category);
+
+                return Ok(createCategory);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> PutCategoryAsync(int id, Category category)
+        {
+            try
+            {
+                if (id != category.Id)
+                {
+                    return BadRequest($"Category with ID: {id} mismatch");
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var existCategory = await _categoryRepository.GetByIdAsync(id);
+                if (existCategory is null)
+                {
+                    return NotFound($"Category with ID: {existCategory} not found");
+                }
+
+                existCategory.Name = category.Name;
+                await _categoryRepository.UpdateAsync(existCategory);
+
+                return Ok(existCategory);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteCategoryAsync(int id)
+        {
+            try
+            {
+                var existCategory = await _categoryRepository.GetByIdAsync(id);
+                if (existCategory is null)
+                {
+                    return NotFound($"Category with ID: {id} not found");
+                }
+
+                var hasProducts = await _categoryRepository.HasProductsAsync(id);
+                if (hasProducts)
+                {
+                    return BadRequest($"Cannot delete Category ID: {id} with associated Product. Remove Prodcuts first.");
+                }
+
+                await _categoryRepository.DeleteAsync(id);
+
+                return Ok(existCategory);
             }
             catch (Exception ex)
             {
