@@ -21,7 +21,7 @@ namespace OneClick.Backend.Controllers
         {
             try
             {
-                var categories = await _categoryRepository.GetAllAsync();
+                var categories = await _categoryRepository.GetAllCategoryAsync();
                 return Ok(categories);
             }
             catch (Exception ex)
@@ -35,7 +35,7 @@ namespace OneClick.Backend.Controllers
         {
             try
             {
-                var category = await _categoryRepository.GetByIdAsync(id);
+                var category = await _categoryRepository.GetByIdCategoryAsync(id);
 
                 if (category is null)
                 {
@@ -60,7 +60,7 @@ namespace OneClick.Backend.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var createCategory = await _categoryRepository.AddAsync(category);
+                var createCategory = await _categoryRepository.AddCategoryAsync(category);
 
                 return Ok(createCategory);
             }
@@ -85,16 +85,16 @@ namespace OneClick.Backend.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var existCategory = await _categoryRepository.GetByIdAsync(id);
+                var existCategory = await _categoryRepository.GetByIdCategoryAsync(id);
                 if (existCategory is null)
                 {
                     return NotFound($"Category with ID: {existCategory} not found");
                 }
 
                 existCategory.Name = category.Name;
-                await _categoryRepository.UpdateAsync(existCategory);
+                await _categoryRepository.UpdateCategoryAsync(existCategory);
 
-                return Ok(existCategory);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -107,7 +107,7 @@ namespace OneClick.Backend.Controllers
         {
             try
             {
-                var existCategory = await _categoryRepository.GetByIdAsync(id);
+                var existCategory = await _categoryRepository.GetByIdCategoryAsync(id);
                 if (existCategory is null)
                 {
                     return NotFound($"Category with ID: {id} not found");
@@ -119,9 +119,9 @@ namespace OneClick.Backend.Controllers
                     return BadRequest($"Cannot delete Category ID: {id} with associated Product. Remove Prodcuts first.");
                 }
 
-                await _categoryRepository.DeleteAsync(id);
+                await _categoryRepository.DeleteCategoryAsync(id);
 
-                return Ok(existCategory);
+                return Ok();
             }
             catch (Exception ex)
             {

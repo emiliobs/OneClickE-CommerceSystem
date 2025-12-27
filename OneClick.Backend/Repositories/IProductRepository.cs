@@ -4,19 +4,19 @@ namespace OneClick.Backend.Repositories;
 
 public interface IProductRepository
 {
-    Task<Product> GetByIdAsync(int id);
+    Task<Product> GetProductByIdAsync(int id);
 
-    Task<IEnumerable<Product>> GetAllAsync();
+    Task<IEnumerable<Product>> GetAllProductsAsync();
 
-    Task<IEnumerable<Product>> GetByCategoryIdAsync(int categoryId);
+    Task<IEnumerable<Product>> GetByIdProductAsync(int categoryId);
 
-    Task<Product> AddAsync(Product product);
+    Task<Product> AddProductAsync(Product product);
 
-    Task UpdateAsync(Product product);
+    Task UpdateProductAsync(Product product);
 
-    Task DeleteAsync(int id);
+    Task DeleteProductAsync(int id);
 
-    Task<bool> ExistsAsync(int id);
+    Task<bool> ExistsProductAsync(int id);
 
     Task<bool> CategoryExistsAsync(int categoryId);
 }

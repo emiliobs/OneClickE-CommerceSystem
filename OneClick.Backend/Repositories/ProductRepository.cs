@@ -4,7 +4,7 @@ namespace OneClick.Backend.Repositories;
 
 public class ProductRepository : IProductRepository
 {
-    public Task<Product> AddAsync(Product product)
+    public Task<Product> AddProductAsync(Product product)
     {
         throw new NotImplementedException();
     }
@@ -14,32 +14,32 @@ public class ProductRepository : IProductRepository
         throw new NotImplementedException();
     }
 
-    public Task DeleteAsync(int id)
+    public Task DeleteProductAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> ExistsAsync(int id)
+    public Task<bool> ExistsProductAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Product>> GetAllAsync()
+    public Task<IEnumerable<Product>> GetAllProductsAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Product>> GetByCategoryIdAsync(int categoryId)
+    public Task<IEnumerable<Product>> GetByIdProductAsync(int categoryId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Product> GetByIdAsync(int id)
+    public Task<Product> GetProductByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task UpdateAsync(Product product)
+    public Task UpdateProductAsync(Product product)
     {
         throw new NotImplementedException();
     }

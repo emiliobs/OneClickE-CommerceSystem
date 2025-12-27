@@ -13,11 +13,11 @@ public class CategoryRepository : ICategoryRepository
         this._context = context;
     }
 
-    public async Task<Category> GetByIdAsync(int id) => await _context.Categories.FindAsync(id);
+    public async Task<Category> GetByIdCategoryAsync(int id) => await _context.Categories.FindAsync(id);
 
-    public async Task<IEnumerable<Category>> GetAllAsync() => await _context.Categories.OrderBy(c => c.Name).ToListAsync();
+    public async Task<IEnumerable<Category>> GetAllCategoryAsync() => await _context.Categories.OrderBy(c => c.Name).ToListAsync();
 
-    public async Task<Category> AddAsync(Category category)
+    public async Task<Category> AddCategoryAsync(Category category)
     {
         // Check if category with the same name already exist
         var existCategory = await _context.Categories.FirstOrDefaultAsync(c => c.Name.ToLower() == category.Name.ToLower());
@@ -32,7 +32,7 @@ public class CategoryRepository : ICategoryRepository
         return category;
     }
 
-    public async Task UpdateAsync(Category category)
+    public async Task UpdateCategoryAsync(Category category)
     {
         // Check if another category with  same name exist
         var duplicate = await _context.Categories.FirstOrDefaultAsync(c => c.Name.ToLower() == category.Name.ToLower()
@@ -47,9 +47,9 @@ public class CategoryRepository : ICategoryRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteCategoryAsync(int id)
     {
-        var category = await GetByIdAsync(id);
+        var category = await GetByIdCategoryAsync(id);
 
         if (category != null)
         {
