@@ -9,8 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<OneClickDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration
-        .GetConnectionString("OneClickConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("OneClickConnection"));
 });
 
 // Register repositories
@@ -31,7 +30,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorFrontend", builder =>
     {
-        builder.WithOrigins("https://localhost:5001", "http://localhost:5000").AllowAnyHeader().AllowAnyMethod();
+        builder.WithOrigins("https://localhost:7171")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
 });
 
