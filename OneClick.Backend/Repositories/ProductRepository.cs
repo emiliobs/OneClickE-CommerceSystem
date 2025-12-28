@@ -52,8 +52,14 @@ public class ProductRepository : IProductRepository
         return product;
     }
 
-    public async Task UpdateProductAsync(Product product)
+    public async Task<Product> UpdateProductAsync(Product product)
     {
+        var existProduct = await _context.Products.FindAsync(product.Id);
+        if (existProduct is null)
+        {
+            return null!;
+        }
+
         // Verify category exsit
         var categoryExist = await _context.Categories.AnyAsync(c => c.Id == product.CategoryId);
         if (!categoryExist)
@@ -61,17 +67,29 @@ public class ProductRepository : IProductRepository
             throw new InvalidOperationException($"Category with ID {product.CategoryId} does not exist.");
         }
 
-        _context.Products.Update(product);
+        existProduct.Name = product.Name;
+        existProduct.Description = product.Description;
+        existProduct.ImageURL = product.ImageURL;
+        existProduct.Price = product.Price;
+        existProduct.Qty = product.Qty;
+        existProduct.CategoryId = product.CategoryId;
+
         await _context.SaveChangesAsync();
+
+        return existProduct;
     }
 
-    public async Task DeleteProductAsync(int id)
+    public async Task<Product> DeleteProductAsync(int id)
     {
-        var existProduct = await GetProductByIdAsync(id);
-        if (existProduct is not null)
+        var product = await _context.Products.FindAsync(id);
+        if (product is null)
         {
-            _context.Products.Remove(existProduct);
-            await _context.SaveChangesAsync();
+            return null!;
         }
+
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
+
+        return product;
     }
 }

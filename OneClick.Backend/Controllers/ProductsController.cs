@@ -113,12 +113,6 @@ namespace OneClick.Backend.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var existProduct = await _productRepository.GetProductByIdAsync(id);
-                if (existProduct is null)
-                {
-                    return BadRequest($"Product with ID {id} not found");
-                }
-
                 // Verify category exist
                 var categoryExist = await _categoryRepository.GetByIdCategoryAsync(product.CategoryId);
                 if (categoryExist is null)
@@ -126,20 +120,36 @@ namespace OneClick.Backend.Controllers
                     return BadRequest($"Category with ID {product.CategoryId} does not exist.");
                 }
 
-                existProduct.Name = product.Name;
-                existProduct.Description = product.Description;
-                existProduct.ImageURL = product.ImageURL;
-                existProduct.Price = product.Price;
-                existProduct.Qty = product.Qty;
-                existProduct.CategoryId = product.CategoryId;
-
-                await _productRepository.UpdateProductAsync(product);
+                var resultProduct = await _productRepository.UpdateProductAsync(product);
+                if (resultProduct is null)
+                {
+                    return BadRequest($"Product with ID {id} not found");
+                }
 
                 return Ok();
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server erro: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeletePorductsAsync(int id)
+        {
+            try
+            {
+                var resultProduct = await _productRepository.DeleteProductAsync(id);
+                if (resultProduct is null)
+                {
+                    return NotFound($"Prodcut with ID: {id} not found");
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal  error server: {ex.Message}");
             }
         }
     }
