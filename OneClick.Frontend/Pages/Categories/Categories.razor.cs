@@ -83,18 +83,19 @@ namespace OneClick.Frontend.Pages.Categories
 
                     if (success)
                     {
-                        //  liberamos la bandera de guardado
+                        //  // Reset flag before closing
                         isSaving = false;
 
                         // cerramos el modal(ahora CloseFormModal obedecerá)
                         CloseFormModel();
 
                         await LoadCategories();
-                        ShowAlert("Category update successfully!", "success");
+                        await _sweetAlertService.ShowSuccessToast("Category update successfully!");
                     }
                     else
                     {
-                        ShowAlert("Failed to update category", "error");
+                        // Show pretty toast notification
+                        await _sweetAlertService.ShowErrorAlert("Error", "Failed to update category. Please try again.");
                     }
                 }
                 else
@@ -108,14 +109,14 @@ namespace OneClick.Frontend.Pages.Categories
 
                     if (createdCategory != null)
                     {
-                        //  liberamos la bandera de guardado
+                        // Reset flag before closing
                         isSaving = false;
 
                         // cerramos el modal(ahora CloseFormModal obedecerá)
                         CloseFormModel();
 
                         await LoadCategories();
-                        ShowAlert("Category created successfully!", "success");
+                        await _sweetAlertService.ShowSuccessToast("Category created successfully!");
                     }
                 }
             }
@@ -160,6 +161,17 @@ namespace OneClick.Frontend.Pages.Categories
                 return;
             }
 
+            // Check if category has products locally before sending request (Optimization)
+            if (categoryToDelete.Products != null && categoryToDelete.Products.Count > 0)
+            {
+                // Show error immediately without calling backend
+                await _sweetAlertService.ShowErrorAlert("Cannot Delete",
+                         "This category contains products. Please delete the products first.");
+                CloseDeleteModal();
+
+                return;
+            }
+
             isDeleting = true;
             StateHasChanged();
 
@@ -170,11 +182,14 @@ namespace OneClick.Frontend.Pages.Categories
                 CloseDeleteModal();
 
                 await LoadCategories();
-                ShowAlert("Category deleted successfully!", "success");
+                // Show pretty toast notification
+                await _sweetAlertService.ShowSuccessToast("Category delete successfully!");
             }
             else
             {
-                ShowAlert("Failed to delete category", "error");
+                // If backend failed (likely due to database constraints we missed)
+                CloseDeleteModal(); //Close modal to show alert clearly.
+                await _sweetAlertService.ShowErrorAlert("Error", "Could not delete category, It might be in use.");
             }
 
             isDeleting = false;

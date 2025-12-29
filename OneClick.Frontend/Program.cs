@@ -17,4 +17,7 @@ builder.Services.AddScoped(sp => new HttpClient
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
+// Register the notification service
+builder.Services.AddScoped<SweetAlertService>();
+
 await builder.Build().RunAsync();
