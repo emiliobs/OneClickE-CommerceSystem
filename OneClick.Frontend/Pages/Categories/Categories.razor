@@ -15,7 +15,9 @@
         <button class="btn btn-primary" @onclick="ShowAddForm">
             <i class="bi bi-plus-circle me-1"></i>New Category
         </button>
+       
     </div>    
+ <hr />
     @if (isLoading)
     {
         <!-- Loading State -->
@@ -46,49 +48,58 @@
     }
    else
     {
+        
         <!-- Categories List -->
-    <div class="row">
-        @foreach (var category in categories)
-        {
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h5 class="card-title mb-0">@category.Name</h5>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-light"
-                                        type="button"
-                                        data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <button class="dropdown-item" @onclick="() => EditCategory(category)">
-                                            <i class="bi bi-pencil me-2"></i>Edit
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button class="dropdown-item text-danger" @onclick="() => DeleteCategory(category)">
-                                            <i class="bi bi-trash me-2"></i>Delete
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <p class="card-text small text-muted">
-                            ID: @category.Id
-                            @if (category.Products?.Count > 0)
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th class="ps-4">Category Name</th>
+                                <th class="text-center">Products</th>
+                                <th class="text-center" style="width: 150px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var category in categories)
                             {
-                                <span class="ms-2">
-                                    • @category.Products.Count products
-                                </span>
+                                <tr>
+                                    <td class="align-middle ps-4">
+                                        <span class="fw-bold">@category.Name</span>
+                                        <div class="small text-muted">ID: @category.Id</div>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        @if (category.Products != null && category.Products.Count > 0)
+                                        {
+                                            <span class="badge bg-primary rounded-pill">
+                                                @category.Products.Count 
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary rounded-pill">0</span>
+                                        }
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <button class="btn btn-warning btn-sm me-2"
+                                                title="Edit"
+                                                @onclick="() => EditCategory(category)">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm"
+                                                title="Delete"
+                                                @onclick="() => DeleteCategory(category)">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </td>
+                                </tr>
                             }
-                        </p>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        }
-    </div>
+        </div>
     }
 </div>
 

@@ -214,3 +214,91 @@ body {
 .fade-in {
     animation: fadeIn 0.3s ease-in;
 }
+
+/* Modificamos la barra superior por defecto */
+.top-row {
+    background-color: #D32F2F; /* Rojo intenso OneClick */
+    border-bottom: none; /* Quitamos la línea de borde fea */
+    color: white; /* Texto blanco por defecto */
+    z-index: 101; /* Aseguramos que quede encima */
+}
+
+    /* Opcional: Esto hace que los enlaces dentro de la barra sean blancos */
+    .top-row a, .top-row .btn-link {
+        color: white !important;
+    }
+
+/* =========================================
+   ESTILOS DARK MODE (MODO OSCURO)
+   ========================================= */
+
+/* 1. Fondo y Texto General */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+    /* 2. Tarjetas (Cards) */
+    body.dark-mode .card {
+        background-color: #1e1e1e;
+        border-color: #333;
+        color: #e0e0e0;
+    }
+
+    /* 3. Tablas (UNIFICADO) */
+    body.dark-mode .table {
+        /* Variables de Bootstrap para redefinir colores base */
+        --bs-table-bg: #1e1e1e;
+        --bs-table-border-color: #333;
+        --bs-table-hover-bg: #2c2c2c;
+        /* Forzamos el color del texto para que se vea bien */
+        color: #e0e0e0 !important;
+        --bs-table-color: #e0e0e0 !important;
+    }
+
+        /* Aseguramos que las celdas individuales también obedezcan */
+        body.dark-mode .table td,
+        body.dark-mode .table th {
+            color: #e0e0e0 !important;
+        }
+
+    /* Filas cebradas (Striped) - Ajuste visual */
+    body.dark-mode .table-striped > tbody > tr:nth-of-type(odd) > * {
+        color: #e0e0e0 !important;
+        box-shadow: inset 0 0 0 9999px rgba(255, 255, 255, 0.05);
+    }
+
+    /* Hover (Al pasar el mouse) - Texto blanco brillante */
+    body.dark-mode .table-hover > tbody > tr:hover > * {
+        color: #fff !important;
+        box-shadow: inset 0 0 0 9999px rgba(255, 255, 255, 0.1);
+    }
+
+    /* 4. Inputs y Selects */
+    body.dark-mode .form-control,
+    body.dark-mode .form-select {
+        background-color: #2c2c2c;
+        border-color: #444;
+        color: #fff;
+    }
+
+    /* 5. Modales */
+    body.dark-mode .modal-content {
+        background-color: #1e1e1e;
+        border-color: #333;
+        color: #e0e0e0;
+    }
+
+    body.dark-mode .modal-header,
+    body.dark-mode .modal-footer {
+        border-color: #333;
+    }
+
+    body.dark-mode .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%); /* X blanca */
+    }
+
+    /* 6. Textos secundarios (Muted) */
+    body.dark-mode .text-muted {
+        color: #adb5bd !important;
+    }
