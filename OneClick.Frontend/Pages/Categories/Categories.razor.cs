@@ -32,10 +32,12 @@ namespace OneClick.Frontend.Pages.Categories
         private async Task LoadCategories()
         {
             isLoading = true;
+            StateHasChanged();
 
             categories = await _categoryService.GetAllCategoryAsync();
 
             isLoading = false;
+            StateHasChanged();
         }
 
         // ---- Form Logic ----
@@ -62,7 +64,9 @@ namespace OneClick.Frontend.Pages.Categories
             {
                 return;
             }
+
             isSaving = true;
+            StateHasChanged();
 
             try
             {
@@ -79,7 +83,12 @@ namespace OneClick.Frontend.Pages.Categories
 
                     if (success)
                     {
+                        //  liberamos la bandera de guardado
+                        isSaving = false;
+
+                        // cerramos el modal(ahora CloseFormModal obedecerá)
                         CloseFormModel();
+
                         await LoadCategories();
                         ShowAlert("Category update successfully!", "success");
                     }
@@ -99,9 +108,14 @@ namespace OneClick.Frontend.Pages.Categories
 
                     if (createdCategory != null)
                     {
+                        //  liberamos la bandera de guardado
+                        isSaving = false;
+
+                        // cerramos el modal(ahora CloseFormModal obedecerá)
                         CloseFormModel();
+
                         await LoadCategories();
-                        ShowAlert("CAtegory created successfully!", "success");
+                        ShowAlert("Category created successfully!", "success");
                     }
                 }
             }
@@ -109,10 +123,6 @@ namespace OneClick.Frontend.Pages.Categories
             {
                 errorMessage = ex.Message;
                 showError = true;
-            }
-            finally
-            {
-                isSaving = false;
             }
         }
 
@@ -151,17 +161,20 @@ namespace OneClick.Frontend.Pages.Categories
             }
 
             isDeleting = true;
+            StateHasChanged();
 
             var success = await _categoryService.DeleteCategoryAsync(categoryToDelete.Id);
             if (success)
             {
+                // cerramos el modal(ahora CloseFormModal obedecerá)
                 CloseDeleteModal();
+
                 await LoadCategories();
                 ShowAlert("Category deleted successfully!", "success");
             }
             else
             {
-                ShowAlert("FAiled to delete category", "error");
+                ShowAlert("Failed to delete category", "error");
             }
 
             isDeleting = false;
@@ -169,20 +182,14 @@ namespace OneClick.Frontend.Pages.Categories
 
         private void CloseFormModel()
         {
-            if (!isSaving)
-            {
-                showFormModal = false;
-                categoryToDelete = null;
-            }
+            showFormModal = false;
+            categoryToDelete = null;
         }
 
         private void CloseDeleteModal()
         {
-            if (!isDeleting)
-            {
-                showDeleteModal = false;
-                categoryToDelete = null;
-            }
+            showDeleteModal = false;
+            categoryToDelete = null;
         }
 
         private void ShowAlert(string message, string type)
