@@ -302,3 +302,14 @@ body.dark-mode {
     body.dark-mode .text-muted {
         color: #adb5bd !important;
     }
+
+    /* --- ARREGLO PARA PLACEHOLDERS EN MODO OSCURO --- */
+    body.dark-mode .form-control::placeholder {
+        color: #adb5bd !important; /* Gris claro visible */
+        opacity: 1; /* Asegura que no sea transparente */
+    }
+
+    /* Opcional: Para el icono de búsqueda también */
+    body.dark-mode .input-group-text i {
+        color: #adb5bd !important;
+    }

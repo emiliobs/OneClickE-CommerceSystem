@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OneClick.Shared.Entities;
 
@@ -6,9 +7,17 @@ namespace OneClick.Frontend.Pages.Categories
     public partial class Categories
     {
         // State variables
+
+        // Source of Truth: Stores ALL data fetched from API
         private List<Category> categories = new();
 
+        // Store only the categories currently visible to the user
+        private List<Category> filteredCategories = new();
+
         private Category? categoryToDelete;
+
+        // Variable to capture what the user type.
+        private string searchText = "";
 
         // UI State flags
         private bool isLoading = true;
@@ -34,10 +43,34 @@ namespace OneClick.Frontend.Pages.Categories
             isLoading = true;
             StateHasChanged();
 
+            // Fetch data form API
             categories = await _categoryService.GetAllCategoryAsync();
+
+            // Initialize the filtered list with All data (because search is empty at start)
+            filteredCategories = new List<Category>(categories);
 
             isLoading = false;
             StateHasChanged();
+        }
+
+        // ----- Search Logic ---
+        private void FilterCategories(ChangeEventArgs e)
+        {
+            // Get the text from the input
+            searchText = e.Value?.ToString() ?? "";
+
+            // Filter logic
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                // If search is empty, restore the full list
+                filteredCategories = new List<Category>(categories);
+            }
+            else
+            {
+                // Filter by Name (Case Insentitive), Example: "bo" finds "Books" and "Boots"
+                filteredCategories = categories.Where(c => c.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                                               .ToList();
+            }
         }
 
         // ---- Form Logic ----
