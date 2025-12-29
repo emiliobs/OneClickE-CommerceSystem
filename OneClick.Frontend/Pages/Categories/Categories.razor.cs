@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using OneClick.Frontend.Services;
 using OneClick.Shared.Entities;
 
 namespace OneClick.Frontend.Pages.Categories
 {
     public partial class Categories
     {
+        private ICategoryService _categoryService;
+        private SweetAlertService _sweetAlertService;
+
         // State variables
 
         // Source of Truth: Stores ALL data fetched from API
@@ -18,6 +22,30 @@ namespace OneClick.Frontend.Pages.Categories
 
         // Variable to capture what the user type.
         private string searchText = "";
+
+        // --- PAGINATION VARIABLES (NEW) ---
+        private int currentPage = 1;
+
+        private int itemsPerPage = 8; // We can change this to 10
+
+        // Calculated Property: Calculates how many pages we need based on filtered results
+        public int TotalPages => (int)Math.Ceiling((double)filteredCategories.Count / itemsPerPage);
+
+        // Calculated Property: Gets ONLY the records for the current page
+        public IEnumerable<Category> PaginatedCategories
+        {
+            // Logic: Skip previous pages and Take the next chunk
+            get
+            {
+                return filteredCategories.Skip((currentPage - 1) * itemsPerPage).Take(itemsPerPage);
+            }
+        }
+
+        public Categories(ICategoryService categoryService, SweetAlertService sweetAlertService)
+        {
+            _categoryService = categoryService;
+            _sweetAlertService = sweetAlertService;
+        }
 
         // UI State flags
         private bool isLoading = true;
@@ -71,6 +99,17 @@ namespace OneClick.Frontend.Pages.Categories
                 filteredCategories = categories.Where(c => c.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
                                                .ToList();
             }
+
+            // IMPORTANT: Always reset to page 1 when searching to avoid empty pages
+            currentPage = 1;
+        }
+
+        // This method is called by the Component when a button is clicked
+        private void ChangePage(int newPage)
+        {
+            currentPage = newPage;
+            // No need to validate < 1 here because the component already protects us
+            // But keeping validation is good practice.
         }
 
         // ---- Form Logic ----
