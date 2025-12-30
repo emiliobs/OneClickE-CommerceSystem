@@ -191,7 +191,7 @@ public partial class Products
         // Confirm with the user var
         var confirmed = await SweetAlertService.ConfirmAsync(
               "Are you sure",
-              $"You won't be able to revert this! Deliting" +
+              $"You won't be able to revert this! Deleting" +
               $"; {product.Name}"
             );
 
@@ -203,11 +203,11 @@ public partial class Products
             if (success)
             {
                 await LoadProducts();
-                await SweetAlertService.ShowSuccessToast("Prodcut deleted successfully!");
+                await SweetAlertService.ShowSuccessToast("Product deleted successfully!");
             }
             else
             {
-                await SweetAlertService.ShowErrorAlert("Error", "Could not delete prodcut. It might be in use");
+                await SweetAlertService.ShowErrorAlert("Error", "Could not delete product. It might be in use");
             }
         }
     }
