@@ -1,3 +1,4 @@
+using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using OneClick.Frontend;
@@ -18,6 +19,8 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
 // Register the notification service
-builder.Services.AddScoped<SweetAlertService>();
+builder.Services.AddScoped<OneClick.Frontend.Services.SweetAlertService>();
+
+builder.Services.AddSweetAlert2();
 
 await builder.Build().RunAsync();

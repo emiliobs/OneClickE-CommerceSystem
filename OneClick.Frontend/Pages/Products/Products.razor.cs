@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using OneClick.Frontend.Services;
 using OneClick.Shared.Entities;
+using System.Threading.Tasks;
 
 namespace OneClick.Frontend.Pages.Products
 {
@@ -9,12 +10,22 @@ namespace OneClick.Frontend.Pages.Products
         // --- Dependency Injection ---
         [Inject] public IProductService ProductService { get; set; } = default!;
 
+        [Inject]
+        public ICategoryService CategoryService { get; set; } = default!;
+
         [Inject] public SweetAlertService SweetAlertService { get; set; } = default!;
 
         // --- State Variables ---
         private List<Product> products = new();
 
         private List<Product> filteredProducts = new();
+
+        // List to polutate the <Select> dropdown
+        private List<Category> categories = new();
+
+        // The object we are editing/creating
+        private Product productModel = new();
+
         private string searchText = "";
 
         // --- Pagination Variables ---
@@ -38,6 +49,10 @@ namespace OneClick.Frontend.Pages.Products
 
         // --- UI State ---
         private bool isLoading = true;
+
+        private bool showFormModal = false; // Controls MOdal visibility
+        private bool isEditing = false; // Flags if we  are updating or creating
+        private bool isSaving = false; // Disables buttons while saving
 
         // --- Initialization ---
         protected override async Task OnInitializedAsync()
@@ -90,20 +105,109 @@ namespace OneClick.Frontend.Pages.Products
             currentPage = newPage;
         }
 
-        // --- Placeholder Methods for CRUD (To be implemented) ---
-        private void ShowAddForm()
+        // MOdal and Form Logic
+        private async Task ShowAddForm()
         {
-            // TODO: Open Modal for creation
+            // Reset the model for a new product
+            productModel = new Product();
+            isEditing = false;
+
+            // Load fresh categories for the dropdown
+            categories = await CategoryService.GetAllCategoryAsync();
+
+            // Shoe modal
+            showFormModal = true;
         }
 
-        private void EditProduct(Product product)
+        private async Task SaveProduct()
         {
-            // TODO: Open Modal for editing
+            isSaving = true;
+            StateHasChanged();
+
+            try
+            {
+                bool succes;
+                if (isEditing)
+                {
+                    succes = await ProductService.UpdateProductAsync(productModel);
+                }
+                else
+                {
+                    var created = await ProductService.CreateProductAsync(productModel);
+                    succes = created != null;
+                }
+
+                if (succes)
+                {
+                    showFormModal = false;
+                    await LoadProducts(); // Refresh list
+                    await SweetAlertService.ShowSuccessToast(isEditing ? "Product Update!" : "Product Created!");
+                }
+                else
+                {
+                    await SweetAlertService.ShowErrorAlert("Error", "Operation failed check your data.");
+                }
+            }
+            catch (Exception ex)
+            {
+                await SweetAlertService.ShowErrorAlert("Error", ex.Message);
+            }
+            finally
+            {
+                isSaving = false;
+            }
         }
 
-        private void DeleteProduct(Product product)
+        private async Task EditProduct(Product product)
         {
-            // TODO: Trigger SweetAlert delete confirmation
+            productModel = new Product
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                Qty = product.Qty,
+                ImageURL = product.ImageURL,
+                CategoryId = product.CategoryId,
+            };
+
+            isEditing = true;
+
+            // Load categories for the dropdown
+            categories = await CategoryService.GetAllCategoryAsync();
+
+            showFormModal = true;
+        }
+
+        private async Task DeleteProduct(Product product)
+        {
+            // Confirm with the user var
+            var confirmed = await SweetAlertService.ConfirmAsync(
+                  "Are you sure",
+                  $"You won't be able to revert this! Deliting" +
+                  $"; {product.Name}"
+                );
+
+            // If confirm, proceed to delete
+            if (confirmed)
+            {
+                var success = await ProductService.DeleteProductAsync(product.Id);
+
+                if (success)
+                {
+                    await LoadProducts();
+                    await SweetAlertService.ShowSuccessToast("Prodcut deleted successfully!");
+                }
+                else
+                {
+                    await SweetAlertService.ShowErrorAlert("Error", "Could not delete prodcut. It might be in use");
+                }
+            }
+        }
+
+        private void CloseModal()
+        {
+            showFormModal = false;
         }
     }
 }
