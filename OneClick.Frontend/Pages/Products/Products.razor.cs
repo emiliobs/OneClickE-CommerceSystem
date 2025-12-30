@@ -113,6 +113,7 @@ public partial class Products
     {
         // Reset the model for a new product
         productModel = new Product();
+
         isEditing = false;
 
         // Load fresh categories for the dropdown
@@ -163,6 +164,7 @@ public partial class Products
 
     private async Task EditProduct(Product product)
     {
+        // Create a NEW instance (copy) to avoid modifying the table row in real-time
         productModel = new Product
         {
             Id = product.Id,
@@ -170,15 +172,17 @@ public partial class Products
             Description = product.Description,
             Price = product.Price,
             Qty = product.Qty,
-            ImageURL = product.ImageURL,
-            CategoryId = product.CategoryId,
+            ImageURL = product.ImageURL,// Shows the existing image in the preview
+            CategoryId = product.CategoryId,// This selects the correct dropdown item
         };
 
+        // Set the flag to true so the title says "Edit Product"
         isEditing = true;
 
         // Load categories for the dropdown
         categories = await CategoryService.GetAllCategoryAsync();
 
+        // Open the modal
         showFormModal = true;
     }
 
@@ -221,7 +225,9 @@ public partial class Products
             return;
         }
 
-        isUploading = false;
+        // This must be TRUE to lock the button
+        isUploading = true;
+
         StateHasChanged(); // Show spinner
 
         try
@@ -245,7 +251,9 @@ public partial class Products
         }
         finally
         {
+            // Now we turn it off
             isUploading = false;
+
             StateHasChanged(); // Hide spinner
         }
     }
