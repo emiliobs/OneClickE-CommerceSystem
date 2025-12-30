@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OneClick.Backend.Data;
 
@@ -10,9 +11,11 @@ using OneClick.Backend.Data;
 namespace OneClick.Backend.Migrations
 {
     [DbContext(typeof(OneClickDbContext))]
-    partial class OneClickDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251230013835_UpdateSeedDb1")]
+    partial class UpdateSeedDb1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

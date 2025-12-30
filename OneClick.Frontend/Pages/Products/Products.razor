@@ -1,0 +1,146 @@
+﻿@page "/products"
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold" style="color:#D32F2F;">
+                <i class="bi bi-box-seam me-2"></i>Product Management
+            </h2>
+            <p class="text-muted">Manage your catalog and inventory</p>
+        </div>
+        <button class="btn btn-danger" @onclick="ShowAddForm">
+            <i class="bi bi-plus-lg me-2"></i>NEW PRODUCT
+        </button>
+    </div>
+
+    <div class="card bg-dark text-white mb-4 border-0 shadow-sm">
+        <div class="card-body p-2">
+            <div class="input-group">
+               
+                <input type="text"
+                       class="form-control bg-transparent border-0 text-white shadow-none"
+                       placeholder="Search products by name, description or category..."
+                       value="@searchText"
+                       @oninput="FilterProducts" />
+                <span class="input-group-text bg-transparent border-0 text-muted">
+                    <i class="bi bi-search"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+    <hr />
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Loading products...</p>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm" style="min-height: 400px;">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead class="text-muted text-uppercase small border-bottom border-secondary">
+                            <tr>
+                                <th class="ps-4">ID</th>
+                                <th class="ps-4">Product</th>
+                                <th>Category</th>
+                                <th>Stock (Qty)</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!filteredProducts.Any())
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        No products found matching "<strong>@searchText</strong>"
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var product in PaginatedProducts)
+                                {
+                                    <tr>
+                                        <td class="ps-4 align-middle" style="color:#FF4081 !important;">
+                                            #@product.Id
+                                        </td>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-3 rounded bg-secondary d-flex align-items-center justify-content-center"
+                                                     style="width: 48px; height: 48px; overflow: hidden;">
+                                                    @if (string.IsNullOrEmpty(product.ImageURL))
+                                                    {
+                                                        <i class="bi bi-image text-white fs-4"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="@product.ImageURL" alt="@product.Name" class="img-fluid" />
+                                                    }
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-white">@product.Name</div>
+                                                    <div class="small text-muted text-truncate" style="max-width: 200px;">
+                                                        @product.Description
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <span class="badge bg-secondary text-light rounded-pill px-3">
+                                                @(product.Category?.Name ?? "Uncategorized")
+                                            </span>
+                                        </td>
+
+                                        <td class="text-white fw-bold">@product.Qty</td>
+
+                                        <td class="text-white">£@product.Price.ToString("N2")</td>
+
+                                        <td>
+                                            @if (product.Qty > 10)
+                                            {
+                                                <span class="badge bg-success text-white rounded-pill">Available</span>
+                                            }
+                                            else if (product.Qty > 0)
+                                            {
+                                                <span class="badge bg-warning text-dark rounded-pill">Low Stock</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger text-white rounded-pill">Out of Stock</span>
+                                            }
+                                        </td>
+
+                                        <td class="text-end pe-4">
+                                            <button class="btn btn-link text-warning p-0 me-3" title="Edit"
+                                                    @onclick="() => EditProduct(product)">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </button>
+                                            <button class="btn btn-link text-danger p-0" title="Delete"
+                                                    @onclick="() => DeleteProduct(product)">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-1 border-top border-secondary">
+                    <Pagination CurrentPage="currentPage"
+                                TotalPages="TotalPages"
+                                SelectedPage="ChangePage" />
+                </div>
+            </div>
+        </div>
+    }
+</div>

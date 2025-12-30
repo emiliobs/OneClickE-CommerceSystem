@@ -1,18 +1,18 @@
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OneClick.Frontend.Services;
 using OneClick.Shared.Entities;
+using Microsoft.AspNetCore.Components;
 
 namespace OneClick.Frontend.Pages.Categories
 {
     public partial class Categories
     {
-        private ICategoryService _categoryService;
-        private SweetAlertService _sweetAlertService;
+        [Inject]
+        public ICategoryService CategoryService { get; set; } = default!;
 
-        // State variables
+        [Inject]
+        public SweetAlertService SweetAlertService { get; set; } = default!;
 
-        // Source of Truth: Stores ALL data fetched from API
         private List<Category> categories = new();
 
         // Store only the categories currently visible to the user
@@ -26,7 +26,7 @@ namespace OneClick.Frontend.Pages.Categories
         // --- PAGINATION VARIABLES (NEW) ---
         private int currentPage = 1;
 
-        private int itemsPerPage = 8; // We can change this to 10
+        private int itemsPerPage = 7; // We can change this to 10
 
         // Calculated Property: Calculates how many pages we need based on filtered results
         public int TotalPages => (int)Math.Ceiling((double)filteredCategories.Count / itemsPerPage);
@@ -39,12 +39,6 @@ namespace OneClick.Frontend.Pages.Categories
             {
                 return filteredCategories.Skip((currentPage - 1) * itemsPerPage).Take(itemsPerPage);
             }
-        }
-
-        public Categories(ICategoryService categoryService, SweetAlertService sweetAlertService)
-        {
-            _categoryService = categoryService;
-            _sweetAlertService = sweetAlertService;
         }
 
         // UI State flags
@@ -72,7 +66,7 @@ namespace OneClick.Frontend.Pages.Categories
             StateHasChanged();
 
             // Fetch data form API
-            categories = await _categoryService.GetAllCategoryAsync();
+            categories = await CategoryService.GetAllCategoryAsync();
 
             // Initialize the filtered list with All data (because search is empty at start)
             filteredCategories = new List<Category>(categories);
@@ -151,7 +145,7 @@ namespace OneClick.Frontend.Pages.Categories
                         Name = categoryName,
                     };
 
-                    var success = await _categoryService.UpdateCategoryAsync(categoryToDelete.Id, categoryToUpdate);
+                    var success = await CategoryService.UpdateCategoryAsync(categoryToDelete.Id, categoryToUpdate);
 
                     if (success)
                     {
@@ -162,12 +156,12 @@ namespace OneClick.Frontend.Pages.Categories
                         CloseFormModel();
 
                         await LoadCategories();
-                        await _sweetAlertService.ShowSuccessToast("Category update successfully!");
+                        await SweetAlertService.ShowSuccessToast("Category update successfully!");
                     }
                     else
                     {
                         // Show pretty toast notification
-                        await _sweetAlertService.ShowErrorAlert("Error", "Failed to update category. Please try again.");
+                        await SweetAlertService.ShowErrorAlert("Error", "Failed to update category. Please try again.");
                     }
                 }
                 else
@@ -177,7 +171,7 @@ namespace OneClick.Frontend.Pages.Categories
                     {
                         Name = categoryName,
                     };
-                    var createdCategory = await _categoryService.AddCategoryAsync(newCategory);
+                    var createdCategory = await CategoryService.AddCategoryAsync(newCategory);
 
                     if (createdCategory != null)
                     {
@@ -188,7 +182,7 @@ namespace OneClick.Frontend.Pages.Categories
                         CloseFormModel();
 
                         await LoadCategories();
-                        await _sweetAlertService.ShowSuccessToast("Category created successfully!");
+                        await SweetAlertService.ShowSuccessToast("Category created successfully!");
                     }
                 }
             }
@@ -237,7 +231,7 @@ namespace OneClick.Frontend.Pages.Categories
             if (categoryToDelete.Products != null && categoryToDelete.Products.Count > 0)
             {
                 // Show error immediately without calling backend
-                await _sweetAlertService.ShowErrorAlert("Cannot Delete",
+                await SweetAlertService.ShowErrorAlert("Cannot Delete",
                          "This category contains products. Please delete the products first.");
                 CloseDeleteModal();
 
@@ -247,7 +241,7 @@ namespace OneClick.Frontend.Pages.Categories
             isDeleting = true;
             StateHasChanged();
 
-            var success = await _categoryService.DeleteCategoryAsync(categoryToDelete.Id);
+            var success = await CategoryService.DeleteCategoryAsync(categoryToDelete.Id);
             if (success)
             {
                 // cerramos el modal(ahora CloseFormModal obedecerá)
@@ -255,13 +249,13 @@ namespace OneClick.Frontend.Pages.Categories
 
                 await LoadCategories();
                 // Show pretty toast notification
-                await _sweetAlertService.ShowSuccessToast("Category delete successfully!");
+                await SweetAlertService.ShowSuccessToast("Category delete successfully!");
             }
             else
             {
                 // If backend failed (likely due to database constraints we missed)
                 CloseDeleteModal(); //Close modal to show alert clearly.
-                await _sweetAlertService.ShowErrorAlert("Error", "Could not delete category, It might be in use.");
+                await SweetAlertService.ShowErrorAlert("Error", "Could not delete category, It might be in use.");
             }
 
             isDeleting = false;

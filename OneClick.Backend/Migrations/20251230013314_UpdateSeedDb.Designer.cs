@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OneClick.Backend.Data;
 
@@ -10,9 +11,11 @@ using OneClick.Backend.Data;
 namespace OneClick.Backend.Migrations
 {
     [DbContext(typeof(OneClickDbContext))]
-    partial class OneClickDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251230013314_UpdateSeedDb")]
+    partial class UpdateSeedDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -178,7 +181,7 @@ namespace OneClick.Backend.Migrations
                             Id = 1,
                             CategoryId = 1,
                             Description = "Apple smartphone, 128GB",
-                            ImageURL = "https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/iphone15/600/400",
                             Name = "iPhone 15",
                             Price = 899.00m,
                             Qty = 20
@@ -188,7 +191,7 @@ namespace OneClick.Backend.Migrations
                             Id = 2,
                             CategoryId = 1,
                             Description = "Apple laptop, 8GB/256GB",
-                            ImageURL = "https://images.unsplash.com/photo-1517336714731-489689fd1ca4?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/macbookair/600/400",
                             Name = "MacBook Air 13 M2",
                             Price = 1199.00m,
                             Qty = 8
@@ -198,7 +201,7 @@ namespace OneClick.Backend.Migrations
                             Id = 3,
                             CategoryId = 2,
                             Description = "Shampoo, wax and microfiber towels",
-                            ImageURL = "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/carcare/600/400",
                             Name = "Car Care Kit",
                             Price = 39.99m,
                             Qty = 35
@@ -208,7 +211,7 @@ namespace OneClick.Backend.Migrations
                             Id = 4,
                             CategoryId = 2,
                             Description = "1080p dashboard camera with loop recording",
-                            ImageURL = "https://images.unsplash.com/photo-1680519324888-03823798950c?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/dashcam/600/400",
                             Name = "Dash Cam HD",
                             Price = 69.99m,
                             Qty = 12
@@ -218,7 +221,7 @@ namespace OneClick.Backend.Migrations
                             Id = 5,
                             CategoryId = 3,
                             Description = "Daily moisturizer for all skin types",
-                            ImageURL = "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/facecream/600/400",
                             Name = "Hydrating Face Cream",
                             Price = 22.50m,
                             Qty = 40
@@ -228,7 +231,7 @@ namespace OneClick.Backend.Migrations
                             Id = 6,
                             CategoryId = 3,
                             Description = "Brightening 10% serum",
-                            ImageURL = "https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/vitcserum/600/400",
                             Name = "Vitamin C Serum",
                             Price = 18.99m,
                             Qty = 15
@@ -238,7 +241,7 @@ namespace OneClick.Backend.Migrations
                             Id = 7,
                             CategoryId = 4,
                             Description = "Lightweight breathable trainers",
-                            ImageURL = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/runningshoes/600/400",
                             Name = "Men's Running Shoes",
                             Price = 79.90m,
                             Qty = 25
@@ -248,7 +251,7 @@ namespace OneClick.Backend.Migrations
                             Id = 8,
                             CategoryId = 4,
                             Description = "Comfort everyday sneakers",
-                            ImageURL = "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/casualsneakers/600/400",
                             Name = "Women's Casual Sneakers",
                             Price = 59.90m,
                             Qty = 10
@@ -258,7 +261,7 @@ namespace OneClick.Backend.Migrations
                             Id = 9,
                             CategoryId = 5,
                             Description = "Whole-grain oats with nuts",
-                            ImageURL = "https://images.unsplash.com/photo-1517093728432-a0440f8d45ca?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/granola/600/400",
                             Name = "Organic Granola 500g",
                             Price = 6.99m,
                             Qty = 50
@@ -268,7 +271,7 @@ namespace OneClick.Backend.Migrations
                             Id = 10,
                             CategoryId = 5,
                             Description = "Extra virgin, cold pressed",
-                            ImageURL = "https://images.unsplash.com/photo-1474979266404-7cadd259c308?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/oliveoil/600/400",
                             Name = "Olive Oil 1L",
                             Price = 9.99m,
                             Qty = 30
@@ -278,7 +281,7 @@ namespace OneClick.Backend.Migrations
                             Id = 11,
                             CategoryId = 6,
                             Description = "Long-wear, natural shade",
-                            ImageURL = "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/lipstick/600/400",
                             Name = "Matte Lipstick",
                             Price = 12.99m,
                             Qty = 35
@@ -288,7 +291,7 @@ namespace OneClick.Backend.Migrations
                             Id = 12,
                             CategoryId = 6,
                             Description = "Water-resistant, volume effect",
-                            ImageURL = "https://images.unsplash.com/photo-1631214524020-7e18db9a8f92?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/mascara/600/400",
                             Name = "Black Mascara",
                             Price = 11.49m,
                             Qty = 22
@@ -298,7 +301,7 @@ namespace OneClick.Backend.Migrations
                             Id = 13,
                             CategoryId = 7,
                             Description = "PU match ball",
-                            ImageURL = "https://images.unsplash.com/photo-1614632537423-1e6c2e7e0aab?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/football/600/400",
                             Name = "Football Size 5",
                             Price = 29.99m,
                             Qty = 60
@@ -308,7 +311,7 @@ namespace OneClick.Backend.Migrations
                             Id = 14,
                             CategoryId = 7,
                             Description = "Non-slip exercise mat",
-                            ImageURL = "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/yogamat/600/400",
                             Name = "Yoga Mat 6mm",
                             Price = 24.50m,
                             Qty = 8
@@ -318,7 +321,7 @@ namespace OneClick.Backend.Migrations
                             Id = 15,
                             CategoryId = 8,
                             Description = "Scented candles set for ambience",
-                            ImageURL = "https://images.unsplash.com/photo-1602826347632-009a584de633?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/romancecandles/600/400",
                             Name = "Romance Candle Set",
                             Price = 19.99m,
                             Qty = 25
@@ -328,7 +331,7 @@ namespace OneClick.Backend.Migrations
                             Id = 16,
                             CategoryId = 8,
                             Description = "Couples card & board game",
-                            ImageURL = "https://images.unsplash.com/photo-1630260655866-e3256037b605?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/romancegame/600/400",
                             Name = "Romantic Board Game",
                             Price = 17.50m,
                             Qty = 12
@@ -338,7 +341,7 @@ namespace OneClick.Backend.Migrations
                             Id = 17,
                             CategoryId = 9,
                             Description = "2 batteries, fast charger",
-                            ImageURL = "https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/drill/600/400",
                             Name = "Cordless Drill 18V",
                             Price = 89.00m,
                             Qty = 14
@@ -348,7 +351,7 @@ namespace OneClick.Backend.Migrations
                             Id = 18,
                             CategoryId = 9,
                             Description = "Sockets, bits and ratchet",
-                            ImageURL = "https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/toolset/600/400",
                             Name = "Tool Set 46pcs",
                             Price = 39.99m,
                             Qty = 40
@@ -358,7 +361,7 @@ namespace OneClick.Backend.Migrations
                             Id = 19,
                             CategoryId = 10,
                             Description = "Linear switches, full-size",
-                            ImageURL = "https://images.unsplash.com/photo-1587829741301-dc798b91a602?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/keyboard/600/400",
                             Name = "Mechanical Keyboard RGB",
                             Price = 69.90m,
                             Qty = 18
@@ -368,7 +371,7 @@ namespace OneClick.Backend.Migrations
                             Id = 20,
                             CategoryId = 10,
                             Description = "Programmable buttons",
-                            ImageURL = "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/gamingmouse/600/400",
                             Name = "Gaming Mouse 8K DPI",
                             Price = 29.90m,
                             Qty = 45
@@ -378,7 +381,7 @@ namespace OneClick.Backend.Migrations
                             Id = 21,
                             CategoryId = 11,
                             Description = "Adjustable arm, warm/cool light",
-                            ImageURL = "https://images.unsplash.com/photo-1534073828943-f801091a7d58?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/desklamp/600/400",
                             Name = "LED Desk Lamp",
                             Price = 22.99m,
                             Qty = 45
@@ -388,7 +391,7 @@ namespace OneClick.Backend.Migrations
                             Id = 22,
                             CategoryId = 11,
                             Description = "Ergonomic cervical pillow",
-                            ImageURL = "https://images.unsplash.com/photo-1584100936595-c0654b55a2e6?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/pillow/600/400",
                             Name = "Memory Foam Pillow",
                             Price = 34.90m,
                             Qty = 16
@@ -398,7 +401,7 @@ namespace OneClick.Backend.Migrations
                             Id = 23,
                             CategoryId = 12,
                             Description = "Flexible anti-kink hose",
-                            ImageURL = "https://images.unsplash.com/photo-1596707328646-778832a8747f?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/gardenhose/600/400",
                             Name = "Garden Hose 15m",
                             Price = 19.99m,
                             Qty = 30
@@ -408,7 +411,7 @@ namespace OneClick.Backend.Migrations
                             Id = 24,
                             CategoryId = 12,
                             Description = "Bypass pruner stainless steel",
-                            ImageURL = "https://images.unsplash.com/photo-1622374274291-3e4b77f32997?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/pruner/600/400",
                             Name = "Pruning Shears",
                             Price = 12.50m,
                             Qty = 25
@@ -418,7 +421,7 @@ namespace OneClick.Backend.Migrations
                             Id = 25,
                             CategoryId = 13,
                             Description = "Compatible bricks 500 pcs",
-                            ImageURL = "https://images.unsplash.com/photo-1587654780291-39c940483713?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/blocks/600/400",
                             Name = "Building Blocks Set",
                             Price = 24.99m,
                             Qty = 40
@@ -428,7 +431,7 @@ namespace OneClick.Backend.Migrations
                             Id = 26,
                             CategoryId = 13,
                             Description = "Landscape illustration",
-                            ImageURL = "https://images.unsplash.com/photo-1610419885843-0c4a457493a7?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/puzzle/600/400",
                             Name = "Puzzle 1000 Pieces",
                             Price = 14.99m,
                             Qty = 12
@@ -438,7 +441,7 @@ namespace OneClick.Backend.Migrations
                             Id = 27,
                             CategoryId = 14,
                             Description = "Two-piece loungewear set",
-                            ImageURL = "https://images.unsplash.com/photo-1594967384738-9e63e2621746?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/sleepwear/600/400",
                             Name = "Soft Sleepwear Set",
                             Price = 29.90m,
                             Qty = 28
@@ -448,7 +451,7 @@ namespace OneClick.Backend.Migrations
                             Id = 28,
                             CategoryId = 14,
                             Description = "Comfort fit essentials",
-                            ImageURL = "https://images.unsplash.com/photo-1596489392231-15b565780365?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/undergarments/600/400",
                             Name = "Seamless Undergarments",
                             Price = 19.90m,
                             Qty = 18
@@ -458,7 +461,7 @@ namespace OneClick.Backend.Migrations
                             Id = 29,
                             CategoryId = 15,
                             Description = "Chicken & rice formula",
-                            ImageURL = "https://images.unsplash.com/photo-1589924691195-41432c84c161?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/dogfood/600/400",
                             Name = "Dry Dog Food 3kg",
                             Price = 16.99m,
                             Qty = 35
@@ -468,7 +471,7 @@ namespace OneClick.Backend.Migrations
                             Id = 30,
                             CategoryId = 15,
                             Description = "Sisal rope post with base",
-                            ImageURL = "https://images.unsplash.com/photo-1545249390-6bdfa286032f?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/catpost/600/400",
                             Name = "Cat Scratching Post",
                             Price = 21.99m,
                             Qty = 14
@@ -478,7 +481,7 @@ namespace OneClick.Backend.Migrations
                             Id = 31,
                             CategoryId = 16,
                             Description = "Vanilla flavor",
-                            ImageURL = "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/whey/600/400",
                             Name = "Whey Protein 1kg",
                             Price = 32.90m,
                             Qty = 20
@@ -488,7 +491,7 @@ namespace OneClick.Backend.Migrations
                             Id = 32,
                             CategoryId = 16,
                             Description = "Daily vitamins & minerals",
-                            ImageURL = "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/multivitamin/600/400",
                             Name = "Multivitamin 120 caps",
                             Price = 14.50m,
                             Qty = 10
@@ -498,7 +501,7 @@ namespace OneClick.Backend.Migrations
                             Id = 33,
                             CategoryId = 17,
                             Description = "Classic fit, 100% cotton",
-                            ImageURL = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/tshirt/600/400",
                             Name = "Men's Cotton T-Shirt",
                             Price = 14.99m,
                             Qty = 60
@@ -508,7 +511,7 @@ namespace OneClick.Backend.Migrations
                             Id = 34,
                             CategoryId = 17,
                             Description = "Mid-wash, regular fit",
-                            ImageURL = "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/denimjacket/600/400",
                             Name = "Women's Denim Jacket",
                             Price = 49.90m,
                             Qty = 9
@@ -518,7 +521,7 @@ namespace OneClick.Backend.Migrations
                             Id = 35,
                             CategoryId = 18,
                             Description = "Portable speaker with mic",
-                            ImageURL = "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/speaker/600/400",
                             Name = "Bluetooth Speaker",
                             Price = 34.99m,
                             Qty = 25
@@ -528,7 +531,7 @@ namespace OneClick.Backend.Migrations
                             Id = 36,
                             CategoryId = 18,
                             Description = "HDMI, USB 3.0, SD/MicroSD",
-                            ImageURL = "https://images.unsplash.com/photo-1630080644612-4b2eb00438a9?auto=format&fit=crop&w=600&q=80",
+                            ImageURL = "https://picsum.photos/seed/usbhub/600/400",
                             Name = "USB-C Hub 6-in-1",
                             Price = 24.90m,
                             Qty = 15

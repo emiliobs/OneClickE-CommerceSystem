@@ -313,3 +313,7 @@ body.dark-mode {
     body.dark-mode .input-group-text i {
         color: #adb5bd !important;
     }
+
+.text-pink {
+    color: #FF4081 !important;
+}
