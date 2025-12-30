@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using OneClick.Backend.Repositories;
 using OneClick.Shared.Entities;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 
 namespace OneClick.Backend.Controllers
 {
@@ -11,11 +13,13 @@ namespace OneClick.Backend.Controllers
     {
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IConfiguration _configuration;
 
-        public ProductsController(IProductRepository productRepository, ICategoryRepository categoryRepository)
+        public ProductsController(IProductRepository productRepository, ICategoryRepository categoryRepository, IConfiguration configuration)
         {
             this._productRepository = productRepository;
             this._categoryRepository = categoryRepository;
+            this._configuration = configuration;
         }
 
         [HttpGet]
@@ -150,6 +154,58 @@ namespace OneClick.Backend.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal  error server: {ex.Message}");
+            }
+        }
+
+        [HttpPost("UploadImage")]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            // Validate that the file exist is not empty
+            if (file is null || file.Length == 0)
+            {
+                return BadRequest("NoContent file uploaded");
+            }
+
+            try
+            {
+                //Initialize Cloudinary Account using configuration from appsettings.json
+                // These keys must match exactly what is in your JSON file.
+                var account = new Account
+                    (
+                       _configuration["CloudinarySettings:CloudName"],
+                       _configuration["CloudinarySettings:ApiKey"],
+                       _configuration["CloudinarySettings:ApiSecret"]
+
+                    );
+
+                var cloudinary = new Cloudinary(account);
+
+                // Prepare tyhe file stream for upload
+                await using var stream = file.OpenReadStream();
+
+                var uploadParam = new ImageUploadParams
+                {
+                    File = new FileDescription(file.FileName, stream),
+
+                    //Transformation: Automatically crop the image to a 500X500 square
+                    Transformation = new Transformation().Height(500).Width(500).Crop("fill")
+                };
+
+                // Execute the upload to Clodinary
+                var uploadResult = await cloudinary.UploadAsync(uploadParam);
+
+                // Check for Cloudinary specific errors
+                if (uploadResult.Error is not null)
+                {
+                    return BadRequest(uploadResult.Error.Message);
+                }
+
+                // Return the Secure URL (Https) to the forntend
+                return Ok(new { Url = uploadResult.SecureUrl.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Interna server error: {ex.Message}");
             }
         }
     }

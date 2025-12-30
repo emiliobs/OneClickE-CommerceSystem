@@ -16,6 +16,7 @@ public class Product
 
     [MaxLength(500, ErrorMessage = "Image URL cannot exceed 500 characters")]
     [Url(ErrorMessage = "Please enter a valid URL")]
+    [Required(ErrorMessage = "Image is required")]
     public string ImageURL { get; set; } = null!;
 
     [Required(ErrorMessage = "Field {0} is required.")]
@@ -26,6 +27,7 @@ public class Product
     [Range(0, int.MaxValue, ErrorMessage = "Quantity cannot be negative")]
     public int Qty { get; set; }
 
+    [Range(1, int.MaxValue, ErrorMessage = "Please select a valid category")]
     [Required(ErrorMessage = "Field {0} is required.")]
     public int CategoryId { get; set; }
 

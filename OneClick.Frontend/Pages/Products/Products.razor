@@ -23,7 +23,7 @@
                        placeholder="Search products by name, description or category..."
                        value="@searchText"
                        @oninput="FilterProducts" />
-                <span class="input-group-text bg-transparent border-0 text-muted">
+                <span class="input-group-text bg-transparent border-0 text-danger">
                     <i class="bi bi-search"></i>
                 </span>
             </div>
@@ -211,25 +211,37 @@
 
                             <div class="col-md-5 d-flex flex-column">
                                 <label class="form-label small text-muted text-uppercase">Image</label>
-                                <InputText class="form-control bg-secondary text-white border-0 mb-3"
-                                           @bind-Value="productModel.ImageURL" placeholder="https://..." />
-                                <ValidationMessage For="@(() => productModel.ImageURL)" />
 
-                                <div class="card bg-secondary border-0 d-flex align-items-center justify-content-center flex-grow-1 overflow-hidden"
-                                     style="min-height: 200px;">
-                                    @if (string.IsNullOrWhiteSpace(productModel.ImageURL))
+                                <div class="mb-3">
+                                    <InputFile OnChange="@HandleImageUpload"
+                                               class="form-control bg-secondary text-white border-0"
+                                               accept=".jpg,.jpeg,.png">
+                                    </InputFile>
+                                </div>
+
+                                <InputText class="form-control d-none" @bind-Value="productModel.ImageURL"></InputText>
+                                <ValidationMessage For="@(() => productModel.ImageURL)"></ValidationMessage>
+
+                                
+                                <div class="card bg-secondary border-0 d-flex align-items-center justify-content-center flex-grow-1 overflow-hidden position-relative">                                
+                                    @if (isUploading)
                                     {
-                                        <div class="text-center text-muted opacity-50">
-                                            <i class="bi bi-image" style="font-size: 3rem;"></i>
-                                            <p class="small">Preview</p>
+                                        <div class="text-center">
+                                            <div class="spinner-border text-light mb-2"></div>
+                                            <p class="small text-white mb-0">Uploading.....</p>
                                         </div>
+                                    }
+                                    else if(!string.IsNullOrWhiteSpace(productModel.ImageURL))
+                                    {
+                                         <img  src="@productModel.ImageURL" class="img-fluid rounded" 
+                                            style="max-height:250px; object-fit:contain;"/>
                                     }
                                     else
                                     {
-                                        <img src="@productModel.ImageURL" class="img-fluid rounded"
-                                             style="max-height: 250px; object-fit: contain;"
-                                             onerror="this.src='https://via.placeholder.com/300?text=Error+Loading+Image';" />
-                                    }
+                                        <i class="bi bi-cloud-arrow-up" style="font-size: 3rem;"></i>
+                                        <p class="small">Select a file</p>
+                                    }                                  
+
                                 </div>
                             </div>
                         </div>
@@ -237,12 +249,12 @@
                         <div class="modal-footer border-secondary mt-3">
                             <button type="button" class="btn btn-outline-light" @onclick="CloseModal">Cancel</button>
 
-                            <button type="submit" class="btn btn-primary px-4" disabled="@isSaving">
+                            <button type="submit" class="btn btn-primary px-4" disabled="@(isSaving || isUploading)">
                                 @if (isSaving)
                                 {
                                     <span class="spinner-border spinner-border-sm me-2"></span>
                                 }
-                                @(isEditing ? "Update" : "Save")
+                                @(isUploading ? "Uploading..." : (isEditing ? "Update" : "Save"))
                             </button>
                         </div>
 

@@ -1,213 +1,252 @@
+using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using OneClick.Frontend.Services;
 using OneClick.Shared.Entities;
 using System.Threading.Tasks;
 
-namespace OneClick.Frontend.Pages.Products
+namespace OneClick.Frontend.Pages.Products;
+
+public partial class Products
 {
-    public partial class Products
+    // --- Dependency Injection ---
+    [Inject] public IProductService ProductService { get; set; } = default!;
+
+    [Inject]
+    public ICategoryService CategoryService { get; set; } = default!;
+
+    [Inject] public Services.SweetAlertService SweetAlertService { get; set; } = default!;
+
+    // --- State Variables ---
+    private List<Product> products = new();
+
+    private List<Product> filteredProducts = new();
+
+    // List to polutate the <Select> dropdown
+    private List<Category> categories = new();
+
+    // The object we are editing/creating
+    private Product productModel = new();
+
+    private string searchText = "";
+
+    // --- Pagination Variables ---
+    private int currentPage = 1;
+
+    private int itemsPerPage = 7;
+
+    // Calculates total pages based on filtered results
+    public int TotalPages => (int)Math.Ceiling((double)filteredProducts.Count / itemsPerPage);
+
+    // Returns only the slice of products for the current page
+    public IEnumerable<Product> PaginatedProducts
     {
-        // --- Dependency Injection ---
-        [Inject] public IProductService ProductService { get; set; } = default!;
-
-        [Inject]
-        public ICategoryService CategoryService { get; set; } = default!;
-
-        [Inject] public SweetAlertService SweetAlertService { get; set; } = default!;
-
-        // --- State Variables ---
-        private List<Product> products = new();
-
-        private List<Product> filteredProducts = new();
-
-        // List to polutate the <Select> dropdown
-        private List<Category> categories = new();
-
-        // The object we are editing/creating
-        private Product productModel = new();
-
-        private string searchText = "";
-
-        // --- Pagination Variables ---
-        private int currentPage = 1;
-
-        private int itemsPerPage = 7;
-
-        // Calculates total pages based on filtered results
-        public int TotalPages => (int)Math.Ceiling((double)filteredProducts.Count / itemsPerPage);
-
-        // Returns only the slice of products for the current page
-        public IEnumerable<Product> PaginatedProducts
+        get
         {
-            get
-            {
-                return filteredProducts
-                    .Skip((currentPage - 1) * itemsPerPage)
-                    .Take(itemsPerPage);
-            }
+            return filteredProducts
+                .Skip((currentPage - 1) * itemsPerPage)
+                .Take(itemsPerPage);
         }
+    }
 
-        // --- UI State ---
-        private bool isLoading = true;
+    // --- UI State ---
+    private bool isLoading = true;
 
-        private bool showFormModal = false; // Controls MOdal visibility
-        private bool isEditing = false; // Flags if we  are updating or creating
-        private bool isSaving = false; // Disables buttons while saving
+    private bool isUploading = false;
+    private bool showFormModal = false; // Controls MOdal visibility
+    private bool isEditing = false; // Flags if we  are updating or creating
+    private bool isSaving = false; // Disables buttons while saving
 
-        // --- Initialization ---
-        protected override async Task OnInitializedAsync()
+    // --- Initialization ---
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+    }
+
+    private async Task LoadProducts()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        // Fetch all products from API
+        products = await ProductService.GetProductsAsync();
+
+        // Initialize filtered list with all products
+        filteredProducts = new List<Product>(products);
+
+        isLoading = false;
+        StateHasChanged();
+    }
+
+    // --- Search Logic ---
+    private void FilterProducts(ChangeEventArgs e)
+    {
+        searchText = e.Value?.ToString() ?? "";
+
+        if (string.IsNullOrWhiteSpace(searchText))
         {
-            await LoadProducts();
-        }
-
-        private async Task LoadProducts()
-        {
-            isLoading = true;
-            StateHasChanged();
-
-            // Fetch all products from API
-            products = await ProductService.GetProductsAsync();
-
-            // Initialize filtered list with all products
+            // Reset filter
             filteredProducts = new List<Product>(products);
-
-            isLoading = false;
-            StateHasChanged();
+        }
+        else
+        {
+            // Filter by Name, Description, or Category Name
+            filteredProducts = products
+                .Where(p => p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                            (p.Description != null && p.Description.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
+                            (p.Category?.Name != null && p.Category.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
         }
 
-        // --- Search Logic ---
-        private void FilterProducts(ChangeEventArgs e)
-        {
-            searchText = e.Value?.ToString() ?? "";
+        // Always reset to page 1 after filtering
+        currentPage = 1;
+    }
 
-            if (string.IsNullOrWhiteSpace(searchText))
+    // --- Pagination Event Handler ---
+    private void ChangePage(int newPage)
+    {
+        currentPage = newPage;
+    }
+
+    // MOdal and Form Logic
+    private async Task ShowAddForm()
+    {
+        // Reset the model for a new product
+        productModel = new Product();
+        isEditing = false;
+
+        // Load fresh categories for the dropdown
+        categories = await CategoryService.GetAllCategoryAsync();
+
+        // Shoe modal
+        showFormModal = true;
+    }
+
+    private async Task SaveProduct()
+    {
+        isSaving = true;
+        StateHasChanged();
+
+        try
+        {
+            bool succes;
+            if (isEditing)
             {
-                // Reset filter
-                filteredProducts = new List<Product>(products);
+                succes = await ProductService.UpdateProductAsync(productModel);
             }
             else
             {
-                // Filter by Name, Description, or Category Name
-                filteredProducts = products
-                    .Where(p => p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                                (p.Description != null && p.Description.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
-                                (p.Category?.Name != null && p.Category.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)))
-                    .ToList();
+                var created = await ProductService.CreateProductAsync(productModel);
+                succes = created != null;
             }
 
-            // Always reset to page 1 after filtering
-            currentPage = 1;
-        }
-
-        // --- Pagination Event Handler ---
-        private void ChangePage(int newPage)
-        {
-            currentPage = newPage;
-        }
-
-        // MOdal and Form Logic
-        private async Task ShowAddForm()
-        {
-            // Reset the model for a new product
-            productModel = new Product();
-            isEditing = false;
-
-            // Load fresh categories for the dropdown
-            categories = await CategoryService.GetAllCategoryAsync();
-
-            // Shoe modal
-            showFormModal = true;
-        }
-
-        private async Task SaveProduct()
-        {
-            isSaving = true;
-            StateHasChanged();
-
-            try
+            if (succes)
             {
-                bool succes;
-                if (isEditing)
-                {
-                    succes = await ProductService.UpdateProductAsync(productModel);
-                }
-                else
-                {
-                    var created = await ProductService.CreateProductAsync(productModel);
-                    succes = created != null;
-                }
-
-                if (succes)
-                {
-                    showFormModal = false;
-                    await LoadProducts(); // Refresh list
-                    await SweetAlertService.ShowSuccessToast(isEditing ? "Product Update!" : "Product Created!");
-                }
-                else
-                {
-                    await SweetAlertService.ShowErrorAlert("Error", "Operation failed check your data.");
-                }
+                showFormModal = false;
+                await LoadProducts(); // Refresh list
+                await SweetAlertService.ShowSuccessToast(isEditing ? "Product Update!" : "Product Created!");
             }
-            catch (Exception ex)
+            else
             {
-                await SweetAlertService.ShowErrorAlert("Error", ex.Message);
-            }
-            finally
-            {
-                isSaving = false;
+                await SweetAlertService.ShowErrorAlert("Error", "Operation failed check your data.");
             }
         }
-
-        private async Task EditProduct(Product product)
+        catch (Exception ex)
         {
-            productModel = new Product
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                Qty = product.Qty,
-                ImageURL = product.ImageURL,
-                CategoryId = product.CategoryId,
-            };
-
-            isEditing = true;
-
-            // Load categories for the dropdown
-            categories = await CategoryService.GetAllCategoryAsync();
-
-            showFormModal = true;
+            await SweetAlertService.ShowErrorAlert("Error", ex.Message);
         }
-
-        private async Task DeleteProduct(Product product)
+        finally
         {
-            // Confirm with the user var
-            var confirmed = await SweetAlertService.ConfirmAsync(
-                  "Are you sure",
-                  $"You won't be able to revert this! Deliting" +
-                  $"; {product.Name}"
-                );
+            isSaving = false;
+        }
+    }
 
-            // If confirm, proceed to delete
-            if (confirmed)
+    private async Task EditProduct(Product product)
+    {
+        productModel = new Product
+        {
+            Id = product.Id,
+            Name = product.Name,
+            Description = product.Description,
+            Price = product.Price,
+            Qty = product.Qty,
+            ImageURL = product.ImageURL,
+            CategoryId = product.CategoryId,
+        };
+
+        isEditing = true;
+
+        // Load categories for the dropdown
+        categories = await CategoryService.GetAllCategoryAsync();
+
+        showFormModal = true;
+    }
+
+    private async Task DeleteProduct(Product product)
+    {
+        // Confirm with the user var
+        var confirmed = await SweetAlertService.ConfirmAsync(
+              "Are you sure",
+              $"You won't be able to revert this! Deliting" +
+              $"; {product.Name}"
+            );
+
+        // If confirm, proceed to delete
+        if (confirmed)
+        {
+            var success = await ProductService.DeleteProductAsync(product.Id);
+
+            if (success)
             {
-                var success = await ProductService.DeleteProductAsync(product.Id);
-
-                if (success)
-                {
-                    await LoadProducts();
-                    await SweetAlertService.ShowSuccessToast("Prodcut deleted successfully!");
-                }
-                else
-                {
-                    await SweetAlertService.ShowErrorAlert("Error", "Could not delete prodcut. It might be in use");
-                }
+                await LoadProducts();
+                await SweetAlertService.ShowSuccessToast("Prodcut deleted successfully!");
+            }
+            else
+            {
+                await SweetAlertService.ShowErrorAlert("Error", "Could not delete prodcut. It might be in use");
             }
         }
+    }
 
-        private void CloseModal()
+    private void CloseModal()
+    {
+        showFormModal = false;
+    }
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file is null)
         {
-            showFormModal = false;
+            return;
+        }
+
+        isUploading = false;
+        StateHasChanged(); // Show spinner
+
+        try
+        {
+            var maxFileSize = 1024 * 1024 * 6;
+
+            using var content = new MultipartFormDataContent();
+            var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+            content.Add(fileContent, "file", file.Name);
+
+            // Subir y obtener URL
+            var uploadUrl = await ProductService.UploadImageAsync(content);
+
+            // Assignar URL al product
+            productModel.ImageURL = uploadUrl;
+        }
+        catch (Exception ex)
+        {
+            await SweetAlertService.ShowErrorAlert("Upload Error", ex.Message);
+        }
+        finally
+        {
+            isUploading = false;
+            StateHasChanged(); // Hide spinner
         }
     }
 }

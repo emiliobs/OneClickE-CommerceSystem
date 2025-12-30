@@ -23,4 +23,6 @@ public interface IProductService
     // Sends a DELETE request to remove a product.
 
     Task<bool> DeleteProductAsync(int id);
+
+    Task<String> UploadImageAsync(MultipartFormDataContent content);
 }

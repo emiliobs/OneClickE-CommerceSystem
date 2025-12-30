@@ -317,3 +317,17 @@ body.dark-mode {
 .text-pink {
     color: #FF4081 !important;
 }
+/* Default style (usually for Dark Mode) */
+.search-icon {
+    /* White icon for dark backgrounds */
+    color: #ffffff;
+    fill: #ffffff; /* If it's an SVG */
+}
+
+/* Override when Light Mode is active */
+/* Check the class name used in your <body> tag */
+body.light-mode .search-icon {
+    /* Switch to dark gray or black so it's visible */
+    color: #333333;
+    fill: #333333;
+}

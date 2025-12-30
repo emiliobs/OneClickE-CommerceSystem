@@ -50,4 +50,18 @@ public class ProductService : IProductService
         var response = await _httpClient.DeleteAsync($"api/products/{id}");
         return response.IsSuccessStatusCode;
     }
+
+    public async Task<string> UploadImageAsync(MultipartFormDataContent content)
+    {
+        var response = await _httpClient.PostAsync($"api/products/UploadImage", content);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception(error);
+        }
+
+        var result = await response.Content.ReadFromJsonAsync<UploadResult>();
+        return result!.Url;
+    }
 }
