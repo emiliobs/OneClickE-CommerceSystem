@@ -1,90 +1,41 @@
-﻿@* Pages/Home.razor *@
-@page "/"
+﻿@page "/"
+@using OneClick.Shared.Entities
+@using OneClick.Frontend.Components
 
-<PageTitle>OneClick | Home</PageTitle>
+<PageTitle>Home Catalog</PageTitle>
 
-@* --- SOLUCIÓN DE EMERGENCIA: ESTILOS DIRECTOS --- *@
-<style>
-    /* 1. Fondo y texto general */
-    .home-container {
-        padding: 20px;
-        background-color: #15141B;
-        min-height: 100vh;
-        color: white;
-    }
-
-    .page-title {
-        font-size: 2rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-
-    .subtitle {
-        color: #808191;
-        margin-bottom: 2rem;
-    }
-
-    /* 2. LA GRILLA MÁGICA (GRID) */
-    .products-grid {
-        display: grid;
-        /* Esto hace que las tarjetas se acomoden automáticamente */
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 20px;
-        width: 100%; /* Asegura que use el ancho disponible */
-    }
-</style>
-
-<div class="home-container">
-
-    <h1 class="page-title">Welcome, Emilio! 👋</h1>
-    <p class="subtitle">Discover our latest tech deals</p>
-
-    @* IMPORTANTE: Aquí usamos la clase 'products-grid' que coincide con el estilo de arriba *@
-    <div class="products-grid">
-
-        @* Product 1 *@
-        <ProductCard Title="USB-C Hub 6-in-1"
-                     Category="Accessories"
-                     Price="@(24.90m)"
-                     StockUnits="15"
-                     ImageUrl="https://placehold.co/300x300/1F1D2B/white?text=USB+Hub"
-                     IsOnSale="true"
-                     OnAddToCartClicked="HandleAddToCart" />
-
-        @* Product 2 *@
-        <ProductCard Title="Bluetooth Speaker"
-                     Category="Audio"
-                     Price="@(34.99m)"
-                     StockUnits="25"
-                     ImageUrl="https://placehold.co/300x300/1F1D2B/white?text=Speaker"
-                     IsNew="true"
-                     OnAddToCartClicked="HandleAddToCart" />
-
-        @* Product 3 *@
-        <ProductCard Title="Denim Jacket"
-                     Category="Fashion"
-                     Price="@(49.90m)"
-                     StockUnits="9"
-                     ImageUrl="https://placehold.co/300x300/1F1D2B/white?text=Jacket"
-                     OnAddToCartClicked="HandleAddToCart" />
-
-        @* Product 4 *@
-        <ProductCard Title="Cotton T-Shirt"
-                     Category="Fashion"
-                     Price="@(14.99m)"
-                     StockUnits="60"
-                     ImageUrl="https://placehold.co/300x300/1F1D2B/white?text=T-Shirt"
-                     IsOnSale="true"
-                     OnAddToCartClicked="HandleAddToCart" />
-
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2 class="fw-bold">Testing Reusable Components</h2>
+            <p class="text-muted">This list is rendered using the <code>&lt;ProductCard /&gt;</code> component</p>
+        </div>
     </div>
 
-    @* Feedback Message *@
-    @if (!string.IsNullOrEmpty(LastAddedProduct))
+    @if (!string.IsNullOrEmpty(message))
     {
-        <div class="alert alert-success mt-4">
-            <i class="bi bi-check-circle-fill"></i> You added <strong>@LastAddedProduct</strong> to the cart!
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>System:</strong> @message
+            <button type="button" class="btn-close" @onclick="() => message = null"></button>
         </div>
     }
+
+    <div class="row g-4">
+        @if (products.Count > 0)
+        {
+            @foreach (var product in products)
+            {
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+
+                    <ProductCard Product="@product" OnAddToCart="@HandleAddToCart" />
+
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center">Loading mock data...</div>
+        }
+    </div>
 </div>
 
