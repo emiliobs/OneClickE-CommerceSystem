@@ -2,6 +2,13 @@
 @using OneClick.Frontend.Services
 @using OneClick.Shared.Entities
 
+<style>
+    .modal-color {
+        background-color: rgba(0,0,0,0.6);
+        backdrop-filter: blur(3px);
+    }
+</style>
+
 
 <div class="container py-4">
 
@@ -72,7 +79,7 @@
         <div class="card shadow-sm">
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped mb-0">
+                    <table class="table table-dark table-hover table-striped mb-0">
                         <thead class="table-dark">
                             <tr>
                                 <th class="ps-4">CATEGORY</th>
@@ -141,15 +148,15 @@
 
 @if(showFormModal)
 {
-    <div class="modal show d-block" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal show d-block modal-color">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
+                    <div class="modal-content  bg-dark text-white border-secondary shadow-lg">
+                        <div class="modal-header border-secondary">
                     <h5 class="modal-title fw-bold">
                                 <i class="bi @(isEditing ? "bi-pencil-square" : "bi-plus-circle") me-2"></i>
                                 @(isEditing ? "Edit Category" : "New Category")
                     </h5>
-                    <button type="button" class="btn-close" @onclick="CloseFormModel"></button>
+                            <button type="button" class="btn-close btn-close-white" @onclick="CloseFormModel"></button>
                 </div>
 
                 <div class="modal-body">
@@ -166,11 +173,8 @@
                     </div>
                 </div>
 
-                <div class="modal-footer">
-                    <button type="button"
-                            class="btn btn-secondary"
-                            @onclick="CloseFormModel"
-                            disabled="@isSaving">
+                        <div class="modal-footer border-secondary mt-3">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseFormModel" disabled="@isSaving">
                         Cancel
                     </button>
                     <button type="button"
@@ -192,47 +196,7 @@
             </div>
         </div>
     </div>
-}
+   }
 
-
-<!-- Delet Confirmation Modal -->
-    @if (showDeleteModal)
-    {
-        <div class="modal show d-block" style="background-color: rgba(0,0,0,0.5);">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title text-danger">Confirm Delete</h5>
-                        <button type="button" class="btn-close" @onclick="CloseDeleteModal"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete category <strong>"@categoryToDelete?.Name"</strong>?</p>
-                        <p class="text-muted small">This action cannot be undone.</p>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button"
-                                class="btn btn-secondary"
-                                @onclick="CloseDeleteModal"
-                                disabled="@isDeleting">
-                            Cancel
-                        </button>
-                        <button type="button"
-                                class="btn btn-danger"
-                                @onclick="ConfirmDelete"
-                                disabled="@isDeleting">
-                            @if (isDeleting)
-                            {
-                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                                <p> Deleting...</p>
-                            }
-                            Delete
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
 }
 </div>

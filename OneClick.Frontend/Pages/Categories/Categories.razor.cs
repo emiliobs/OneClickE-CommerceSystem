@@ -214,51 +214,31 @@ namespace OneClick.Frontend.Pages.Categories
             return true;
         }
 
-        private void DeleteCategory(Category category)
+        private async Task DeleteCategory(Category category)
         {
-            categoryToDelete = category;
-            showDeleteModal = true;
-        }
+            // Confirm with the user var
+            var confirmed = await SweetAlertService.ConfirmAsync(
+                  "Are you sure",
+                  $"You won't be able to revert this! Deleting" +
+                  $"; {category.Name}!"
+                );
 
-        private async Task ConfirmDelete()
-        {
-            if (categoryToDelete is null)
+            // If confirm, proceed to delete
+            if (confirmed)
             {
-                return;
-            }
+                var success = await CategoryService.DeleteCategoryAsync(category.Id);
 
-            // Check if category has products locally before sending request (Optimization)
-            if (categoryToDelete.Products != null && categoryToDelete.Products.Count > 0)
-            {
-                // Show error immediately without calling backend
-                await SweetAlertService.ShowErrorAlert("Cannot Delete",
+                if (success)
+                {
+                    await LoadCategories();
+                    await SweetAlertService.ShowSuccessToast("Category deleted successfully!");
+                }
+                else
+                {
+                    await SweetAlertService.ShowErrorAlert("Cannot Delete",
                          "This category contains products. Please delete the products first.");
-                CloseDeleteModal();
-
-                return;
+                }
             }
-
-            isDeleting = true;
-            StateHasChanged();
-
-            var success = await CategoryService.DeleteCategoryAsync(categoryToDelete.Id);
-            if (success)
-            {
-                // cerramos el modal(ahora CloseFormModal obedecerá)
-                CloseDeleteModal();
-
-                await LoadCategories();
-                // Show pretty toast notification
-                await SweetAlertService.ShowSuccessToast("Category delete successfully!");
-            }
-            else
-            {
-                // If backend failed (likely due to database constraints we missed)
-                CloseDeleteModal(); //Close modal to show alert clearly.
-                await SweetAlertService.ShowErrorAlert("Error", "Could not delete category, It might be in use.");
-            }
-
-            isDeleting = false;
         }
 
         private void CloseFormModel()

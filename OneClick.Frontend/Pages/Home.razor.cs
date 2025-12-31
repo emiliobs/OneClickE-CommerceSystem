@@ -37,6 +37,7 @@ public partial class Home
     // 2. HANDLE THE EVENT (Lógica del Padre)
     private async Task HandleAddToCart(Product product)
     {
+        product.Qty--;
         SweetAlertService.ShowSuccessToast($"Clicked on: {product.Name}");
     }
 }
