@@ -1,0 +1,54 @@
+﻿@* Shared/ProductCard.razor *@
+
+<div class="product-card">
+    <div class="image-container">
+
+        @* Display the offer badge only if the product is on sale *@
+        @if (IsOnSale)
+        {
+            <span class="badge badge-offer">
+                @* Icon: Fire for hot offers *@
+                <i class="bi bi-fire"></i> OFFER
+            </span>
+        }
+
+        @* Display the new badge only if the product is new *@
+        @if (IsNew)
+        {
+            <span class="badge badge-new">
+                @* Icon: Stars/Sparkles for new items *@
+                <i class="bi bi-stars"></i> NEW
+            </span>
+        }
+
+        <img src="@ImageUrl" alt="@Title" class="product-image" />
+
+    </div>
+
+    <div class="card-details">
+        <h3 class="product-title">@Title</h3>
+
+        @* Product description or category *@
+        <p class="product-category">
+            @* Icon: Layers or Tag for category *@
+            <i class="bi bi-layers-fill"></i> @Category
+        </p>
+
+        <div class="price-row">
+            <span class="price">£@Price.ToString("F2")</span>
+
+            @* Optional: show remaining stock *@
+            <span class="stock-info">
+                @* Icon: Box seam for inventory/stock *@
+                <i class="bi bi-box-seam-fill"></i> @StockUnits units
+            </span>
+        </div>
+
+        <button class="btn-add-cart" @onclick="AddToCart">
+            @* Icon: Cart with plus sign *@
+            <i class="bi bi-cart-plus-fill"></i> Add to Cart
+        </button>
+
+    </div>
+
+</div>

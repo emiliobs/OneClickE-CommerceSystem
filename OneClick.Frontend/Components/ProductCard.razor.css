@@ -1,0 +1,155 @@
+﻿/* 1. The Card Container */
+.product-card {
+    background-color: #1F1D2B; /* Dark background similar to the design */
+    border-radius: 16px; /* Rounded corners */
+    overflow: hidden; /* Ensures image doesn't stick out of corners */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+    /* Hover effect: The card lifts up slightly when mouse is over it */
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(110, 89, 255, 0.2); /* Glow effect */
+    }
+
+/* 2. Image Area */
+.image-container {
+    position: relative; /* Needed to position the badges absolutely */
+    width: 100%;
+    padding-top: 100%; /* Trick to force a square aspect ratio (1:1) */
+    background-color: #fff; /* White bg for product visibility */
+}
+
+.product-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Shows whole image without cropping */
+    padding: 20px; /* Breathing room for the image */
+}
+
+/* 3. Badges (New, Offer) */
+.badge {
+    position: absolute;
+    top: 10px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: white;
+    z-index: 10;
+}
+
+.badge-offer {
+    background-color: #FF5C8D; /* Pinkish/Red for offers */
+    right: 10px;
+}
+
+.badge-new {
+    background-color: #6C5DD3; /* Purple for new items */
+    left: 10px;
+}
+
+/* 4. Details Area */
+.card-details {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #ffffff;
+    flex-grow: 1; /* Pushes content to fill space */
+}
+
+.product-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adds "..." if text is too long */
+}
+
+.product-category {
+    font-size: 0.85rem;
+    color: #808191; /* Grey text for secondary info */
+    margin: 0;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto; /* Pushes price to bottom of details */
+}
+
+.price {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #FF754C; /* Orange accent color */
+}
+
+.stock-info {
+    font-size: 0.75rem;
+    color: #808191;
+    background-color: #2D2D3F;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+/* 5. The Button */
+.btn-add-cart {
+    width: 100%;
+    background-color: #6C5DD3; /* Primary Purple */
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+}
+
+    .btn-add-cart:hover {
+        background-color: #5a4cb5; /* Slightly darker on hover */
+    }
+
+    /* Add a small gap between the icon and the text */
+    .btn-add-cart i {
+        margin-right: 8px;
+    }
+
+/* Pages/Home.razor.css */
+
+.home-container {
+    padding: 20px;
+    background-color: #15141B; /* Very dark background for the whole page */
+    min-height: 100vh;
+    color: white;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: #808191;
+    margin-bottom: 2rem;
+}
+
+/* THE GRID SYSTEM */
+.products-grid {
+    display: grid;
+    /* This magic line creates responsive columns automatically:
+       It tries to fit as many 250px cards as possible in the row. */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px; /* Space between cards */
+}
