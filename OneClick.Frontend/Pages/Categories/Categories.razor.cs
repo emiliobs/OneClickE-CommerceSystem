@@ -220,7 +220,7 @@ namespace OneClick.Frontend.Pages.Categories
             var confirmed = await SweetAlertService.ConfirmAsync(
                   "Are you sure",
                   $"You won't be able to revert this! Deleting" +
-                  $"; {category.Name}!"
+                  $": {category.Name}!"
                 );
 
             // If confirm, proceed to delete

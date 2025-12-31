@@ -192,7 +192,7 @@ public partial class Products
         var confirmed = await SweetAlertService.ConfirmAsync(
               "Are you sure",
               $"You won't be able to revert this! Deleting" +
-              $"; {product.Name}"
+              $": {product.Name}"
             );
 
         // If confirm, proceed to delete
