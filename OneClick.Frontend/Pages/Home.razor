@@ -2,40 +2,63 @@
 @using OneClick.Shared.Entities
 @using OneClick.Frontend.Components
 
-<PageTitle>Home Catalog</PageTitle>
+<style>
+    /* Custom class for the Hero Banner gradient */
+    .hero-banner {
+        background: linear-gradient(135deg, #d84315 0%, #b71c1c 100%);
+        color: white;
+    }
+</style>
 
-<div class="container py-5">
-    <div class="row mb-4">
-        <div class="col-12 text-center">
-            <h2 class="fw-bold">Testing Reusable Components</h2>
-            <p class="text-muted">This list is rendered using the <code>&lt;ProductCard /&gt;</code> component</p>
-        </div>
-    </div>
+<PageTitle>Catalog - OneClick</PageTitle>
 
-    @if (!string.IsNullOrEmpty(message))
+<div class="container-fluid p-4">
+    @if (products is null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>System:</strong> @message
-            <button type="button" class="btn-close" @onclick="() => message = null"></button>
+        <div class="d-flex">
+            <div class="d-flex flex-column align-items-center justify-content-center py-5">
+                <div class="spinner-border text-danger" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5 class="mt-3 text-secondary">Loading products.....</h5>
+            </div>
         </div>
     }
-
-    <div class="row g-4">
-        @if (products.Count > 0)
-        {
-            @foreach (var product in products)
-            {
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-
-                    <ProductCard Product="@product" OnAddToCart="@HandleAddToCart" />
-
+    else
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="p-4 text-white rounded-3 shadow-sm hero-banner text-center">
+                    <h1 class="display-5 fw-bold">Welcome, just OneClick away 🚀</h1>
+                    <p class="lead opacity-75">
+                        Discover premium technology at unbeatable prices. Fast, secure, and easy.
+                    </p>
                 </div>
-            }
+            </div>
+        </div>
+
+        @if (products.Count == 0)
+        {
+            <div class="text-center py-5">
+                <h3 class="text-white">No products found in the database</h3>
+            </div>
         }
         else
         {
-            <div class="text-center">Loading mock data...</div>
-        }
-    </div>
-</div>
+            <div class="row g-4">
 
+                @foreach (var product in products)
+                {
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                        <ProductCard Product="@product" OnAddToCart="@HandleAddToCart" />
+                    </div>
+                }
+
+            </div>
+        }
+
+        
+    }
+    
+
+</div>
