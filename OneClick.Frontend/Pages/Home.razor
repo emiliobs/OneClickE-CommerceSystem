@@ -13,7 +13,8 @@
 <PageTitle>Catalog - OneClick</PageTitle>
 
 <div class="container-fluid p-4">
-    @if (products is null)
+
+    @if (products is null && isLoading)
     {
         <div class="d-flex">
             <div class="d-flex flex-column align-items-center justify-content-center py-5">
@@ -37,17 +38,27 @@
             </div>
         </div>
 
-        @if (products.Count == 0)
+        <ProductFilters Categories="@categories"
+                        ResultCount="@GetFilteredProducts().Count"
+                        @bind-SearchText="searchText"
+                        @bind-SelectedCategory="selectedCategory"
+                        @bind-SelectedStatus="selectedStatus"
+                        >
+        </ProductFilters>
+
+        @if (GetFilteredProducts().Count == 0)
         {
             <div class="text-center py-5">
-                <h3 class="text-white">No products found in the database</h3>
+                <div style="font-size: 3rem;">🕵️‍♂️</div>
+                <h3 class="text-muted mt-2">No products found</h3>
+                <p>Try adjusting your search or filters.</p>
             </div>
         }
         else
         {
             <div class="row g-4">
 
-                @foreach (var product in products)
+                @foreach (var product in GetFilteredProducts())
                 {
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                         <ProductCard Product="@product" OnAddToCart="@HandleAddToCart" />

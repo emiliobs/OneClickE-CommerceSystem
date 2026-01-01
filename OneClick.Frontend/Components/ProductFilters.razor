@@ -1,0 +1,134 @@
+﻿<style>
+    /* Container with dark background */
+    .filter-container {
+        background-color: #1e1e2d; /* Dark blue-ish grey */
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        overflow: hidden; /* Ensures child elements respect border radius */
+    }
+
+    /* Custom styling for inputs to match dark theme */
+    .filter-input {
+        background-color: transparent;
+        border: 1px solid rgba(255,255,255,0.1);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+    }
+
+        .filter-input:focus {
+            background-color: rgba(255,255,255,0.05);
+            border-color: #d84315; /* Brand color */
+            color: white;
+            outline: none;
+        }
+
+        .filter-input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+    /* The bottom bar (Red/Pink strip) */
+    .status-bar {
+        background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%);
+        padding: 10px 20px;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* Tab buttons inside the status bar */
+    .status-tab {
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.8);
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        padding: 5px 10px;
+        transition: all 0.3s ease;
+        border-radius: 20px;
+      
+    }
+
+        .status-tab:hover {
+            color: white;
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        .status-tab.active {
+            color: #ff4b2b;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+    /* Dropdown customization */
+    select.filter-input option {
+        background-color: #1e1e2d;
+        color: white;
+    }
+</style>
+
+<div class="filter-container mb-4">
+
+    <div class="p-4">
+        <div class="row g-3 align-items-center">
+
+            <div class="col-md-6">
+                <div class="d-flex align-items-center position-relative">
+                    <input type="text"
+                           class="filter-input w-100 ps-5"
+                           placeholder="What are you looking for today?"
+                           value="@SearchText"
+                           @oninput="OnSearchInput" />
+                    <i class="bi bi-search position-absolute ms-3 text-white"></i>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-grid-fill ms-3 text-white position-absolute" style="font-size: 1.2rem;"></i>
+                    <select class="filter-input w-100 ps-5" value="@SelectedCategory" @onchange="OnCategoryInput">
+                        <option  value="All">All Categories</option>
+                        @if (Categories != null)
+                        {
+                            foreach (var cat in Categories)
+                            {
+                                <option value="@cat.Name">@cat.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-2 text-end">
+                <span class="badge bg-primary p-2 rounded-pill shadow-sm">
+                    <i class="bi bi-box-seam me-1"></i> @ResultCount Products Found
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-bar">
+        <button class="status-tab @(SelectedStatus == 0 ? "active" : "")"
+                @onclick="() => SetStatus(0)">
+            <i class="bi bi-grid me-1"></i> ALL
+        </button>
+
+        <button class="status-tab @(SelectedStatus == 1 ? "active" : "")"
+                @onclick="() => SetStatus(1)">
+            <i class="bi bi-check-circle me-1"></i> AVAILABLE
+        </button>
+
+        <button class="status-tab @(SelectedStatus == 2 ? "active" : "")"
+                @onclick="() => SetStatus(2)">
+            <i class="bi bi-tag-fill me-1"></i> OFFERS
+        </button>
+
+        <button class="status-tab @(SelectedStatus == 3 ? "active" : "")"
+                @onclick="() => SetStatus(3)">
+            <i class="bi bi-stars me-1"></i> NEW
+        </button>
+    </div>
+</div>
