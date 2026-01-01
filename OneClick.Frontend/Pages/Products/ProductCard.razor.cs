@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using OneClick.Shared.Entities;
 
-namespace OneClick.Frontend.Components;
+namespace OneClick.Frontend.Pages.Products;
 
 public partial class ProductCard
 {
@@ -11,11 +11,22 @@ public partial class ProductCard
     [Parameter]
     public EventCallback<Product> OnAddToCart { get; set; }
 
+    [Parameter]
+    public EventCallback<Product> OnViewDetails { get; set; }
+
     private async Task HandleClick()
     {
         if (OnAddToCart.HasDelegate)
         {
             await OnAddToCart.InvokeAsync(Product);
+        }
+    }
+
+    private async Task HandledViewDetails()
+    {
+        if (OnViewDetails.HasDelegate)
+        {
+            await OnViewDetails.InvokeAsync(Product);
         }
     }
 }

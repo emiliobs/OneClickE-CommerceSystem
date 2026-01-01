@@ -83,9 +83,16 @@
         </div>
     }
 
-    <div class="product-media-container">
-        <img src="@Product.ImageURL" class="product-media" alt="@Product.Name" />
+    <div class="card product-card shadow-sm">
+        <div class="product-media-container" style="cursor:pointer;" @onclick="HandledViewDetails">
+            <img src="@Product.ImageURL" class="product-media" alt="@Product.Name" />
+           @*  <div class="hover-overlay">
+                <i class="bi bi-eye-fill text-white fs-1"></i>
+            </div> *@
+        </div>       
     </div>
+
+    
 
     <div class="card-body d-flex flex-column">
         <h5 class="card-title fw-bold text-white">@Product.Name</h5>
@@ -130,7 +137,8 @@
             }
         </div>
 
-        <button class="btn w-100 fw-bold @(Product.Qty > 0 ? "btn-primary" : "btn-secondary")"
+       
+            <button class="btn w-100 fw-bold @(Product.Qty > 0 ? "btn-primary" : "btn-secondary")"
                 disabled="@(Product.Qty == 0)"
                 @onclick="HandleClick"
                 style="border-radius: 12px;">

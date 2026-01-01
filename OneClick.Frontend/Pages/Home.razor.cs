@@ -32,6 +32,9 @@ public partial class Home
     private string _selectedCategory = "All";
     private int _selectedStatus = 0; // 0:All, 1:Available, 2:Offers, 3:New
 
+    //Variable to track which product is in the modal
+    private Product? _selectedProduct = null;
+
     // Propiedades publicas que resetean la pgina a 1 cuando cambian
     public string SearchText
     {
@@ -166,5 +169,14 @@ public partial class Home
         {
             product.Qty--;
         }
+
+        // Optional: If you want to close modal after adding
+        //_selectedProduct = null;
+    }
+
+    // Method to open the modal
+    private void ShowProductDetails(Product product)
+    {
+        _selectedProduct = product;
     }
 }

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using OneClick.Shared.Entities;
 
-namespace OneClick.Frontend.Components;
+namespace OneClick.Frontend.Pages.Products;
 
 public partial class ProductFilters
 {
