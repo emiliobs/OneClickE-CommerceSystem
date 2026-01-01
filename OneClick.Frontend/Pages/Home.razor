@@ -39,14 +39,14 @@
         </div>
 
         <ProductFilters Categories="@categories"
-                        ResultCount="@GetFilteredProducts().Count"
-                        @bind-SearchText="searchText"
-                        @bind-SelectedCategory="selectedCategory"
-                        @bind-SelectedStatus="selectedStatus"
+                        ResultCount="@GetFilteredAndPAginateProducts().Count"
+                        @bind-SearchText="SearchText"
+                        @bind-SelectedCategory="SelectedCategory"
+                        @bind-SelectedStatus="SelectedStatus"
                         >
         </ProductFilters>
 
-        @if (GetFilteredProducts().Count == 0)
+        @if (GetFilteredAndPAginateProducts().Count == 0)
         {
             <div class="text-center py-5">
                 <div style="font-size: 3rem;">🕵️‍♂️</div>
@@ -58,7 +58,7 @@
         {
             <div class="row g-4">
 
-                @foreach (var product in GetFilteredProducts())
+                @foreach (var product in GetFilteredAndPAginateProducts())
                 {
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                         <ProductCard Product="@product" OnAddToCart="@HandleAddToCart" />
@@ -66,10 +66,13 @@
                 }
 
             </div>
-        }
 
-        
-    }
-    
+            <div class="row mt-4">
+                <div class="col-12">
+                    <Pagination CurrentPage="currentPage" TotalPages="totalPages" SelectedPage="PageChanged"></Pagination>
+                </div>
+            </div>
+        }        
+    }   
 
 </div>

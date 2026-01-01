@@ -1,35 +1,67 @@
 ﻿@using OneClick.Shared.Entities
 
 <style>
-    /* Scoped styles for the card */
+    /* Custom CSS for the card hover effects */
     .product-card {
+        position: relative;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        cursor: pointer;
+        border: none;
+        border-radius: 16px;
+        overflow: hidden;
+        background-color: white;
+        height: 100%;
     }
 
         .product-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
         }
+
+    /* Badge Styles */
+    .offer-badge {
+        position: absolute;
+        top: 8px;
+        right: 12px;
+        background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        color: white;
+        padding: 2px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
 
     .product-media-container {
         text-align: center;
+        /* 🆕 CAMBIO 1: Margen pequeño y elegante (10px) */
         padding: 20px;
-        background: linear-gradient(to bottom, #f8f9fa, white);
-        height: 220px;
+        background: white; /* Fondo blanco limpio */
+        height: 250px;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
     .product-media {
-        max-height: 100%;
-        max-width: 100%;
+        height: 100%;
+        width: 100%;
+        /* 🆕 CAMBIO 2: 'cover' llena el espacio, pero el padding lo protege */
+        object-fit: cover;
         transition: transform 0.3s ease;
+        /* 🆕 CAMBIO 3: Redondeamos la imagen un poco para que combine con la tarjeta */
+        border-radius: 12px;
     }
 
     .product-card:hover .product-media {
         transform: scale(1.05);
+    }
+
+    .product-card:hover .product-media {
+        transform: scale(1.03); /* Efecto zoom un poco más sutil */
     }
 
     .price-tag {
@@ -44,6 +76,13 @@
 
 <div class="card product-card shadow-sm h-100">
 
+    @if (Product.Price < 15)
+    {
+        <div class="offer-badge">
+            <span>🔥</span> OFFER
+        </div>
+    }
+
     <div class="product-media-container">
         <img src="@Product.ImageURL" class="product-media" alt="@Product.Name" />
     </div>
@@ -52,7 +91,7 @@
         <h5 class="card-title fw-bold text-white">@Product.Name</h5>
         <p class="card-text text-white small flex-grow-1">@Product.Description</p>
 
-        <hr class="my-1" style="border-color: rgba(255,255,255,0.1);" />
+        <hr class="my-o" style="border-color: rgba(255,255,255,0.5);" />
 
         <div class="d-flex justify-content-between align-items-center mb-3">
 
@@ -75,11 +114,11 @@
 
             @if (Product.Qty > 10)
             {
-                <span class="badge bg-success">In Stock</span>
+                <span class="badge bg-success">Available</span>
             }
             else if (Product.Qty > 5)
             {
-                <span class="badge bg-warning text-dark">Low Stock</span>
+                <span class="badge bg-warning text-dark">Low</span>
             }
             else if (Product.Qty > 0)
             {

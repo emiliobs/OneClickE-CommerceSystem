@@ -24,14 +24,14 @@
         <div class="card-body p-2">
             <div class="input-group">
                
+                <span class="input-group-text bg-transparent border-0 text-danger">
+                    <i class="bi bi-search"></i>
+                </span>
                 <input type="text"
                        class="form-control bg-transparent border-0 text-white shadow-none"
                        placeholder="Search products by name, description or category..."
                        value="@searchText"
                        @oninput="FilterProducts" />
-                <span class="input-group-text bg-transparent border-0 text-danger">
-                    <i class="bi bi-search"></i>
-                </span>
             </div>
         </div>
     </div>

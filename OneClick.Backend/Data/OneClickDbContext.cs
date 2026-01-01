@@ -36,7 +36,12 @@ public class OneClickDbContext : DbContext
 
         modelBuilder.Entity<Category>().HasIndex(c => c.Name).IsUnique();
 
-        // Seed Categories
+        // Create Index to avoid duplicate category names
+        modelBuilder.Entity<Category>().HasIndex(c => c.Name).IsUnique();
+
+        // =========================================================================
+        // 1. SEED CATEGORIES (18 Categories)
+        // =========================================================================
         modelBuilder.Entity<Category>().HasData(
             new Category { Id = 1, Name = "Apple" },
             new Category { Id = 2, Name = "Cars" },
@@ -58,402 +63,406 @@ public class OneClickDbContext : DbContext
             new Category { Id = 18, Name = "Technology" }
         );
 
-        // Seed Products with REAL Images (Unsplash)
+        // =========================================================================
+        // 2. SEED PRODUCTS (36 Products - 2 per Category)
+        // All images are cropped to 600x600 for perfect grid alignment.
+        // =========================================================================
         modelBuilder.Entity<Product>().HasData(
-            // --- Apple (CatId: 1) ---
+
+            // --- 1. Apple ---
             new Product
             {
                 Id = 1,
-                Name = "iPhone 15",
-                Description = "Apple smartphone, 128GB",
+                Name = "iPhone 15 Pro Max",
+                Description = "Titanium design, A17 Pro chip, the most powerful iPhone yet.",
                 CategoryId = 1,
-                Price = 899.00m,
+                Price = 1199.00m,
                 Qty = 20,
-                ImageURL = "https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 2,
-                Name = "MacBook Air 13 M2",
-                Description = "Apple laptop, 8GB/256GB",
+                Name = "MacBook Air M2",
+                Description = "Supercharged by M2. Strikingly thin and fast.",
                 CategoryId = 1,
-                Price = 1199.00m,
-                Qty = 8,
-                ImageURL = "https://images.unsplash.com/photo-1517336714731-489689fd1ca4?auto=format&fit=crop&w=600&q=80"
+                Price = 1099.00m,
+                Qty = 15,
+                ImageURL = "https://images.unsplash.com/photo-1517336714731-489689fd1ca4?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Cars (CatId: 2) ---
+            // --- 2. Cars ---
             new Product
             {
                 Id = 3,
-                Name = "Car Care Kit",
-                Description = "Shampoo, wax and microfiber towels",
+                Name = "Meguiar's Car Wax",
+                Description = "Ultimate liquid wax for a deep mirror-like shine.",
                 CategoryId = 2,
-                Price = 39.99m,
-                Qty = 35,
-                ImageURL = "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=600&q=80"
+                Price = 24.99m,
+                Qty = 50,
+                ImageURL = "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 4,
-                Name = "Dash Cam HD",
-                Description = "1080p dashboard camera with loop recording",
+                Name = "4K Dash Cam Front/Rear",
+                Description = "Secure your driving with 24/7 loop recording.",
                 CategoryId = 2,
-                Price = 69.99m,
+                Price = 89.50m,
                 Qty = 12,
-                ImageURL = "https://images.unsplash.com/photo-1680519324888-03823798950c?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1680519324888-03823798950c?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Beauty (CatId: 3) ---
+            // --- 3. Beauty ---
             new Product
             {
                 Id = 5,
-                Name = "Hydrating Face Cream",
-                Description = "Daily moisturizer for all skin types",
+                Name = "Hydro Boost Gel Cream",
+                Description = "Instantly quenches dry skin for a healthy glow.",
                 CategoryId = 3,
-                Price = 22.50m,
+                Price = 19.99m,
                 Qty = 40,
-                ImageURL = "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 6,
                 Name = "Vitamin C Serum",
-                Description = "Brightening 10% serum",
+                Description = "Brightening serum for uneven skin tone.",
                 CategoryId = 3,
-                Price = 18.99m,
-                Qty = 15,
-                ImageURL = "https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?auto=format&fit=crop&w=600&q=80"
+                Price = 34.00m,
+                Qty = 25,
+                ImageURL = "https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Footwear (CatId: 4) ---
+            // --- 4. Footwear ---
             new Product
             {
                 Id = 7,
-                Name = "Men's Running Shoes",
-                Description = "Lightweight breathable trainers",
+                Name = "Nike Air Zoom Pegasus",
+                Description = "Responsive running shoes for road running.",
                 CategoryId = 4,
-                Price = 79.90m,
-                Qty = 25,
-                ImageURL = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80"
+                Price = 129.99m,
+                Qty = 30,
+                ImageURL = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 8,
-                Name = "Women's Casual Sneakers",
-                Description = "Comfort everyday sneakers",
+                Name = "Classic White Sneakers",
+                Description = "Minimalist leather sneakers for everyday wear.",
                 CategoryId = 4,
-                Price = 59.90m,
-                Qty = 10,
-                ImageURL = "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&w=600&q=80"
+                Price = 89.90m,
+                Qty = 18,
+                ImageURL = "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Food (CatId: 5) ---
+            // --- 5. Food ---
             new Product
             {
                 Id = 9,
-                Name = "Organic Granola 500g",
-                Description = "Whole-grain oats with nuts",
+                Name = "Organic Honey Granola",
+                Description = "Crunchy clusters with almonds and seeds.",
                 CategoryId = 5,
-                Price = 6.99m,
-                Qty = 50,
-                ImageURL = "https://images.unsplash.com/photo-1517093728432-a0440f8d45ca?auto=format&fit=crop&w=600&q=80"
+                Price = 8.50m,
+                Qty = 60,
+                ImageURL = "https://images.unsplash.com/photo-1517093728432-a0440f8d45ca?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 10,
-                Name = "Olive Oil 1L",
-                Description = "Extra virgin, cold pressed",
+                Name = "Extra Virgin Olive Oil",
+                Description = "Cold-pressed, rich flavor perfect for salads.",
                 CategoryId = 5,
-                Price = 9.99m,
-                Qty = 30,
-                ImageURL = "https://images.unsplash.com/photo-1474979266404-7cadd259c308?auto=format&fit=crop&w=600&q=80"
+                Price = 18.99m,
+                Qty = 45,
+                ImageURL = "https://images.unsplash.com/photo-1474979266404-7cadd259c308?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Cosmetics (CatId: 6) ---
+            // --- 6. Cosmetics ---
             new Product
             {
                 Id = 11,
-                Name = "Matte Lipstick",
-                Description = "Long-wear, natural shade",
+                Name = "Matte Velvet Lipstick",
+                Description = "Long-lasting color with a hydrating formula.",
                 CategoryId = 6,
-                Price = 12.99m,
+                Price = 22.00m,
                 Qty = 35,
-                ImageURL = "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 12,
-                Name = "Black Mascara",
-                Description = "Water-resistant, volume effect",
+                Name = "Volumizing Mascara",
+                Description = "Dramatic volume without clumping.",
                 CategoryId = 6,
-                Price = 11.49m,
+                Price = 16.50m,
                 Qty = 22,
-                ImageURL = "https://images.unsplash.com/photo-1631214524020-7e18db9a8f92?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1631214524020-7e18db9a8f92?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Sports (CatId: 7) ---
+            // --- 7. Sports ---
             new Product
             {
                 Id = 13,
-                Name = "Football Size 5",
-                Description = "PU match ball",
+                Name = "Pro Match Football",
+                Description = "FIFA quality certified ball size 5.",
                 CategoryId = 7,
-                Price = 29.99m,
+                Price = 34.99m,
                 Qty = 60,
-                ImageURL = "https://images.unsplash.com/photo-1614632537423-1e6c2e7e0aab?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1614632537423-1e6c2e7e0aab?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 14,
-                Name = "Yoga Mat 6mm",
-                Description = "Non-slip exercise mat",
+                Name = "Non-Slip Yoga Mat",
+                Description = "Eco-friendly material with alignment lines.",
                 CategoryId = 7,
-                Price = 24.50m,
-                Qty = 8,
-                ImageURL = "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?auto=format&fit=crop&w=600&q=80"
+                Price = 29.95m,
+                Qty = 15,
+                ImageURL = "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Erotic (Romantic/Safe) (CatId: 8) ---
+            // --- 8. Erotic (Romantic) ---
             new Product
             {
                 Id = 15,
-                Name = "Romance Candle Set",
-                Description = "Scented candles set for ambience",
+                Name = "Luxury Scented Candles",
+                Description = "Set of 3 soy wax candles for ambiance.",
                 CategoryId = 8,
-                Price = 19.99m,
+                Price = 24.99m,
                 Qty = 25,
-                ImageURL = "https://images.unsplash.com/photo-1602826347632-009a584de633?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1602826347632-009a584de633?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 16,
-                Name = "Romantic Board Game",
-                Description = "Couples card & board game",
+                Name = "Couples Card Game",
+                Description = "Deepen your connection with fun questions.",
                 CategoryId = 8,
-                Price = 17.50m,
-                Qty = 12,
-                ImageURL = "https://images.unsplash.com/photo-1630260655866-e3256037b605?auto=format&fit=crop&w=600&q=80"
+                Price = 19.99m,
+                Qty = 20,
+                ImageURL = "https://images.unsplash.com/photo-1630260655866-e3256037b605?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Hardware (CatId: 9) ---
+            // --- 9. Hardware ---
             new Product
             {
                 Id = 17,
-                Name = "Cordless Drill 18V",
-                Description = "2 batteries, fast charger",
+                Name = "Cordless Drill Driver",
+                Description = "18V power with 2 batteries and case.",
                 CategoryId = 9,
                 Price = 89.00m,
                 Qty = 14,
-                ImageURL = "https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 18,
-                Name = "Tool Set 46pcs",
-                Description = "Sockets, bits and ratchet",
+                Name = "46-Piece Tool Set",
+                Description = "Socket wrench set for home and auto repair.",
                 CategoryId = 9,
-                Price = 39.99m,
+                Price = 45.00m,
                 Qty = 40,
-                ImageURL = "https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Gamer (CatId: 10) ---
+            // --- 10. Gamer ---
             new Product
             {
                 Id = 19,
-                Name = "Mechanical Keyboard RGB",
-                Description = "Linear switches, full-size",
+                Name = "RGB Mechanical Keyboard",
+                Description = "Tactile blue switches with custom lighting.",
                 CategoryId = 10,
-                Price = 69.90m,
+                Price = 79.99m,
                 Qty = 18,
-                ImageURL = "https://images.unsplash.com/photo-1587829741301-dc798b91a602?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1587829741301-dc798b91a602?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 20,
-                Name = "Gaming Mouse 8K DPI",
-                Description = "Programmable buttons",
+                Name = "Wireless Gaming Mouse",
+                Description = "Ultra-lightweight, 20,000 DPI sensor.",
                 CategoryId = 10,
-                Price = 29.90m,
+                Price = 49.99m,
                 Qty = 45,
-                ImageURL = "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Home (CatId: 11) ---
+            // --- 11. Home ---
             new Product
             {
                 Id = 21,
-                Name = "LED Desk Lamp",
-                Description = "Adjustable arm, warm/cool light",
+                Name = "Modern LED Desk Lamp",
+                Description = "Dimmable light with USB charging port.",
                 CategoryId = 11,
-                Price = 22.99m,
+                Price = 39.99m,
                 Qty = 45,
-                ImageURL = "https://images.unsplash.com/photo-1534073828943-f801091a7d58?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1534073828943-f801091a7d58?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 22,
                 Name = "Memory Foam Pillow",
-                Description = "Ergonomic cervical pillow",
+                Description = "Ergonomic cervical pillow for neck pain relief.",
                 CategoryId = 11,
-                Price = 34.90m,
+                Price = 29.99m,
                 Qty = 16,
-                ImageURL = "https://images.unsplash.com/photo-1584100936595-c0654b55a2e6?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1584100936595-c0654b55a2e6?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Garden (CatId: 12) ---
+            // --- 12. Garden ---
             new Product
             {
                 Id = 23,
-                Name = "Garden Hose 15m",
-                Description = "Flexible anti-kink hose",
+                Name = "Expandable Garden Hose",
+                Description = "50ft flexible hose, leak-proof design.",
                 CategoryId = 12,
-                Price = 19.99m,
+                Price = 27.50m,
                 Qty = 30,
-                ImageURL = "https://images.unsplash.com/photo-1596707328646-778832a8747f?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1596707328646-778832a8747f?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 24,
-                Name = "Pruning Shears",
-                Description = "Bypass pruner stainless steel",
+                Name = "Professional Pruning Shears",
+                Description = "Sharp titanium blade for gardening.",
                 CategoryId = 12,
-                Price = 12.50m,
+                Price = 14.99m,
                 Qty = 25,
-                ImageURL = "https://images.unsplash.com/photo-1622374274291-3e4b77f32997?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1622374274291-3e4b77f32997?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Toys (CatId: 13) ---
+            // --- 13. Toys ---
             new Product
             {
                 Id = 25,
-                Name = "Building Blocks Set",
-                Description = "Compatible bricks 500 pcs",
+                Name = "Creative Building Blocks",
+                Description = "1000 pieces set, compatible with major brands.",
                 CategoryId = 13,
-                Price = 24.99m,
+                Price = 39.95m,
                 Qty = 40,
-                ImageURL = "https://images.unsplash.com/photo-1587654780291-39c940483713?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1587654780291-39c940483713?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 26,
-                Name = "Puzzle 1000 Pieces",
-                Description = "Landscape illustration",
+                Name = "Landscape Jigsaw Puzzle",
+                Description = "1000 pieces puzzle, high quality print.",
                 CategoryId = 13,
-                Price = 14.99m,
+                Price = 18.50m,
                 Qty = 12,
-                ImageURL = "https://images.unsplash.com/photo-1610419885843-0c4a457493a7?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1610419885843-0c4a457493a7?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Lingerie (CatId: 14) ---
+            // --- 14. Lingerie ---
             new Product
             {
                 Id = 27,
-                Name = "Soft Sleepwear Set",
-                Description = "Two-piece loungewear set",
+                Name = "Silk Satin Sleepwear",
+                Description = "Premium 2-piece pajama set.",
                 CategoryId = 14,
-                Price = 29.90m,
+                Price = 55.00m,
                 Qty = 28,
-                ImageURL = "https://images.unsplash.com/photo-1594967384738-9e63e2621746?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1594967384738-9e63e2621746?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 28,
-                Name = "Seamless Undergarments",
-                Description = "Comfort fit essentials",
+                Name = "Seamless Comfort Set",
+                Description = "Invisible underwear pack of 3.",
                 CategoryId = 14,
-                Price = 19.90m,
+                Price = 24.90m,
                 Qty = 18,
-                ImageURL = "https://images.unsplash.com/photo-1596489392231-15b565780365?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1596489392231-15b565780365?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Pets (CatId: 15) ---
+            // --- 15. Pets ---
             new Product
             {
                 Id = 29,
-                Name = "Dry Dog Food 3kg",
-                Description = "Chicken & rice formula",
+                Name = "Premium Adult Dog Food",
+                Description = "Chicken & Brown Rice Recipe, 15 lbs.",
                 CategoryId = 15,
-                Price = 16.99m,
+                Price = 42.99m,
                 Qty = 35,
-                ImageURL = "https://images.unsplash.com/photo-1589924691195-41432c84c161?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1589924691195-41432c84c161?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 30,
                 Name = "Cat Scratching Post",
-                Description = "Sisal rope post with base",
+                Description = "Durable sisal pole with plush base.",
                 CategoryId = 15,
-                Price = 21.99m,
+                Price = 29.99m,
                 Qty = 14,
-                ImageURL = "https://images.unsplash.com/photo-1545249390-6bdfa286032f?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1545249390-6bdfa286032f?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Nutrition (CatId: 16) ---
+            // --- 16. Nutrition ---
             new Product
             {
                 Id = 31,
-                Name = "Whey Protein 1kg",
-                Description = "Vanilla flavor",
+                Name = "Whey Protein Isolate",
+                Description = "Chocolate flavor, 2 lbs, 25g protein.",
                 CategoryId = 16,
-                Price = 32.90m,
+                Price = 59.90m,
                 Qty = 20,
-                ImageURL = "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 32,
-                Name = "Multivitamin 120 caps",
-                Description = "Daily vitamins & minerals",
+                Name = "Multivitamin Complex",
+                Description = "120 capsules, immunity & energy support.",
                 CategoryId = 16,
-                Price = 14.50m,
+                Price = 19.95m,
                 Qty = 10,
-                ImageURL = "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Clothing (CatId: 17) ---
+            // --- 17. Clothing ---
             new Product
             {
                 Id = 33,
-                Name = "Men's Cotton T-Shirt",
-                Description = "Classic fit, 100% cotton",
+                Name = "Cotton Crew Neck T-Shirt",
+                Description = "100% Organic cotton, slim fit.",
                 CategoryId = 17,
-                Price = 14.99m,
+                Price = 19.99m,
                 Qty = 60,
-                ImageURL = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 34,
-                Name = "Women's Denim Jacket",
-                Description = "Mid-wash, regular fit",
+                Name = "Classic Denim Jacket",
+                Description = "Vintage wash, button closure.",
                 CategoryId = 17,
-                Price = 49.90m,
+                Price = 64.90m,
                 Qty = 9,
-                ImageURL = "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&h=600&q=80"
             },
 
-            // --- Technology (CatId: 18) ---
+            // --- 18. Technology ---
             new Product
             {
                 Id = 35,
-                Name = "Bluetooth Speaker",
-                Description = "Portable speaker with mic",
+                Name = "Portable Bluetooth Speaker",
+                Description = "Waterproof IPX7, 360 sound, 12h battery.",
                 CategoryId = 18,
-                Price = 34.99m,
+                Price = 49.99m,
                 Qty = 25,
-                ImageURL = "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=600&h=600&q=80"
             },
             new Product
             {
                 Id = 36,
-                Name = "USB-C Hub 6-in-1",
-                Description = "HDMI, USB 3.0, SD/MicroSD",
+                Name = "USB-C Hub 7-in-1",
+                Description = "HDMI 4K, USB 3.0, SD Card Reader.",
                 CategoryId = 18,
-                Price = 24.90m,
+                Price = 34.99m,
                 Qty = 15,
-                ImageURL = "https://images.unsplash.com/photo-1630080644612-4b2eb00438a9?auto=format&fit=crop&w=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1630080644612-4b2eb00438a9?auto=format&fit=crop&w=600&h=600&q=80"
             }
         );
     }
