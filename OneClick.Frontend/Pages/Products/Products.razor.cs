@@ -148,8 +148,8 @@ public partial class Products
                 await SweetAlertService.ShowSuccessToast(isEditing ? "Product Update!" : "Product Created!");
             }
             else
-            {
                 await SweetAlertService.ShowErrorAlert("Error", "Operation failed check your data.");
+            {
             }
         }
         catch (Exception ex)

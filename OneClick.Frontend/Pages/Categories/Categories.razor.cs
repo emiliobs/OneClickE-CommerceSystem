@@ -2,11 +2,14 @@ using Microsoft.AspNetCore.Components.Web;
 using OneClick.Frontend.Services;
 using OneClick.Shared.Entities;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using System.ComponentModel.Design;
 
 namespace OneClick.Frontend.Pages.Categories
 {
     public partial class Categories
     {
+        //INJECTIONS (Services)
         [Inject]
         public ICategoryService CategoryService { get; set; } = default!;
 
@@ -18,18 +21,28 @@ namespace OneClick.Frontend.Pages.Categories
         // Store only the categories currently visible to the user
         private List<Category> filteredCategories = new();
 
-        private Category? categoryToDelete;
+        private Category currentCategory = new();
 
-        // Variable to capture what the user type.
+        // Search text variable.
         private string searchText = "";
+
+        // UI State Flags
+        private bool isLoading = true;
+
+        private bool isUploading = false;
+
+        private bool showFormModal = false;
+
+        private bool isEditing = false; // Flags if we  are updating or creating
+
+        private bool isSaving = false; // Controls the spinner
 
         // --- PAGINATION VARIABLES (NEW) ---
         private int currentPage = 1;
 
-        private int itemsPerPage = 7; // We can change this to 10
+        private int itemsPerPage = 7;
 
-        // Calculated Property: Calculates how many pages we need based on filtered results
-        public int TotalPages => (int)Math.Ceiling((double)filteredCategories.Count / itemsPerPage);
+        public int TotalPages => filteredCategories.Count == 0 ? 1 : (int)Math.Ceiling((double)filteredCategories.Count / itemsPerPage);
 
         // Calculated Property: Gets ONLY the records for the current page
         public IEnumerable<Category> PaginatedCategories
@@ -40,19 +53,6 @@ namespace OneClick.Frontend.Pages.Categories
                 return filteredCategories.Skip((currentPage - 1) * itemsPerPage).Take(itemsPerPage);
             }
         }
-
-        // UI State flags
-        private bool isLoading = true;
-
-        private bool showFormModal = false;
-        private bool showDeleteModal = false;
-        private bool isEditing = false;
-        private bool isSaving = false;
-        private bool isDeleting = false;
-
-        private string categoryName = "";
-        private string errorMessage = "";
-        private bool showError = false;
 
         // Initialization
         protected override async Task OnInitializedAsync()
@@ -65,14 +65,26 @@ namespace OneClick.Frontend.Pages.Categories
             isLoading = true;
             StateHasChanged();
 
-            // Fetch data form API
-            categories = await CategoryService.GetAllCategoryAsync();
+            try
+            {
+                // Fetch data form API
+                categories = await CategoryService.GetAllCategoryAsync();
 
-            // Initialize the filtered list with All data (because search is empty at start)
-            filteredCategories = new List<Category>(categories);
+                // Initialize the filtered list with All data (because search is empty at start)
+                filteredCategories = new List<Category>(categories);
 
-            isLoading = false;
-            StateHasChanged();
+                isLoading = false;
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                SweetAlertService.ShowErrorAlert("Error", $"{ex.Message}");
+            }
+            finally
+            {
+                isLoading = false;
+                StateHasChanged();
+            }
         }
 
         // ----- Search Logic ---
@@ -102,116 +114,97 @@ namespace OneClick.Frontend.Pages.Categories
         private void ChangePage(int newPage)
         {
             currentPage = newPage;
-            // No need to validate < 1 here because the component already protects us
-            // But keeping validation is good practice.
+        }
+
+        private void ClearSearch()
+        {
+            searchText = string.Empty;
+            filteredCategories = new List<Category>();
+            currentPage = 1;
         }
 
         // ---- Form Logic ----
         private void ShowAddForm()
         {
+            // Reset the object to be empty fo anew category
+            currentCategory = new Category();
+            // FIX: Explicitly set isEditing to false.
+            // Otherwise, if you clicked "Edit" before, this stays true!
             isEditing = false;
-            categoryName = "";
-            showError = false;
             showFormModal = true;
         }
 
         private void EditCategory(Category category)
         {
+            currentCategory = new Category
+            {
+                Id = category.Id,
+                Name = category.Name,
+            };
+
+            // Set the flag to true
             isEditing = true;
-            categoryName = category.Name;
-            categoryToDelete = category; // Reuse for editing
-            showError = false;
+
             showFormModal = true;
         }
 
-        private async Task SaveCategory()
+        private void CloseFormModel()
         {
-            if (!ValidateForm())
+            showFormModal = false;
+        }
+
+        private async Task SaveCategory(EditContext context)
+        {
+            // Manual Validation: Check for errors first
+            if (!context.Validate())
             {
+                var error = context.GetValidationMessages().ToList();
+                var errorHTML = string.Join("</br>", error);
+
+                //showFormModal errors in a nice alert instead of red text
+                SweetAlertService.ShowErrorAlert("Error", errorHTML);
+
                 return;
             }
 
+            //  If valid, proceed to Server
             isSaving = true;
-            StateHasChanged();
-
             try
             {
-                if (isEditing && categoryToDelete != null)
+                bool success;
+                StateHasChanged();
+
+                if (isEditing)
                 {
-                    // Update existing category
-                    var categoryToUpdate = new Category
-                    {
-                        Id = categoryToDelete.Id,
-                        Name = categoryName,
-                    };
-
-                    var success = await CategoryService.UpdateCategoryAsync(categoryToDelete.Id, categoryToUpdate);
-
-                    if (success)
-                    {
-                        //  // Reset flag before closing
-                        isSaving = false;
-
-                        // cerramos el modal(ahora CloseFormModal obedecerá)
-                        CloseFormModel();
-
-                        await LoadCategories();
-                        await SweetAlertService.ShowSuccessToast("Category update successfully!");
-                    }
-                    else
-                    {
-                        // Show pretty toast notification
-                        await SweetAlertService.ShowErrorAlert("Error", "Failed to update category. Please try again.");
-                    }
+                    success = await CategoryService.UpdateCategoryAsync(currentCategory);
                 }
                 else
                 {
-                    // Create new category
-                    var newCategory = new Category
-                    {
-                        Name = categoryName,
-                    };
-                    var createdCategory = await CategoryService.AddCategoryAsync(newCategory);
+                    var created = await CategoryService.AddCategoryAsync(currentCategory);
+                    success = created != null;
+                }
 
-                    if (createdCategory != null)
-                    {
-                        // Reset flag before closing
-                        isSaving = false;
+                if (success)
+                {
+                    showFormModal = false;
 
-                        // cerramos el modal(ahora CloseFormModal obedecerá)
-                        CloseFormModel();
+                    await LoadCategories(); // Refrest list
 
-                        await LoadCategories();
-                        await SweetAlertService.ShowSuccessToast("Category created successfully!");
-                    }
+                    await SweetAlertService.ShowSuccessToast(isEditing ? "Category Update!" : "Category Created!");
+                }
+                else
+                {
+                    await SweetAlertService.ShowErrorAlert("Error", "Operation failed check your data.");
                 }
             }
             catch (Exception ex)
             {
-                errorMessage = ex.Message;
-                showError = true;
+                await SweetAlertService.ShowErrorAlert("System Error", $"{ex.Message}");
             }
-        }
-
-        private bool ValidateForm()
-        {
-            showError = false;
-
-            if (string.IsNullOrWhiteSpace(categoryName))
+            finally
             {
-                errorMessage = "Category name is required";
-                showError = true;
-                return false;
+                isSaving = false;
             }
-
-            if (categoryName.Length > 100)
-            {
-                errorMessage = "Category name cannot exceed 100 chatacters";
-                showError = true;
-                return false;
-            }
-
-            return true;
         }
 
         private async Task DeleteCategory(Category category)
@@ -238,32 +231,6 @@ namespace OneClick.Frontend.Pages.Categories
                     await SweetAlertService.ShowErrorAlert("Cannot Delete",
                          "This category contains products. Please delete the products first.");
                 }
-            }
-        }
-
-        private void CloseFormModel()
-        {
-            showFormModal = false;
-            categoryToDelete = null;
-        }
-
-        private void CloseDeleteModal()
-        {
-            showDeleteModal = false;
-            categoryToDelete = null;
-        }
-
-        private void ShowAlert(string message, string type)
-        {
-            // Simple JavaScript alert for now
-            // We will implement a proper tast notifiaction later
-            if (type == "success")
-            {
-                Console.WriteLine($"Success: {message}");
-            }
-            else
-            {
-                Console.WriteLine($"Error: {message}");
             }
         }
     }

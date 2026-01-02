@@ -49,7 +49,7 @@ public class CategoryService : ICategoryService
         }
     }
 
-    public async Task<Category> AddCategoryAsync(Category category)
+    public async Task<Category?> AddCategoryAsync(Category category)
     {
         try
         {
@@ -71,25 +71,12 @@ public class CategoryService : ICategoryService
         }
     }
 
-    public async Task<bool> UpdateCategoryAsync(int id, Category category)
+    public async Task<bool> UpdateCategoryAsync(Category category)
     {
         try
         {
-            // Ensure the the ID matches
-            category.Id = id;
-
-            var response = await _httpClient.PutAsJsonAsync($"api/categories/{id}", category);
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-            else
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error updating category: {response.StatusCode}: {error}");
-
-                return false;
-            }
+            var response = await _httpClient.PutAsJsonAsync($"api/categories/{category.Id}", category);
+            return response.IsSuccessStatusCode;
         }
         catch (Exception ex)
         {

@@ -148,50 +148,44 @@
 
 @if(showFormModal)
 {
-    <div class="modal show d-block modal-color">
-                <div class="modal-dialog  modal-dialog-centered">
-                    <div class="modal-content  bg-dark text-white border-secondary shadow-lg">
+    <div class="modal show d-block modal-color" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white border-secondary shadow-lg">
+
                         <div class="modal-header border-secondary">
-                    <h5 class="modal-title fw-bold">
-                                <i class="bi @(isEditing ? "bi-pencil-square" : "bi-plus-circle") me-2"></i>
-                                @(isEditing ? "Edit Category" : "New Category")
-                    </h5>
+                            <h5 class="modal-title fw-bold">
+                                <i class="bi @(currentCategory.Id == 0 ? "bi-plus-circle" : "bi-pencil-square") me-2"></i>
+                                @(currentCategory.Id == 0 ? "New Category" : "Edit Category")
+                            </h5>
                             <button type="button" class="btn-close btn-close-white" @onclick="CloseFormModel"></button>
-                </div>
+                        </div>
 
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label text-uppercase">Name</label>
-                        <input type="text"  class="form-control @(showError ? "is-invalid" : "")" 
-                        placeholder="Enter category name"
-                        @bind="categoryName"
-                        @bind:event="oninput"/>
-                        @if (showError)
-                        {
-                            <div class="invalid-feedback">@errorMessage</div>
-                        }
+                 <EditForm Model="currentCategory" OnSubmit="SaveCategory">
+                     <DataAnnotationsValidator></DataAnnotationsValidator>
+
+                     <div class="modal-body">
+                         <label class="form-label text-uppercase small text-muted border-0">Name</label>
+                                <InputText class="form-control bg-dark text-white border-secondary"
+                                           placeholder="Ex: Technology"
+                                           @bind-Value="currentCategory.Name">
+                                </InputText>
+                         <ValidationMessage For="@(() => currentCategory.Name)"></ValidationMessage>
+                     </div>
+
+                 <div class="modal-footer border-secondary">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseFormModel" disabled="@isSaving">
+                            Cancel
+                        </button>
+                                <button type="submit" class="btn btn-primary px-4" disabled="@(isSaving || isUploading)">
+                                    @if (isSaving)
+                                    {
+                                        <span class="spinner-border spinner-border-sm me-2"></span>
+                                    }
+                                    @(isUploading ? "Uploading..." : (isEditing ? "Update" : "Save"))
+                                </button>                     
                     </div>
-                </div>
 
-                        <div class="modal-footer border-secondary mt-3">
-                    <button type="button" class="btn btn-secondary" @onclick="CloseFormModel" disabled="@isSaving">
-                        Cancel
-                    </button>
-                    <button type="button"
-                        class="btn btn-primary"
-                    @onclick="SaveCategory"
-                    disabled="@isSaving">
-                        @if (isSaving)
-                        {
-                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                            <p>Saving....</p>
-                        }
-                        else
-                        {
-                            @(isEditing ? "Update" : "Save")
-                        }
-                    </button>
-                </div>
+               </EditForm>                      
 
             </div>
         </div>

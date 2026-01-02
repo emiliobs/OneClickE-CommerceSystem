@@ -13,6 +13,9 @@ public class Order
     // Relationship: Who placed the order
     public int UserId { get; set; }
 
+    // NUEVO: Propiedad de navegación
+    public User? User { get; set; }
+
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
     //Configuration: Precise decimal for money (SQL won't lose cents)

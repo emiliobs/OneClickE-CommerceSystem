@@ -14,7 +14,7 @@ public interface ICategoryService
     Task<Category> AddCategoryAsync(Category category);
 
     // Update an existing category. Returns true if successful.
-    Task<bool> UpdateCategoryAsync(int id, Category category);
+    Task<bool> UpdateCategoryAsync(Category category);
 
     // Delete a category by ID. Returns true if successful.
 

@@ -23,5 +23,10 @@ namespace OneClick.Shared.Entities
         public string PasswordHash { get; set; } = string.Empty;
 
         public string Role { get; set; } = "Customer"; // "Admin" or "Customer"
+
+        //Relación inversa (Un usuario tiene muchas ordenes y items)
+        public ICollection<Order>? Orders { get; set; }
+
+        public ICollection<CartItem>? CartItems { get; set; }
     }
 }

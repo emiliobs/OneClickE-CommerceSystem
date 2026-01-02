@@ -50,6 +50,22 @@ public class OneClickDbContext : DbContext
         modelBuilder.Entity<OrderItem>().Property(oi => oi.Price).HasColumnType("decimal(18,2)");
         modelBuilder.Entity<Order>().Property(o => o.TotalAmount).HasColumnType("decimal(18,2)");
 
+        // Relacion: Usuario (1) <--> (Muchas ) Ordenes
+        modelBuilder.Entity<Order>()
+        .HasOne(o => o.User)
+        .WithMany(u => u.Orders)
+        .HasForeignKey(o => o.UserId)
+        .OnDelete(DeleteBehavior.Restrict);
+        // Restrict: Evita borrar un usuario si tiene historial de compras.
+
+        // Relacion: Usuario (1) <---> (Muchos) CartItems
+        modelBuilder.Entity<CartItem>()
+         .HasOne(c => c.User)
+         .WithMany(u => u.CartItems)
+         .HasForeignKey(c => c.UserId)
+         .OnDelete(DeleteBehavior.Cascade);
+        // Cascade: Si borras al usuario, se limpia su carrito automáticamente.
+
         // SEED DATA: Create a test User automatically, This allows us to user UserId = 1 in the code witout
         //registering/login first.
         modelBuilder.Entity<User>().HasData(

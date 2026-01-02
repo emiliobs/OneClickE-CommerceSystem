@@ -43,6 +43,8 @@ namespace OneClick.Backend.Migrations
 
                     b.HasIndex("ProductId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("CartItems");
                 });
 
@@ -185,6 +187,8 @@ namespace OneClick.Backend.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -672,7 +676,26 @@ namespace OneClick.Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("OneClick.Shared.Entities.User", "User")
+                        .WithMany("CartItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OneClick.Shared.Entities.Order", b =>
+                {
+                    b.HasOne("OneClick.Shared.Entities.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OneClick.Shared.Entities.OrderItem", b =>
@@ -713,6 +736,13 @@ namespace OneClick.Backend.Migrations
             modelBuilder.Entity("OneClick.Shared.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("OneClick.Shared.Entities.User", b =>
+                {
+                    b.Navigation("CartItems");
+
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

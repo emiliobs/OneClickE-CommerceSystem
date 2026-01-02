@@ -12,6 +12,9 @@ public class CartItem
     // Relationship: Belongs to a User
     public int UserId { get; set; }
 
+    // NUEVO: Propiedad de navegación
+    public User? User { get; set; }
+
     // Relationship: Links to a Product
     public int ProductId { get; set; }
 
