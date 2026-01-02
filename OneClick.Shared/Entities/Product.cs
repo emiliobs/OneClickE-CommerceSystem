@@ -9,6 +9,7 @@ public class Product
 
     [Required(ErrorMessage = "Product name is required")]
     [MaxLength(200, ErrorMessage = "Product name cannot exceed 200 characters")]
+    [MinLength(3, ErrorMessage = "The name must be at least 3 characters long.")]
     public string Name { get; set; } = null!;
 
     [MaxLength(1000, ErrorMessage = "Description cannot exceed 1000 characters")]

@@ -10,8 +10,11 @@ public class OneClickDbContext : DbContext
     }
 
     public DbSet<Product> Products { get; set; }
-
     public DbSet<Category> Categories { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<CartItem> CartItems { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
 
     /// <summary>
     /// Configures the database schema using Fluent API.
@@ -32,12 +35,34 @@ public class OneClickDbContext : DbContext
             .HasForeignKey(p => p.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Add unique constraind on Category Name
-
-        modelBuilder.Entity<Category>().HasIndex(c => c.Name).IsUnique();
+        // NEW RULE: Prevent duplicate products in the same category, This creates a "Composite Unique Index".
+        // Valid:  "Apple" (Tech) & "Apple" (Fruit)
+        // Invalid: "Apple" (Tech) & "Apple" (Tech) -> Throws Error
+        modelBuilder.Entity<Product>().HasIndex(p => new { p.Name, p.CategoryId }).IsUnique();
 
         // Create Index to avoid duplicate category names
         modelBuilder.Entity<Category>().HasIndex(c => c.Name).IsUnique();
+
+        //Also ensure User Emails are unique!,Two users cannot register with the same email.
+        modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+
+        modelBuilder.Entity<Product>().Property(p => p.Price).HasColumnType("decimal(18,2)");
+        modelBuilder.Entity<OrderItem>().Property(oi => oi.Price).HasColumnType("decimal(18,2)");
+        modelBuilder.Entity<Order>().Property(o => o.TotalAmount).HasColumnType("decimal(18,2)");
+
+        // SEED DATA: Create a test User automatically, This allows us to user UserId = 1 in the code witout
+        //registering/login first.
+        modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    Name = "Emilio Admin",
+                    Email = "emilio@yopmail.com",
+                    PasswordHash = "123456",
+                    Role = "Admin"
+                }
+
+            );
 
         // =========================================================================
         // 1. SEED CATEGORIES (18 Categories)

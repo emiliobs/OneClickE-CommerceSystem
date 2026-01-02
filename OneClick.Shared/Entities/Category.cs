@@ -11,6 +11,7 @@ public class Category
 
     [MaxLength(100, ErrorMessage = "Field {0} cannot have more than {1} characters.")]
     [Required(ErrorMessage = "Field {0} is required.")]
+    [RegularExpression(@"^.*[a-zA-Z]+.*$", ErrorMessage = "The name must contain letter, not just numbers")]
     public string Name { get; set; } = null!;
 
     // Navigation property
