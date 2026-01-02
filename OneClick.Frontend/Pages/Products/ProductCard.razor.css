@@ -1,12 +1,12 @@
 ﻿/* 1. The Card Container */
 .product-card {
-    background-color: #1F1D2B; /* Dark background similar to the design */
-    border-radius: 16px; /* Rounded corners */
-    overflow: hidden; /* Ensures image doesn't stick out of corners */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+    position: relative;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
+    border: none;
+    /* El radio de la tarjeta es 16px */
+    border-radius: 16px;
+    overflow: hidden;
+    background-color: white;
     height: 100%;
 }
 
@@ -16,22 +16,35 @@
         box-shadow: 0 8px 25px rgba(110, 89, 255, 0.2); /* Glow effect */
     }
 
-/* 2. Image Area */
-.image-container {
-    position: relative; /* Needed to position the badges absolutely */
-    width: 100%;
-    padding-top: 100%; /* Trick to force a square aspect ratio (1:1) */
-    background-color: #fff; /* White bg for product visibility */
+.product-media-container {
+    text-align: center;
+    padding: 10px; /* Tu margen deseado */
+    background: white;
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
-.product-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
+.product-media {
     height: 100%;
-    object-fit: contain; /* Shows whole image without cropping */
-    padding: 20px; /* Breathing room for the image */
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    /* ✅ 1. FORZAMOS EL REDONDEO EN LA FOTO */
+    border-radius: 16px !important;
+    /* ✅ 2. EL TRUCO: Una sombra suave o borde para que se vea el corte */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    /* O si prefieres borde: border: 1px solid #eee; */
+    border-radius: 16px;
+}
+
+.product-card:hover .product-media {
+    transform: scale(1.05);
+}
+
+.product-card:hover .product-media {
+    transform: scale(1.03); /* Efecto zoom un poco más sutil */
 }
 
 /* 3. Badges (New, Offer) */
@@ -54,6 +67,15 @@
 .badge-new {
     background-color: #6C5DD3; /* Purple for new items */
     left: 10px;
+}
+
+.price-tag {
+    font-weight: bold;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, #d84315 0%, #b71c1c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 /* 4. Details Area */
@@ -153,3 +175,20 @@
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px; /* Space between cards */
 }
+
+/* Badge Styles */
+.offer-badge {
+    position: absolute;
+    top: 7px;
+    right: 12px;
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 4px;

@@ -15,7 +15,7 @@ namespace OneClick.Backend.Migrations
                 keyColumn: "Id",
                 keyValue: 1,
                 columns: new[] { "Description", "ImageURL", "Name", "Price" },
-                values: new object[] { "Titanium design, A17 Pro chip, the most powerful iPhone yet.", "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&h=600&q=80", "iPhone 15 Pro Max", 1199.00m });
+                values: new object[] { "Titanium design, A17 Pro chip, the most powerful iPhone yet.", "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format=80", "iPhone 15 Pro Max", 1199.00m });
 
             migrationBuilder.UpdateData(
                 table: "Products",
@@ -271,7 +271,7 @@ namespace OneClick.Backend.Migrations
                 keyColumn: "Id",
                 keyValue: 1,
                 columns: new[] { "Description", "ImageURL", "Name", "Price" },
-                values: new object[] { "Titanium design, A17 Pro chip, 128GB.", "https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&w=600&h=600&q=80", "iPhone 15 Pro", 999.00m });
+                values: new object[] { "Titanium design, A17 Pro chip, 128GB.", "https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format=80", "iPhone 15 Pro", 999.00m });
 
             migrationBuilder.UpdateData(
                 table: "Products",

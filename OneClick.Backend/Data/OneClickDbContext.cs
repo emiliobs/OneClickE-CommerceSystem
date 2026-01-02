@@ -78,7 +78,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 1,
                 Price = 1199.00m,
                 Qty = 20,
-                ImageURL = "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format=80"
             },
             new Product
             {
@@ -88,7 +88,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 1,
                 Price = 1099.00m,
                 Qty = 15,
-                ImageURL = "https://images.unsplash.com/photo-1517336714731-489689fd1ca4?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1517336714731-489689fd1ca4?auto=format=80"
             },
 
             // --- 2. Cars ---
@@ -100,7 +100,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 2,
                 Price = 24.99m,
                 Qty = 50,
-                ImageURL = "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format=80"
             },
             new Product
             {
@@ -110,7 +110,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 2,
                 Price = 89.50m,
                 Qty = 12,
-                ImageURL = "https://images.unsplash.com/photo-1680519324888-03823798950c?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1680519324888-03823798950c?auto=format=80"
             },
 
             // --- 3. Beauty ---
@@ -122,7 +122,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 3,
                 Price = 19.99m,
                 Qty = 40,
-                ImageURL = "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format=80"
             },
             new Product
             {
@@ -132,7 +132,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 3,
                 Price = 34.00m,
                 Qty = 25,
-                ImageURL = "https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?auto=format=80"
             },
 
             // --- 4. Footwear ---
@@ -144,7 +144,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 4,
                 Price = 129.99m,
                 Qty = 30,
-                ImageURL = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format=80"
             },
             new Product
             {
@@ -154,7 +154,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 4,
                 Price = 89.90m,
                 Qty = 18,
-                ImageURL = "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format=80"
             },
 
             // --- 5. Food ---
@@ -166,7 +166,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 5,
                 Price = 8.50m,
                 Qty = 60,
-                ImageURL = "https://images.unsplash.com/photo-1517093728432-a0440f8d45ca?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1517093728432-a0440f8d45ca?auto=format=80"
             },
             new Product
             {
@@ -176,7 +176,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 5,
                 Price = 18.99m,
                 Qty = 45,
-                ImageURL = "https://images.unsplash.com/photo-1474979266404-7cadd259c308?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1474979266404-7cadd259c308?auto=format=80"
             },
 
             // --- 6. Cosmetics ---
@@ -188,7 +188,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 6,
                 Price = 22.00m,
                 Qty = 35,
-                ImageURL = "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format=80"
             },
             new Product
             {
@@ -198,7 +198,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 6,
                 Price = 16.50m,
                 Qty = 22,
-                ImageURL = "https://images.unsplash.com/photo-1631214524020-7e18db9a8f92?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1631214524020-7e18db9a8f92?auto=format=80"
             },
 
             // --- 7. Sports ---
@@ -210,7 +210,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 7,
                 Price = 34.99m,
                 Qty = 60,
-                ImageURL = "https://images.unsplash.com/photo-1614632537423-1e6c2e7e0aab?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1614632537423-1e6c2e7e0aab?auto=format=80"
             },
             new Product
             {
@@ -220,7 +220,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 7,
                 Price = 29.95m,
                 Qty = 15,
-                ImageURL = "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?auto=format=80"
             },
 
             // --- 8. Erotic (Romantic) ---
@@ -232,7 +232,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 8,
                 Price = 24.99m,
                 Qty = 25,
-                ImageURL = "https://images.unsplash.com/photo-1602826347632-009a584de633?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1602826347632-009a584de633?auto=format=80"
             },
             new Product
             {
@@ -242,7 +242,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 8,
                 Price = 19.99m,
                 Qty = 20,
-                ImageURL = "https://images.unsplash.com/photo-1630260655866-e3256037b605?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1630260655866-e3256037b605?auto=format=80"
             },
 
             // --- 9. Hardware ---
@@ -254,7 +254,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 9,
                 Price = 89.00m,
                 Qty = 14,
-                ImageURL = "https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format=80"
             },
             new Product
             {
@@ -264,7 +264,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 9,
                 Price = 45.00m,
                 Qty = 40,
-                ImageURL = "https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?auto=format=80"
             },
 
             // --- 10. Gamer ---
@@ -276,7 +276,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 10,
                 Price = 79.99m,
                 Qty = 18,
-                ImageURL = "https://images.unsplash.com/photo-1587829741301-dc798b91a602?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1587829741301-dc798b91a602?auto=format=80"
             },
             new Product
             {
@@ -286,7 +286,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 10,
                 Price = 49.99m,
                 Qty = 45,
-                ImageURL = "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format=80"
             },
 
             // --- 11. Home ---
@@ -298,7 +298,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 11,
                 Price = 39.99m,
                 Qty = 45,
-                ImageURL = "https://images.unsplash.com/photo-1534073828943-f801091a7d58?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1534073828943-f801091a7d58?auto=format=80"
             },
             new Product
             {
@@ -308,7 +308,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 11,
                 Price = 29.99m,
                 Qty = 16,
-                ImageURL = "https://images.unsplash.com/photo-1584100936595-c0654b55a2e6?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1584100936595-c0654b55a2e6?auto=format=80"
             },
 
             // --- 12. Garden ---
@@ -320,7 +320,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 12,
                 Price = 27.50m,
                 Qty = 30,
-                ImageURL = "https://images.unsplash.com/photo-1596707328646-778832a8747f?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1596707328646-778832a8747f?auto=format=80"
             },
             new Product
             {
@@ -330,7 +330,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 12,
                 Price = 14.99m,
                 Qty = 25,
-                ImageURL = "https://images.unsplash.com/photo-1622374274291-3e4b77f32997?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1622374274291-3e4b77f32997?auto=format=80"
             },
 
             // --- 13. Toys ---
@@ -342,7 +342,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 13,
                 Price = 39.95m,
                 Qty = 40,
-                ImageURL = "https://images.unsplash.com/photo-1587654780291-39c940483713?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1587654780291-39c940483713?auto=format=80"
             },
             new Product
             {
@@ -352,7 +352,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 13,
                 Price = 18.50m,
                 Qty = 12,
-                ImageURL = "https://images.unsplash.com/photo-1610419885843-0c4a457493a7?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1610419885843-0c4a457493a7?auto=format=80"
             },
 
             // --- 14. Lingerie ---
@@ -364,7 +364,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 14,
                 Price = 55.00m,
                 Qty = 28,
-                ImageURL = "https://images.unsplash.com/photo-1594967384738-9e63e2621746?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1594967384738-9e63e2621746?auto=format=80"
             },
             new Product
             {
@@ -374,7 +374,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 14,
                 Price = 24.90m,
                 Qty = 18,
-                ImageURL = "https://images.unsplash.com/photo-1596489392231-15b565780365?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1596489392231-15b565780365?auto=format=80"
             },
 
             // --- 15. Pets ---
@@ -386,7 +386,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 15,
                 Price = 42.99m,
                 Qty = 35,
-                ImageURL = "https://images.unsplash.com/photo-1589924691195-41432c84c161?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1589924691195-41432c84c161?auto=format=80"
             },
             new Product
             {
@@ -396,7 +396,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 15,
                 Price = 29.99m,
                 Qty = 14,
-                ImageURL = "https://images.unsplash.com/photo-1545249390-6bdfa286032f?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1545249390-6bdfa286032f?auto=format=80"
             },
 
             // --- 16. Nutrition ---
@@ -408,7 +408,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 16,
                 Price = 59.90m,
                 Qty = 20,
-                ImageURL = "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?auto=format=80"
             },
             new Product
             {
@@ -418,7 +418,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 16,
                 Price = 19.95m,
                 Qty = 10,
-                ImageURL = "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format=80"
             },
 
             // --- 17. Clothing ---
@@ -430,7 +430,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 17,
                 Price = 19.99m,
                 Qty = 60,
-                ImageURL = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format=80"
             },
             new Product
             {
@@ -440,7 +440,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 17,
                 Price = 64.90m,
                 Qty = 9,
-                ImageURL = "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format=80"
             },
 
             // --- 18. Technology ---
@@ -452,7 +452,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 18,
                 Price = 49.99m,
                 Qty = 25,
-                ImageURL = "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format=80"
             },
             new Product
             {
@@ -462,7 +462,7 @@ public class OneClickDbContext : DbContext
                 CategoryId = 18,
                 Price = 34.99m,
                 Qty = 15,
-                ImageURL = "https://images.unsplash.com/photo-1630080644612-4b2eb00438a9?auto=format&fit=crop&w=600&h=600&q=80"
+                ImageURL = "https://images.unsplash.com/photo-1630080644612-4b2eb00438a9?auto=format=80"
             }
         );
     }

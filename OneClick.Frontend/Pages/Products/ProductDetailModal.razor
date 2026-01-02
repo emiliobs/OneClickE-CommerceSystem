@@ -15,7 +15,7 @@
                     <div class="col-md-6 bg-light d-flex align-items-center justify-content-center p-0 position-relative">
                         <img src="@Product.ImageURL"
                              alt="@Product.Name"
-                             style="width: 100%; height: 100%; object-fit: cover; min-height: 400px;" />
+                             style="width: 100%; height: 100%; border-radius:20px; object-fit: fill; min-height: 400px;" />
 
                         @if (Product.Price < 15)
                         {
@@ -28,7 +28,7 @@
                     <div class="col-md-6 p-5 d-flex flex-column justify-content-center bg-white">
 
                         <div class="text-uppercase text-muted fw-bold small mb-2" style="letter-spacing: 1px;">
-                            @Product.Category?.Name ?? "General"
+                            @(Product.Category?.Name ?? "General")
                         </div>
 
                         <h2 class="fw-bold text-dark mb-3">@Product.Name</h2>
