@@ -34,6 +34,7 @@ public class ProductService : IProductService
             // Return the created object (useful if backend assigns the ID)
             return await response.Content.ReadFromJsonAsync<Product>();
         }
+
         return null;
     }
 

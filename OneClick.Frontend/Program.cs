@@ -17,6 +17,7 @@ builder.Services.AddScoped(sp => new HttpClient
 // Register services with interface
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 // Register the notification service
 builder.Services.AddScoped<OneClick.Frontend.Services.SweetAlertService>();
