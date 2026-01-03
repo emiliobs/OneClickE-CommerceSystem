@@ -15,6 +15,7 @@ builder.Services.AddDbContext<OneClickDbContext>(options =>
 // Register repositories
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
