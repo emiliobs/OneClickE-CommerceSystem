@@ -3,6 +3,7 @@ using OneClick.Frontend.Services;
 using OneClick.Shared.Entities;
 using System.Security;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace OneClick.Frontend.Pages;
 
@@ -13,6 +14,9 @@ public partial class Home
 
     [Inject]
     public IProductService ProductService { get; set; } = default!;
+
+    [Inject]
+    public ICartService CartService { get; set; }
 
     [Inject]
     public ICategoryService CategoryService { get; set; } = default!;
@@ -31,6 +35,8 @@ public partial class Home
 
     private string _selectedCategory = "All";
     private int _selectedStatus = 0; // 0:All, 1:Available, 2:Offers, 3:New
+
+    private int cartCount = 0;
 
     //Variable to track which product is in the modal
     private Product? _selectedProduct = null;
@@ -78,6 +84,13 @@ public partial class Home
         {
             isLoading = true;
 
+            // 1. Suscribirse al evento: "Cuando suene la campana, ejecuta UpdateCartCount"
+            CartService.OnChange += UpdateCartCount;
+
+            // 2. Cargar el número inicial (por si ya había cosas guardadas)
+            // Nota: Usa el mismo UserId que usaste en el Modal (ej: 1)
+            cartCount = await CartService.GetCartCountAsync(1);
+
             // Call the services to get the List of products
             products = await ProductService.GetProductsAsync();
             categories = await CategoryService.GetAllCategoryAsync();
@@ -93,6 +106,25 @@ public partial class Home
         {
             isLoading = false;
         }
+    }
+
+    private async void UpdateCartCount()
+    {
+        // Esta función se ejecuta automáticamente cuando agregas algo al carrito
+        cartCount = await CartService.GetCartCountAsync(1); // Recuerda el ID de usuario
+        await InvokeAsync(StateHasChanged); // Fuerza a la pantalla a repintarse
+    }
+
+    // Tu método existente para abrir el carrito lateral
+    private async Task ShowCartDrawer()
+    {
+        await SweetAlertService.ShowSuccessToast("Yeaaaaaaat...Are yoy baying");
+    }
+
+    public void Dispose()
+    {
+        // Buena práctica: Desuscribirse cuando el componente se destruye
+        CartService.OnChange -= UpdateCartCount;
     }
 
     // LOgic to filter the list based on All criteria

@@ -1,6 +1,6 @@
-﻿@if (Product is not null)
+﻿﻿@if (Product is not null)
 {
-    <div class="modal-backdrop fade show" style="z-index: 1040;"></div>
+<div class="modal-backdrop fade show" style="z-index: 1040;"></div>
 
     <div class="modal fade show d-block" tabindex="-1" style="z-index: 1050;">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -13,8 +13,9 @@
                 <div class="row g-0">
 
                     <div class="col-md-6 bg-light d-flex align-items-center justify-content-center p-0 position-relative">
-                        <img src="@Product.ImageURL" alt="@Product.Name" class="img-fluid"
-                             style="height: 100%;width: 100%; border-radius:20px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)); transition: transform 0.3s ease;" />
+                        <img src="@(string.IsNullOrEmpty(Product.ImageURL) ? "/images/no-image.png" : Product.ImageURL)" 
+                             alt="@Product.Name" class="img-fluid"
+                             style="height: 100%; width: 100%; object-fit: cover; min-height: 400px;" />
 
                         @if (Product.Price < 15)
                         {
@@ -49,8 +50,17 @@
                         <div class="d-grid gap-2">
                             <button class="btn btn-primary btn-lg fw-bold rounded-pill"
                                     style="background: linear-gradient(135deg, #d84315 0%, #b71c1c 100%); border: none;"
-                                    @onclick="HandledAddToCart">
-                                <i class="bi bi-cart-plus me-2"></i> Add to Cart
+                                    @onclick="HandledAddToCart"
+                                    disabled="@isProcessing">
+                                
+                                @if (isProcessing)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span> <span>Adding...</span>
+                                }
+                                else
+                                {
+                                    <span><i class="bi bi-cart-plus me-2"></i> Add to Cart</span>
+                                }
                             </button>
 
                             <button class="btn btn-outline-secondary btn-sm rounded-pill mt-2" @onclick="OnClose">
@@ -64,5 +74,3 @@
         </div>
     </div>
 }
-
-
