@@ -72,13 +72,23 @@
                                     </div>
 
                                     <div class="d-flex flex-column align-items-center gap-2 ms-3">
-                                        <button class="btn btn-sm text-primary p-0 fs-5" style="line-height: 1;">
+
+
+                                        <button class="btn btn-sm text-primary p-0 fs-5" style="line-height: 1;"
+                                               @onclick="() => UpdateCartItemQuantity(cart, 1)">
                                             <i class="bi bi-plus"></i>
                                         </button>
-                                        <button class="btn btn-sm text-secondary p-0 fs-5" style="line-height: 1; color: #ff4081 !important;">
+
+                                        @* <span class="badge bg-dark border border-secondary text-white rounded-pill">
+                                            @cart.Quantity
+                                        </span> *@
+                                        
+                                        <button class="btn btn-sm text-secondary p-0 fs-5" style="line-height: 1; color: #ff4081 !important;"
+                                                @onclick="() => UpdateCartItemQuantity(cart, -1)">
                                             <i class="bi bi-dash"></i>
                                         </button>
-                                        <button class="btn btn-sm text-danger p-0 fs-6 mt-1">
+                                        
+                                        <button class="btn btn-sm text-danger p-0 fs-6 mt-1" @onclick="() => DeleteCartItem(cart)">
                                             <i class="bi bi-trash-fill"></i>
                                         </button>
                                     </div>

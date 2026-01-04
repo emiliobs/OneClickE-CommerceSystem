@@ -15,4 +15,8 @@ public interface ICartService
 
     // Gets the total count of items
     Task<int> GetCartCountAsync(int userId);
+
+    Task DeleteItemAsync(int userId, int productId);
+
+    Task UpdateQuantityAsync(int userId, int productId, int newQuantity);
 }

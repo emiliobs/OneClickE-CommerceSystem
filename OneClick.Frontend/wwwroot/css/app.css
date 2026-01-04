@@ -331,3 +331,8 @@ body.light-mode .search-icon {
     color: #333333;
     fill: #333333;
 }
+
+/* Esto aplicará el desenfoque a cualquier alerta que abras */
+/*.swal2-backdrop-show {
+    backdrop-filter: blur(3px);
+}*/

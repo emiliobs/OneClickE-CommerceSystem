@@ -22,7 +22,10 @@ public class SweetAlertService
             ShowConfirmButton = false,
             Timer = 3000,
             Icon = SweetAlertIcon.Success,
-            Title = message
+            Title = message,
+            Color = "#fff",
+            Background = "#28a745", // Green background
+            IconColor = "#fff"
         });
     }
 
@@ -34,12 +37,17 @@ public class SweetAlertService
             Text = message,
             Icon = SweetAlertIcon.Warning,
             ShowCancelButton = true,
-            ConfirmButtonColor = "#d33",     // Rojo peligro
-            CancelButtonColor = "#3085d6",   // Azul cancelar
-            ConfirmButtonText = "Yes, delete it!",
-            CancelButtonText = "No, cancel"
-        });
+            Background = "#1a1a2e",
+            Color = "#ffffff",
 
+            // --- CAMBIO AQUÍ: Solo acepta true o false ---
+            Backdrop = true,
+
+            ConfirmButtonText = "YES, DELETE",
+            CancelButtonText = "CANCEL",
+            ConfirmButtonColor = "#dc3545",
+            CancelButtonColor = "#6c757d"
+        });
         return result.IsConfirmed;
     }
 
@@ -52,6 +60,9 @@ public class SweetAlertService
             Text = message,
             Icon = SweetAlertIcon.Error,
             ConfirmButtonText = "OK",
+            IconColor = "#fff",
+            Background = "#dc3545", // Red background
+            Color = "#fff"
         });
     }
 }

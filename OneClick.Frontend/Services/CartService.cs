@@ -6,10 +6,12 @@ namespace OneClick.Frontend.Services;
 public class CartService : ICartService
 {
     private readonly HttpClient _httpClient;
+    private readonly SweetAlertService _sweetAlertService;
 
-    public CartService(HttpClient httpClient)
+    public CartService(HttpClient httpClient, SweetAlertService sweetAlertService)
     {
         this._httpClient = httpClient;
+        this._sweetAlertService = sweetAlertService;
     }
 
     //THe event that components subcribes to
@@ -31,12 +33,12 @@ public class CartService : ICartService
             {
                 // Log error if API fails (e.g., BadRequest)
                 var error = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error adding to cart: {error}");
+                _sweetAlertService.ShowErrorAlert("Error", $"Error adding to cart: {error}");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Http Request Error: {ex.Message}");
+            _sweetAlertService.ShowErrorAlert("Error", $"Http Request Error: {ex.Message}");
         }
     }
 
@@ -50,7 +52,7 @@ public class CartService : ICartService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error fetching cart items: {ex.Message}");
+            _sweetAlertService.ShowErrorAlert("Error", $"Error fetching cart items: {ex.Message}");
             return new List<CartItem>();
         }
     }
@@ -74,8 +76,49 @@ public class CartService : ICartService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error fetching cart count: {ex.Message}");
+            _sweetAlertService.ShowErrorAlert("Error", $"Error fetching cart count: {ex.Message}");
+
             return 0;
+        }
+    }
+
+    public async Task UpdateQuantityAsync(int userId, int productId, int newQuantity)
+    {
+        // Call the put endpint we created early
+        var response = await _httpClient.PutAsync($"api/Carts/update-quantity/{userId}/{productId}/{newQuantity}", null);
+
+        if (response.IsSuccessStatusCode)
+        {
+            // Notify the UI (Badge) to update
+            OnChange?.Invoke();
+        }
+        else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            _sweetAlertService.ShowErrorAlert("Error", $"Error updating cart item quantity: {error}");
+        }
+    }
+
+    public async Task DeleteItemAsync(int userId, int productId)
+    {
+        try
+        {
+            // Call the delete endpoint we created early
+            var response = await _httpClient.DeleteAsync($"api/Carts/{userId}/{productId}");
+            if (response.IsSuccessStatusCode)
+            {
+                // Notify the UI (Badge) to update
+                OnChange?.Invoke();
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                _sweetAlertService.ShowErrorAlert("Error", $"Error deleting cart item: {error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            _sweetAlertService.ShowErrorAlert("Error", $"Http Request Error: {ex.Message}");
         }
     }
 }
