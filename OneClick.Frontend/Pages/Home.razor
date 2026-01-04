@@ -98,7 +98,7 @@
     <!-- Contenedor fijo en la esquina -->
     <div class="floating-container">
         <button class="btn btn-danger rounded-circle shadow-lg d-flex align-items-center justify-content-center"
-                style="width: 60px; height: 60px;" @onclick="ShowCartDrawer">
+                style="width: 60px; height: 60px;" @onclick="ShowCart">
 
             <!-- Icono (usando Bootstrap Icons) -->
             <i class="bi bi-cart3 fs-4"></i>
@@ -114,5 +114,7 @@
             }
         </button>
     </div>
+
+    <ShoppingCart @bind-IsOpen="showCart"></ShoppingCart>
 
 </div>

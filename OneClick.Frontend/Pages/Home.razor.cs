@@ -38,6 +38,9 @@ public partial class Home
 
     private int cartCount = 0;
 
+    // Variable to control the visibility of the Shopping Cart
+    private bool showCart = false;
+
     //Variable to track which product is in the modal
     private Product? _selectedProduct = null;
 
@@ -116,9 +119,9 @@ public partial class Home
     }
 
     // Tu método existente para abrir el carrito lateral
-    private async Task ShowCartDrawer()
+    private async Task ShowCart()
     {
-        await SweetAlertService.ShowSuccessToast("Yeaaaaaaat...Are yoy baying");
+        showCart = true;
     }
 
     public void Dispose()
@@ -195,12 +198,46 @@ public partial class Home
     // HANDLE THE EVENT (Lógica del Padre)
     private async Task HandleAddToCart(Product product)
     {
-        SweetAlertService.ShowSuccessToast($"Clicked on: {product.Name} To cart!");
-
-        if (product.Qty > 0)
+        // Prevent adding if out of stock (optional validation)
+        if (product.Qty <= 0)
         {
-            product.Qty--;
+            await SweetAlertService.ShowErrorAlert("Out of Stock", "This item is not available....");
+            return;
         }
+
+        try
+        {
+            // Create the CartItem object
+            var cartItem = new CartItem()
+            {
+                ProductId = product.Id,
+                UserId = 1,
+                Quantity = 1
+            };
+
+            // Call the service to save to SQL Database
+            await CartService.AddToCartAsync(cartItem);
+
+            // Visual frrdback: upate local UI stock immediately
+            if (product.Qty > 0)
+            {
+                product.Qty--;
+            }
+
+            // Success Meesage
+            await SweetAlertService.ShowSuccessToast($"Added: {product.Name}");
+        }
+        catch (Exception ex)
+        {
+            await SweetAlertService.ShowErrorAlert("Error", $"Could not add item: {ex.Message}");
+        }
+
+        //SweetAlertService.ShowSuccessToast($"Clicked on: {product.Name} To cart!");
+
+        //if (product.Qty > 0)
+        //{
+        //    product.Qty--;
+        //}
 
         // Optional: If you want to close modal after adding
         //_selectedProduct = null;

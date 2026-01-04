@@ -1,0 +1,164 @@
+﻿@using OneClick.Shared.Entities
+@using OneClick.Frontend.Services
+@inject ICartService CartService
+
+<style>
+    /* Clase para el item del carrito */
+    .cart-item {
+        background-color: transparent; /* Por defecto transparente */
+        transition: background-color 0.2s ease; /* Suaviza el cambio */
+    }
+        /* Cuando pasas el mouse por encima */
+        .cart-item:hover {
+            background-color: rgba(255, 255, 255, 0.05) !important; /* Un gris muy sutil */
+            cursor: pointer;
+        }
+</style>
+
+@if (IsOpen)
+{
+    <div class="modal-backdrop fade show" style="background-color: rgba(0,0,0,0.8); z-index: 1040;" @onclick="CloseModal"></div>
+
+    <div class="modal fade show d-block" tabindex="-1" style="z-index: 1050;">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:650px;">
+
+            <div class="modal-content border-0 shadow-lg" style="background-color: #1a1a2e; color: white; border-radius: 10px; overflow: hidden;">
+
+                <div class="modal-header border-0 py-3" style="background-color: #dc3545;">
+                    <h5 class="modal-title w-100 text-center fw-bold text-white fs-4">
+                        <i class="bi bi-cart3 me-2"></i>My cart
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" @onclick="CloseModal"></button>
+                </div>
+
+                <div class="modal-body p-4" style="max-height: 60vh; overflow-y: auto;">
+
+                    @if (isLoading)
+                    {
+                        <div class="d-flex justify-content-center py-5">
+                            <div class="spinner-border text-danger" role="status"></div>
+                        </div>
+                    }
+                    else if (cartItems == null || !cartItems.Any())
+                    {
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-cart-x fs-1 mb-3 d-block opacity-50"></i>
+                            <p>Tu carrito está vacío.</p>
+                            <button class="btn btn-outline-light btn-sm mt-2" @onclick="CloseModal">
+                                Volver a la tienda
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex  flex-column gap-3">
+                            @foreach (var item in cartItems)
+                            {
+                                <div class="d-flex align-items-center p-2 rounded cart-item" style="background-color: transparent;">
+
+                                    <div class="me-3">
+                                        <img src="@(string.IsNullOrEmpty(item.Product?.ImageURL) ? "/images/no-image.png" : item.Product.ImageURL)"
+                                             class="rounded-circle shadow-sm"
+                                             style="width: 70px; height: 70px; object-fit: cover; border: 2px solid #333;" />
+                                    </div>
+
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1 fw-normal text-white">@item.Product?.Name</h5>
+                                        <div class="text-secondary small mb-1">
+                                            Cantidad: <span class="text-white">@item.Quantity</span>
+                                        </div>
+                                        <div class="text-secondary small mb-1">
+                                            Precio: <span class="text-white">$@item.Product?.Price.ToString("N2")</span>
+                                        </div>
+                                        <div class="small fw-bold" style="color: #ff4081;">
+                                            Subtotal: $@((item.Product!.Price * item.Quantity).ToString("N2"))
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex flex-column align-items-center gap-2 ms-3">
+                                        <button class="btn btn-sm text-primary p-0 fs-5" style="line-height: 1;">
+                                            <i class="bi bi-plus"></i>
+                                        </button>
+                                        <button class="btn btn-sm text-secondary p-0 fs-5" style="line-height: 1; color: #ff4081 !important;">
+                                            <i class="bi bi-dash"></i>
+                                        </button>
+                                        <button class="btn btn-sm text-danger p-0 fs-6 mt-1">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                <hr />
+                @if (cartItems != null && cartItems.Any())
+                {
+                    <div class="modal-footer border-0 d-block pt-0" style="background-color: #1a1a2e;">
+
+                        <div class="d-flex justify-content-end mb-4">
+                            <div class="text-end">
+                                <span class="fs-4 fw-normal text-white">Total: </span>
+                                <span class="fs-4 fw-bold text-white">$@cartItems.Sum(x => x.Product!.Price * x.Quantity).ToString("N2")</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end align-items-center gap-3">
+                            <button class="btn fw-bold text-uppercase d-flex align-items-center gap-2"
+                                    style="background-color: transparent; color: #2ecc71; border: none;">
+                                REALIZAR PEDIDO <i class="bi bi-check-circle-fill"></i>
+                            </button>
+
+                            <button class="btn text-uppercase fw-bold text-primary text-decoration-none" @onclick="CloseModal">
+                                SEGUIR COMPRANDO
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsOpen { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> IsOpenChanged { get; set; }
+
+    private List<CartItem> cartItems = new();
+    private bool isLoading = true;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (IsOpen)
+        {
+            await LoadCart();
+        }
+    }
+
+    private async Task LoadCart()
+    {
+        isLoading = true;
+        try
+        {
+            // Use ID 5 (or the one you are using in Home.razor)
+            cartItems = await CartService.GetCartItemsAsync(1);
+        }
+        catch (Exception)
+        {
+            cartItems = new();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task CloseModal()
+    {
+        IsOpen = false;
+        await IsOpenChanged.InvokeAsync(false);
+    }
+}

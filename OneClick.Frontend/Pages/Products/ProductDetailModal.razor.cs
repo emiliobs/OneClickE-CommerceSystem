@@ -43,7 +43,11 @@ public partial class ProductDetailModal
             // Call the Bridge
             await CartService.AddToCartAsync(cartItem);
 
-            Product.Qty--;
+            // Visual Feedback: Decrease stock locally immediately, This matches the logic we added in Home.razor
+            if (Product.Qty > 0)
+            {
+                Product.Qty--;
+            }
 
             // Show Feedback
             await SweetAlertService.ShowSuccessToast("Added to cart!");
