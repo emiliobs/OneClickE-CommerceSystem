@@ -231,16 +231,6 @@ public partial class Home
         {
             await SweetAlertService.ShowErrorAlert("Error", $"Could not add item: {ex.Message}");
         }
-
-        //SweetAlertService.ShowSuccessToast($"Clicked on: {product.Name} To cart!");
-
-        //if (product.Qty > 0)
-        //{
-        //    product.Qty--;
-        //}
-
-        // Optional: If you want to close modal after adding
-        //_selectedProduct = null;
     }
 
     // Method to open the modal

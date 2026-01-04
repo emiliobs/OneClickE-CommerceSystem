@@ -1,8 +1,4 @@
-﻿@using OneClick.Shared.Entities
-@using OneClick.Frontend.Services
-@inject ICartService CartService
-
-<style>
+﻿<style>
     /* Clase para el item del carrito */
     .cart-item {
         background-color: transparent; /* Por defecto transparente */
@@ -45,33 +41,33 @@
                             <i class="bi bi-cart-x fs-1 mb-3 d-block opacity-50"></i>
                             <p>Tu carrito está vacío.</p>
                             <button class="btn btn-outline-light btn-sm mt-2" @onclick="CloseModal">
-                                Volver a la tienda
+                              Back to Store
                             </button>
                         </div>
                     }
                     else
                     {
-                        <div class="d-flex  flex-column gap-3">
-                            @foreach (var item in cartItems)
+                       <div class="d-flex flex-column gap-3">
+                           @foreach (var cart in cartItems)
                             {
                                 <div class="d-flex align-items-center p-2 rounded cart-item" style="background-color: transparent;">
 
                                     <div class="me-3">
-                                        <img src="@(string.IsNullOrEmpty(item.Product?.ImageURL) ? "/images/no-image.png" : item.Product.ImageURL)"
+                                        <img src="@(string.IsNullOrEmpty(cart.Product?.ImageURL) ? "/images/no-image.png" : cart.Product.ImageURL)"
                                              class="rounded-circle shadow-sm"
                                              style="width: 70px; height: 70px; object-fit: cover; border: 2px solid #333;" />
                                     </div>
 
                                     <div class="flex-grow-1">
-                                        <h5 class="mb-1 fw-normal text-white">@item.Product?.Name</h5>
+                                        <h5 class="mb-1 fw-normal text-white">@cart.Product?.Name</h5>
                                         <div class="text-secondary small mb-1">
-                                            Cantidad: <span class="text-white">@item.Quantity</span>
+                                            Quantity: <span class="text-white">@cart.Quantity</span>
                                         </div>
                                         <div class="text-secondary small mb-1">
-                                            Precio: <span class="text-white">$@item.Product?.Price.ToString("N2")</span>
+                                            Price: <span class="text-white">$@cart.Product?.Price.ToString("N2")</span>
                                         </div>
                                         <div class="small fw-bold" style="color: #ff4081;">
-                                            Subtotal: $@((item.Product!.Price * item.Quantity).ToString("N2"))
+                                            Subtotal: £@((cart.Product!.Price * cart.Quantity).ToString("N2"))
                                         </div>
                                     </div>
 
@@ -90,6 +86,7 @@
                             }
                         </div>
                     }
+                }
                 </div>
                 <hr />
                 @if (cartItems != null && cartItems.Any())
@@ -99,18 +96,18 @@
                         <div class="d-flex justify-content-end mb-4">
                             <div class="text-end">
                                 <span class="fs-4 fw-normal text-white">Total: </span>
-                                <span class="fs-4 fw-bold text-white">$@cartItems.Sum(x => x.Product!.Price * x.Quantity).ToString("N2")</span>
+                                <span class="fs-4 fw-bold text-white">£@cartItems.Sum(x => x.Product!.Price * x.Quantity).ToString("N2")</span>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-end align-items-center gap-3">
                             <button class="btn fw-bold text-uppercase d-flex align-items-center gap-2"
-                                    style="background-color: transparent; color: #2ecc71; border: none;">
-                                REALIZAR PEDIDO <i class="bi bi-check-circle-fill"></i>
+                                    style="background-color: transparent; color: #2ecc71; border: none;" @onclick="CloseModal">
+                              PLACE ORDER     <i class="bi bi-check-circle-fill"></i>
                             </button>
-
+                            
                             <button class="btn text-uppercase fw-bold text-primary text-decoration-none" @onclick="CloseModal">
-                                SEGUIR COMPRANDO
+                               CONTINUE SHOPPING
                             </button>
                         </div>
                     </div>
@@ -120,45 +117,3 @@
     </div>
 }
 
-@code {
-    [Parameter]
-    public bool IsOpen { get; set; }
-
-    [Parameter]
-    public EventCallback<bool> IsOpenChanged { get; set; }
-
-    private List<CartItem> cartItems = new();
-    private bool isLoading = true;
-
-    protected override async Task OnParametersSetAsync()
-    {
-        if (IsOpen)
-        {
-            await LoadCart();
-        }
-    }
-
-    private async Task LoadCart()
-    {
-        isLoading = true;
-        try
-        {
-            // Use ID 5 (or the one you are using in Home.razor)
-            cartItems = await CartService.GetCartItemsAsync(1);
-        }
-        catch (Exception)
-        {
-            cartItems = new();
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
-
-    private async Task CloseModal()
-    {
-        IsOpen = false;
-        await IsOpenChanged.InvokeAsync(false);
-    }
-}
