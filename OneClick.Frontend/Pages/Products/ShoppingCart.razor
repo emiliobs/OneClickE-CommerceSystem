@@ -64,7 +64,7 @@
                                             Quantity: <span class="text-white">@cart.Quantity</span>
                                         </div>
                                         <div class="text-secondary small mb-1">
-                                            Price: <span class="text-white">$@cart.Product?.Price.ToString("N2")</span>
+                                            Price: <span class="text-white">£@cart.Product?.Price.ToString("N2")</span>
                                         </div>
                                         <div class="small fw-bold" style="color: #ff4081;">
                                             Subtotal: £@((cart.Product!.Price * cart.Quantity).ToString("N2"))
@@ -84,8 +84,7 @@
                                     </div>
                                 </div>
                             }
-                        </div>
-                    }
+                        </div>                
                 }
                 </div>
                 <hr />
