@@ -49,4 +49,38 @@ public class CartRepository : ICartRepository
             return cartItem;
         }
     }
+
+    public async Task<bool> UpdateQuantityAsync(int userId, int productId, int newQuantity)
+    {
+        var item = await _context.CartItems
+                                 .FirstOrDefaultAsync(ci => ci.UserId == userId && ci.ProductId == productId);
+
+        if (item == null)
+        {
+            return false;
+        }
+
+        item.Quantity = newQuantity;
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> DeleteItemAsync(int userId, int productId)
+    {
+        // 1. Find the item
+        var item = await _context.CartItems
+                                 .FirstOrDefaultAsync(ci => ci.UserId == userId && ci.ProductId == productId);
+
+        if (item == null)
+        {
+            return false; // Not found
+        }
+
+        // 2. Remove it
+        _context.CartItems.Remove(item);
+
+        // 3. Save changes
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }

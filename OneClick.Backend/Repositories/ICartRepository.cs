@@ -12,4 +12,10 @@ public interface ICartRepository
 
     // Gets the total number of items (for the badge notification)
     Task<int> GetCartCountAsync(int userId);
+
+    // Update the quantity of an existing item cart
+    Task<bool> UpdateQuantityAsync(int userId, int productId, int newQuantity);
+
+    // Removes an item completely from the cart
+    Task<bool> DeleteItemAsync(int userId, int productId);
 }

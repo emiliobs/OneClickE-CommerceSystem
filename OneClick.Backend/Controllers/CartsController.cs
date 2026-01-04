@@ -74,4 +74,44 @@ public class CartsController : ControllerBase
             return StatusCode(500, $"Internal server error Add: {ex.Message}");
         }
     }
+
+    [HttpPut("update-quantity/{userId:int}/{productId:int}/{newQuantity:int}")]
+    public async Task<ActionResult<bool>> UpdateteCartItemQuantityAsync(int userId, int productId, int newQuantity)
+    {
+        try
+        {
+            var result = await _cartRepository.UpdateQuantityAsync(userId, productId, newQuantity);
+
+            if (!result)
+            {
+                return NotFound($"Cart item for User ID: {userId} and Product ID: {productId} not found");
+            }
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error UpdateQuantity: {ex.Message}");
+        }
+    }
+
+    [HttpDelete("{userId:int}/{productId:int}")]
+    public async Task<ActionResult<bool>> DeleteCartItemAsync(int userId, int productId)
+    {
+        try
+        {
+            var result = await _cartRepository.DeleteItemAsync(userId, productId);
+
+            if (!result)
+            {
+                return NotFound($"Cart item for User ID: {userId} and Product ID: {productId} not found");
+            }
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error Delete: {ex.Message}");
+        }
+    }
 }
