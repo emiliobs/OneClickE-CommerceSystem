@@ -3,15 +3,34 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using OneClick.Frontend;
 using OneClick.Frontend.Services;
+using System.Runtime.InteropServices;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+// --- API CONNECTION LOGIC ---
+
+// FORCE CLOUD URL FOR TESTING (Use HTTPS)
+/*string apiUrl = "https://emiliobarrera-001-site1.mtempurl.com"; */// <--- Note the 's' in https
+
+string apiUrl;
+
+if (builder.HostEnvironment.IsDevelopment())
+{
+    // If running locally in Visual Studio
+    apiUrl = "https://localhost:7009";
+}
+else
+{
+    // If running on the Server (SmarterASP / Azure)
+    apiUrl = "https://emiliobarrera-001-site1.mtempurl.com";
+}
+
 // Configure HttpClient for backend API
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri("https://localhost:7009")
+    BaseAddress = new Uri(apiUrl)
 });
 
 // Register services with interface

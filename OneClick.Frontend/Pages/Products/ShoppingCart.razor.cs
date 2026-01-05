@@ -19,6 +19,9 @@ public partial class ShoppingCart
     [Parameter]
     public EventCallback<bool> IsOpenChanged { get; set; }
 
+    [Inject]
+    public NavigationManager Navigation { get; set; } = default!;
+
     private List<CartItem> cartItems = new List<CartItem>();
     private bool isLoading = true;
 
@@ -102,5 +105,12 @@ public partial class ShoppingCart
         {
             await LoadCart();
         }
+    }
+
+    private void GoToCheckout()
+    {
+        CloseModal(); // Cierra el carrito
+
+        Navigation.NavigateTo("/checkout"); // Va a la nueva página
     }
 }

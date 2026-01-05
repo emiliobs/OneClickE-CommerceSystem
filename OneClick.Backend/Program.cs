@@ -3,13 +3,31 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using OneClick.Backend.Data;
 using OneClick.Backend.Repositories;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// -----DATABASE CONNECTION LOGIC -----
+string connectionStringName;
+
+if (builder.Environment.IsDevelopment())
+{
+    // If running locally in Visual Studio
+    connectionStringName = "OneClickConnectionLocal";
+}
+else
+{
+    //// If running on the Server (SmarterASP / Azure)
+    connectionStringName = "OneClickConnection";
+}
+
+//var connectionString = builder.Configuration.GetConnectionString(connectionStringName);
+
 builder.Services.AddDbContext<OneClickDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("OneClickConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString(connectionStringName));
 });
 
 // Register repositories
@@ -56,18 +74,33 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// 1. Add CORS Policy Service
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()  // Allow requests from anywhere (Cloud, Localhost, etc.)
+              .AllowAnyMethod()  // Allow GET, POST, PUT, DELETE
+              .AllowAnyHeader(); // Allow any headers
+    });
+});
+
 var app = builder.Build();
+
+// Aqui para mostar los endpoints de swagger a nivel de produccion
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-
-    app.UseSwagger();
-    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+
+// 2. Activate CORS Middleware (MUST be before UseAuthorization)
+//app.UseCors("AllowAll"); // <--- This opens the door!
 
 app.UseCors("AllowBlazorFrontend");
 
