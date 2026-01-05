@@ -69,21 +69,21 @@ builder.Services.AddSwaggerGen(c =>
         Contact = new OpenApiContact
         {
             Name = "OneClick Team",
-            Email = "OneClickSupport@yopmail.com"
+            Email = "oneclick.project.emilio@outlook.com"
         }
     });
 });
 
 // 1. Add CORS Policy Service
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()  // Allow requests from anywhere (Cloud, Localhost, etc.)
-              .AllowAnyMethod()  // Allow GET, POST, PUT, DELETE
-              .AllowAnyHeader(); // Allow any headers
-    });
-});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowAll", policy =>
+//    {
+//        policy.AllowAnyOrigin()  // Allow requests from anywhere (Cloud, Localhost, etc.)
+//              .AllowAnyMethod()  // Allow GET, POST, PUT, DELETE
+//              .AllowAnyHeader(); // Allow any headers
+//    });
+//});
 
 var app = builder.Build();
 
