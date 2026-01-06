@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using OneClick.Frontend.Services;
 using OneClick.Shared.Entities;
-using SweetAlertService = OneClick.Frontend.Services.SweetAlertService;
 
 namespace OneClick.Frontend.Pages.Products;
 
@@ -11,7 +10,7 @@ public partial class ShoppingCart
     public ICartService CartService { get; set; } = default!;
 
     [Inject]
-    public SweetAlertService SweetAlertService { get; set; } = default!;
+    public AlertService SweetAlertService { get; set; } = default!;
 
     [Parameter]
     public bool IsOpen { get; set; }

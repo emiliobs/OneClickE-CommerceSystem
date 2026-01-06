@@ -1,16 +1,13 @@
 using Microsoft.AspNetCore.Components;
 using OneClick.Frontend.Services;
 using OneClick.Shared.Entities;
-using System.Security;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace OneClick.Frontend.Pages;
 
 public partial class Home
 {
     [Inject]
-    public Services.SweetAlertService SweetAlertService { get; set; } = default!;
+    public AlertService SweetAlertService { get; set; } = default!;
 
     [Inject]
     public IProductService ProductService { get; set; } = default!;

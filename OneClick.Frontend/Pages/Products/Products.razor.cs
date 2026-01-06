@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using OneClick.Frontend.Services;
 using OneClick.Shared.Entities;
-using System.Threading.Tasks;
 
 namespace OneClick.Frontend.Pages.Products;
 
@@ -15,7 +14,7 @@ public partial class Products
     [Inject]
     public ICategoryService CategoryService { get; set; } = default!;
 
-    [Inject] public Services.SweetAlertService SweetAlertService { get; set; } = default!;
+    [Inject] public AlertService SweetAlertService { get; set; } = default!;
 
     // --- State Variables ---
     private List<Product> products = new();

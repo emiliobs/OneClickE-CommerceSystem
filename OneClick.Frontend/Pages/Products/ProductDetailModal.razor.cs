@@ -1,8 +1,6 @@
-using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components;
 using OneClick.Frontend.Services;
 using OneClick.Shared.Entities;
-using SweetAlertService = OneClick.Frontend.Services.SweetAlertService;
 
 namespace OneClick.Frontend.Pages.Products;
 
@@ -12,7 +10,7 @@ public partial class ProductDetailModal
     public ICartService CartService { get; set; } = default!;
 
     [Inject]
-    public SweetAlertService SweetAlertService { get; set; } = default!;
+    public AlertService SweetAlertService { get; set; } = default!;
 
     [Parameter]
     public Product? Product { get; set; }

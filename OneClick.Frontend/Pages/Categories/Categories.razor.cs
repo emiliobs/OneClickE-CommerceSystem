@@ -1,9 +1,7 @@
-using Microsoft.AspNetCore.Components.Web;
-using OneClick.Frontend.Services;
-using OneClick.Shared.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using System.ComponentModel.Design;
+using OneClick.Frontend.Services;
+using OneClick.Shared.Entities;
 
 namespace OneClick.Frontend.Pages.Categories
 {
@@ -14,7 +12,7 @@ namespace OneClick.Frontend.Pages.Categories
         public ICategoryService CategoryService { get; set; } = default!;
 
         [Inject]
-        public SweetAlertService SweetAlertService { get; set; } = default!;
+        public AlertService SweetAlertService { get; set; } = default!;
 
         private List<Category> categories = new();
 

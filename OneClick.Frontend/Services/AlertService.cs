@@ -1,21 +1,20 @@
-﻿using Microsoft.JSInterop;
-using CurrieTechnologies.Razor.SweetAlert2;
+﻿using CurrieTechnologies.Razor.SweetAlert2;
 
 namespace OneClick.Frontend.Services;
 
-public class SweetAlertService
+public class AlertService
 {
-    private readonly CurrieTechnologies.Razor.SweetAlert2.SweetAlertService _sweetAlertService;
+    private readonly SweetAlertService _sweetAlert;
 
-    public SweetAlertService(CurrieTechnologies.Razor.SweetAlert2.SweetAlertService sweetAlertService)
+    public AlertService(SweetAlertService sweetAlert)
     {
-        this._sweetAlertService = sweetAlertService;
+        this._sweetAlert = sweetAlert;
     }
 
     // Method to show a success toast notification
     public async Task ShowSuccessToast(string message)
     {
-        await _sweetAlertService.FireAsync(new SweetAlertOptions
+        await _sweetAlert.FireAsync(new SweetAlertOptions
         {
             Toast = true,
             Position = SweetAlertPosition.TopEnd,
@@ -31,7 +30,7 @@ public class SweetAlertService
 
     public async Task<bool> ConfirmAsync(string title, string message)
     {
-        var result = await _sweetAlertService.FireAsync(new SweetAlertOptions
+        var result = await _sweetAlert.FireAsync(new SweetAlertOptions
         {
             Title = title,
             Text = message,
@@ -54,7 +53,7 @@ public class SweetAlertService
     // Method to show an error alert (useful for deletion errors)
     public async Task ShowErrorAlert(string title, string message)
     {
-        await _sweetAlertService.FireAsync(new SweetAlertOptions
+        await _sweetAlert.FireAsync(new SweetAlertOptions
         {
             Title = title,
             Text = message,

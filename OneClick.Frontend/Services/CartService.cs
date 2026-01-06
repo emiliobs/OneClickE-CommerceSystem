@@ -6,39 +6,33 @@ namespace OneClick.Frontend.Services;
 public class CartService : ICartService
 {
     private readonly HttpClient _httpClient;
-    private readonly SweetAlertService _sweetAlertService;
 
-    public CartService(HttpClient httpClient, SweetAlertService sweetAlertService)
+    // Modified: We removed SweetAlertService from dependency injection.
+    // Now the service is pure and only handles HTTP logic.
+    public CartService(HttpClient httpClient)
     {
-        this._httpClient = httpClient;
-        this._sweetAlertService = sweetAlertService;
+        _httpClient = httpClient;
     }
 
-    //THe event that components subcribes to
-    public event Action OnChange;
+    // The event that components subscribe to (to update the badge)
+    public event Action? OnChange;
 
     public async Task AddToCartAsync(CartItem cartItem)
     {
-        try
-        {
-            // Calls POST api/Carts
-            var response = await _httpClient.PostAsJsonAsync("api/Carts", cartItem);
+        // Calls POST api/Carts
+        var response = await _httpClient.PostAsJsonAsync("api/Carts", cartItem);
 
-            if (response.IsSuccessStatusCode)
-            {
-                // Notify the UI (Badge) to update
-                OnChange?.Invoke();
-            }
-            else
-            {
-                // Log error if API fails (e.g., BadRequest)
-                var error = await response.Content.ReadAsStringAsync();
-                _sweetAlertService.ShowErrorAlert("Error", $"Error adding to cart: {error}");
-            }
-        }
-        catch (Exception ex)
+        if (response.IsSuccessStatusCode)
         {
-            _sweetAlertService.ShowErrorAlert("Error", $"Http Request Error: {ex.Message}");
+            // Notify the UI (Badge) to update
+            OnChange?.Invoke();
+        }
+        else
+        {
+            // If it fails, we throw an exception with the message from the API.
+            // The Component (UI) will catch this and show the alert.
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception(error);
         }
     }
 
@@ -52,7 +46,9 @@ public class CartService : ICartService
         }
         catch (Exception ex)
         {
-            _sweetAlertService.ShowErrorAlert("Error", $"Error fetching cart items: {ex.Message}");
+            // On read operations, it is often safer to return an empty list
+            // and log the error to the console rather than crashing the page.
+            Console.WriteLine($"Error fetching cart items: {ex.Message}");
             return new List<CartItem>();
         }
     }
@@ -68,57 +64,44 @@ public class CartService : ICartService
             {
                 return await response.Content.ReadFromJsonAsync<int>();
             }
-            else
-            {
-                // If Backend returns 404 (NotFound), it means count is 0 based on your logic
-                return 0;
-            }
+
+            // If Backend returns 404 or error, assume count is 0
+            return 0;
         }
         catch (Exception ex)
         {
-            _sweetAlertService.ShowErrorAlert("Error", $"Error fetching cart count: {ex.Message}");
-
+            Console.WriteLine($"Error fetching cart count: {ex.Message}");
             return 0;
         }
     }
 
     public async Task UpdateQuantityAsync(int userId, int productId, int newQuantity)
     {
-        // Call the put endpint we created early
         var response = await _httpClient.PutAsync($"api/Carts/update-quantity/{userId}/{productId}/{newQuantity}", null);
 
         if (response.IsSuccessStatusCode)
         {
-            // Notify the UI (Badge) to update
             OnChange?.Invoke();
         }
         else
         {
             var error = await response.Content.ReadAsStringAsync();
-            _sweetAlertService.ShowErrorAlert("Error", $"Error updating cart item quantity: {error}");
+            throw new Exception($"Error updating quantity: {error}");
         }
     }
 
     public async Task DeleteItemAsync(int userId, int productId)
     {
-        try
+        var response = await _httpClient.DeleteAsync($"api/Carts/{userId}/{productId}");
+
+        if (response.IsSuccessStatusCode)
         {
-            // Call the delete endpoint we created early
-            var response = await _httpClient.DeleteAsync($"api/Carts/{userId}/{productId}");
-            if (response.IsSuccessStatusCode)
-            {
-                // Notify the UI (Badge) to update
-                OnChange?.Invoke();
-            }
-            else
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                _sweetAlertService.ShowErrorAlert("Error", $"Error deleting cart item: {error}");
-            }
+            OnChange?.Invoke();
         }
-        catch (Exception ex)
+        else
         {
-            _sweetAlertService.ShowErrorAlert("Error", $"Http Request Error: {ex.Message}");
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Error deleting item: {error}");
         }
     }
 }

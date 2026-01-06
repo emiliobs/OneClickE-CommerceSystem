@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using OneClick.Backend.Repositories;
 using OneClick.Shared.Entities;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
 
 namespace OneClick.Backend.Controllers
 {

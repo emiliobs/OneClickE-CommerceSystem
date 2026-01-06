@@ -1,5 +1,4 @@
 ﻿using OneClick.Shared.Entities;
-using System.Collections.Generic;
 
 namespace OneClick.Backend.Repositories;
 
