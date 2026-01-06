@@ -1,57 +1,54 @@
 ﻿@page "/checkout"
 <div class="container py-5" style="color: white;">
-    <h2 class="mb-4 fw-bold"><i class="bi bi-credit-card-2-front me-2"></i>Finalizar Compra</h2>
-
+    <h2 class="mb-4 fw-bold"><i class="bi bi-credit-card-2-front me-2"></i>Checkout</h2>
     <div class="row">
         <div class="col-md-8">
             <div class="card border-0 shadow-lg mb-4" style="background-color: #232342; color: white;">
                 <div class="card-header border-0 bg-transparent py-3">
-                    <h5 class="mb-0 text-danger fw-bold">1. Dirección de Envío</h5>
+                    <h5 class="mb-0 text-danger fw-bold">1. Shipping Address</h5>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label text-secondary">Nombre</label>
+                            <label class="form-label text-secondary">Name</label>
                             <input type="text" class="form-control bg-dark text-white border-secondary" value="Emilio Barrera">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label text-secondary">Teléfono</label>
+                            <label class="form-label text-secondary">Phone</label>
                             <input type="text" class="form-control bg-dark text-white border-secondary" value="+44 7700 900000">
                         </div>
                         <div class="col-12">
-                            <label class="form-label text-secondary">Dirección</label>
+                            <label class="form-label text-secondary">Address</label>
                             <input type="text" class="form-control bg-dark text-white border-secondary" placeholder="123 London Met Street">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label text-secondary">Ciudad</label>
+                            <label class="form-label text-secondary">City</label>
                             <input type="text" class="form-control bg-dark text-white border-secondary" value="London">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label text-secondary">Código Postal</label>
+                            <label class="form-label text-secondary">Zip Code</label>
                             <input type="text" class="form-control bg-dark text-white border-secondary" value="N7 8DB">
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="card border-0 shadow-lg" style="background-color: #232342; color: white;">
                 <div class="card-header border-0 bg-transparent py-3">
-                    <h5 class="mb-0 text-danger fw-bold">2. Método de Pago</h5>
+                    <h5 class="mb-0 text-danger fw-bold">2. Payment Method</h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex gap-3">
                         <div class="border border-danger rounded p-3 text-center" style="width: 100px; cursor: pointer; background: rgba(220, 53, 69, 0.1);">
                             <i class="bi bi-credit-card fs-3 text-danger"></i>
-                            <div class="small mt-1">Tarjeta</div>
+                            <div class="small mt-1">Card</div>
                         </div>
                         <div class="border border-secondary rounded p-3 text-center" style="width: 100px; cursor: pointer; opacity: 0.5;">
                             <i class="bi bi-paypal fs-3 text-primary"></i>
                             <div class="small mt-1">PayPal</div>
                         </div>
                     </div>
-
                     <div class="mt-4">
-                        <label class="form-label text-secondary">Número de Tarjeta (Demo)</label>
+                        <label class="form-label text-secondary">Card Number (Demo)</label>
                         <div class="input-group">
                             <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-credit-card"></i></span>
                             <input type="text" class="form-control bg-dark text-white border-secondary" placeholder="0000 0000 0000 0000">
@@ -60,11 +57,10 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-4">
             <div class="card border-0 shadow-lg position-sticky" style="top: 20px; background-color: #1a1a2e; border: 1px solid #333 !important;">
                 <div class="card-header border-0 bg-transparent py-3">
-                    <h5 class="mb-0 text-white">Resumen</h5>
+                    <h5 class="mb-0 text-white">Summary</h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -72,21 +68,19 @@
                         <span class="text-white">$145.00</span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-secondary">Envío</span>
-                        <span class="text-success">Gratis</span>
+                        <span class="text-secondary">Shipping</span>
+                        <span class="text-success">Free</span>
                     </div>
                     <hr class="border-secondary">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <span class="fs-5 fw-bold">Total</span>
                         <span class="fs-4 fw-bold text-danger">$145.00</span>
                     </div>
-
                     <button class="btn btn-success w-100 py-3 fw-bold fs-5 shadow">
-                        CONFIRMAR PAGO <i class="bi bi-lock-fill ms-2"></i>
+                        CONFIRM PAYMENT <i class="bi bi-lock-fill ms-2"></i>
                     </button>
-
                     <div class="text-center mt-3 small text-secondary">
-                        <i class="bi bi-shield-check me-1"></i> Transacción Segura
+                        <i class="bi bi-shield-check me-1"></i> Secure Transaction
                     </div>
                 </div>
             </div>

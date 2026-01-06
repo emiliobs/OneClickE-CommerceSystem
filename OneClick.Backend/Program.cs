@@ -52,7 +52,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "OneClick E-Commerce API",
         Version = "v1",
-        Description = "API for OneClick E-Commerce System",
+        Description = "API for OneClick E-Commerce System By Emilio Barrera - London 2026 ",
         Contact = new OpenApiContact
         {
             Name = "OneClick Team",

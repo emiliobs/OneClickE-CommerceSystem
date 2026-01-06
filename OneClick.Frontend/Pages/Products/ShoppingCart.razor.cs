@@ -106,10 +106,12 @@ public partial class ShoppingCart
         }
     }
 
-    private void GoToCheckout()
+    private async Task GoToCheckout()
     {
-        CloseModal(); // Cierra el carrito
+        // 1. Close the cart modal so it doesn't stay open
+        await CloseModal();
 
-        Navigation.NavigateTo("/checkout"); // Va a la nueva página
+        // 2. Navigate to the Checkout page
+        Navigation.NavigateTo("/checkout");
     }
 }
