@@ -88,10 +88,15 @@
 
         @if (GetFilteredAndPAginateProducts().Count == 0)
         {
+             //Task.Delay(1000); // Small delay for UX
+
             <div class="text-center py-5">
-                <div style="font-size: 3rem;">🕵️‍♂️</div>
-                <h3 class="text-muted mt-2">No products found</h3>
-                <p>Try adjusting your search or filters.</p>
+                <div class="spinner-border text-danger" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading.....</span>
+                </div>
+
+                <h3 class="text-muted mt-3">Loading products...</h3>
+                <p class="text-secondary">Please wait. Try adjusting your search or filters..</p>
             </div>
         }
         else
