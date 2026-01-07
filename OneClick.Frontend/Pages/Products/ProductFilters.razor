@@ -102,11 +102,19 @@
                 </div>
             </div>
 
-            <div class="col-md-2 text-end">
+            @* <div class="col-md-2 text-end">
                 <span class="badge bg-primary p-2 rounded-pill shadow-sm">
-                    <i class="bi bi-box-seam me-1"></i> @ResultCount Products Found
+                    <i class="bi bi-box-seam me-1"></i> Showing @ResultCount of @TotalProductCount Products
+                </span>
+            </div> *@
+
+            <div class="col-md-2 text-end">
+                <span class="badge p-2 rounded-pill shadow-sm"
+                      style="background-color: var(--accent-blue); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                    <i class="bi bi-box-seam me-1"></i> Showing @ResultCount of @TotalProductCount Products
                 </span>
             </div>
+
         </div>
     </div>
 

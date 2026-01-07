@@ -10,6 +10,8 @@ public partial class ProductFilters
 
     [Parameter] public int ResultCount { get; set; }
 
+    [Parameter] public int TotalProductCount { get; set; }
+
     // Two-way binding parameters (or simple event callbacks)
     [Parameter] public string SearchText { get; set; } = "";
 

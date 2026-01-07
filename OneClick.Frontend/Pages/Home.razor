@@ -55,10 +55,10 @@
 
         <ProductFilters Categories="@categories"
                         ResultCount="@GetFilteredAndPAginateProducts().Count"
+						TotalProductCount="@products!.Count"
                         @bind-SearchText="SearchText"
                         @bind-SelectedCategory="SelectedCategory"
-                        @bind-SelectedStatus="SelectedStatus"
-                        >
+                        @bind-SelectedStatus="SelectedStatus">
         </ProductFilters>
 
         @if (GetFilteredAndPAginateProducts().Count == 0)
