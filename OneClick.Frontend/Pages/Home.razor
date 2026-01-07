@@ -9,12 +9,15 @@
         background: linear-gradient(135deg, #d84315 0%, #b71c1c 100%);
         color: white;
     }
+       
 
     .floating-container {
         position: fixed;
         bottom: 32px;
         right: 32px;
         z-index: 1000; /* Asegura que flote sobre todo lo demás */
+
+
     }
     /* Animación suave al pasar el mouse (opcional) */
     .btn-danger {
@@ -23,11 +26,33 @@
 
         .btn-danger:hover {
             transform: scale(1.1); /* Efecto de "crecer" */
+        }
+    
 </style>
 
 <PageTitle>Catalog - OneClick</PageTitle>
 
 <div class="container-fluid p-3">
+
+    <!-- Contenedor fijo en la esquina -->
+    <div class="floating-container">
+        <button class="btn btn-danger rounded-circle shadow-lg d-flex align-items-center justify-content-center"
+                style="width: 60px; height: 60px;" @onclick="ShowCart">
+
+            <!-- Icono (usando Bootstrap Icons) -->
+            <i class="bi bi-cart3 fs-4"></i>
+
+            <!-- Burbuja del contador -->
+            @if (cartCount > 0)
+            {
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white shadow-sm"
+                      style="font-size: 0.8rem; padding: 0.5em 0.7em;">
+                    @(cartCount > 99 ? "99+" : cartCount)
+                    <span class="visually-hidden">items</span>
+                </span>
+            }
+        </button>
+    </div>
 
     @if (products is null && isLoading)
     {
@@ -95,25 +120,7 @@
         }        
     }   
 
-    <!-- Contenedor fijo en la esquina -->
-    <div class="floating-container">
-        <button class="btn btn-danger rounded-circle shadow-lg d-flex align-items-center justify-content-center"
-                style="width: 60px; height: 60px;" @onclick="ShowCart">
-
-            <!-- Icono (usando Bootstrap Icons) -->
-            <i class="bi bi-cart3 fs-4"></i>
-            
-            <!-- Burbuja del contador -->
-            @if (cartCount > 0)
-            {
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white shadow-sm"
-                      style="font-size: 0.8rem; padding: 0.5em 0.7em;">
-                    @(cartCount > 99 ? "99+" : cartCount)
-                    <span class="visually-hidden">items</span>
-                </span>
-            }
-        </button>
-    </div>
+   
 
     <ShoppingCart @bind-IsOpen="showCart"></ShoppingCart>
 
