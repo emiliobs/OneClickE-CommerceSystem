@@ -65,19 +65,39 @@
             color: white;
         }
 
+/* 1. Iconos SIEMPRE Rojos (Identidad OneClick) */
+.brand-icon {
+    color: #f53005;
+    transition: transform 0.2s;
+}
+
+/* 2. Texto Blanco Suave (Legibilidad) */
+.nav-text {
+    color: #e0e0e0;
+    font-weight: 500;
+    transition: color 0.3s;
+    white-space: nowrap; /* Evita que "Manage Categories" se parta en dos líneas */
+}
+
+/* 3. EFECTO HOVER */
+.nav-link:hover .nav-text {
+    color: #f53005;
+}
+
+.nav-link:hover {
+    background-color: rgba(245, 48, 5, 0.08); /* Fondo sutil al pasar el mouse */
+    border-radius: 0 25px 25px 0; /* Un toque moderno redondeado a la derecha */
+}
+
+/* Ajuste para que el contenido principal se expanda */
 @media (min-width: 641px) {
-    .navbar-toggler {
-        display: none;
+    .page {
+        flex-direction: row;
     }
 
-    .collapse {
-        /* Never collapse the sidebar for wide screens */
-        display: block;
-    }
-
-    .nav-scrollable {
-        /* Allow sidebar to scroll for tall menus */
-        height: calc(100vh - 3.5rem);
-        overflow-y: auto;
+    .sidebar {
+        height: 100vh;
+        position: sticky;
+        top: 0;
     }
 }

@@ -18,7 +18,7 @@
 
 .product-media-container {
     text-align: center;
-    padding: 10px; /* Tu margen deseado */
+    padding: 5px; /* Tu margen deseado */
     background: white;
     height: 260px;
     display: flex;
@@ -30,14 +30,13 @@
 
 .product-media {
     height: 100%;
-    object-fit: contain;
+    object-fit: cover !important;
     transition: transform 0.3s ease;
-    /* ✅ 1. FORZAMOS EL REDONDEO EN LA FOTO */
+    /*FORZAMOS EL REDONDEO EN LA FOTO */
     border-radius: 16px !important;
-    /* ✅ 2. EL TRUCO: Una sombra suave o borde para que se vea el corte */
+    /*EL TRUCO: Una sombra suave o borde para que se vea el corte */
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     /* O si prefieres borde: border: 1px solid #eee; */
-    border-radius: 16px;
 }
 
 .product-card:hover .product-media {
