@@ -1,6 +1,6 @@
 ﻿@using OneClick.Shared.Entities
 
-<div class="card product-card shadow-sm h-">
+<div class="card product-card shadow-sm h-100">
 
     @if (Product.Price < 15)
     {
@@ -8,14 +8,7 @@
             <span>🔥</span> OFFER
         </div>
     }
-      @*   <div class="product-media-container" style="cursor:pointer;" @onclick="HandledViewDetails">
-            <img src="@Product.ImageURL" class="product-media" alt="@Product.Name" />
-            <div class="hover-overlay">
-                <i class="bi bi-eye-fill text-white fs-1"></i>
-            </div> 
-            
-        </div>    *@    
-
+       
     <div class="product-media-container" @onclick="HandledViewDetails">
         <img src="@Product.ImageURL" class="product-media border" style="border:16px;" alt="@Product.Name" />
         <div class="hover-overlay">
@@ -28,7 +21,7 @@
         <h5 class="card-title fw-bold text-muted">@Product.Name</h5>
         <p class="card-text text-muted small flex-grow-1">@Product.Description</p>
 
-        <hr class="my-o" style="border-color: rgba(255,255,255,0.5);" />
+        <hr class="m-0" style="border-color: grey;" />
 
         <div class="d-flex justify-content-between align-items-center mb-3">
 

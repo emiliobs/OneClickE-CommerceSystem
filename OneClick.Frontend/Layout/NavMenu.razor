@@ -1,4 +1,24 @@
-﻿﻿<div class="top-row ps-3 navbar navbar-dark" style="background-color: #D32F2F; justify-content: flex-start;">
+﻿
+<style>
+
+    /* 1. Iconos SIEMPRE Rojos (Identidad OneClick) */
+    .brand-icon {
+        color: #f53005;
+        transition: transform 0.2s; /* Pequeña animación */
+    }
+    /* 2. Texto Blanco Suave (Legibilidad) */
+    .nav-text {
+        color: #e0e0e0;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+    /* 3. EFECTO HOVER (Cuando pasas el mouse) */
+    .nav-link:hover .nav-text {
+        color: #f53005; /* El texto se enciende en rojo al pasar el mouse */
+    }
+</style>
+
+<div class="top-row ps-3 navbar navbar-dark" style="background-color: #D32F2F; justify-content: flex-start;">
     <div class="container-fluid">
         <a class="d-flex" href="">
             <i class="bi bi-cursor-fill text-white fs-4 me-1"></i>
@@ -13,14 +33,15 @@
 </div>
 
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+<div class="@NavMenuCssClass"  @onclick="ToggleNavMenu">
+
     <nav class="flex-column">
 
         <div class="nav-item px-3">
             <NavLink class="nav-link p-0" href="" Match="NavLinkMatch.All">
                 <div class="d-flex align-items-center py-2 px-3 gap-3">
-                    <i class="bi bi-house-door-fill fs-5 lh-1"></i>
-                    <span class="fs-6 pb-1">Home</span>
+                    <i class="bi bi-house-door fs-5 lh-1 brand-icon"></i>
+                    <span class="fs-6 pb-1 nav-text">Home</span>
                 </div>
             </NavLink>
         </div>
@@ -28,8 +49,8 @@
         <div class="nav-item px-3">
             <NavLink class="nav-link p-0" href="products">
                 <div class="d-flex align-items-center py-2 px-3 gap-3">
-                    <i class="bi bi-box-seam fs-5 lh-1"></i>
-                    <span class="fs-6 pb-1">Manage Products</span>
+                    <i class="bi bi-box-seam fs-5 lh-1 brand-icon"></i>
+                    <span class="fs-6 pb-1 nav-text">Manage Stock</span>
                 </div>
             </NavLink>
         </div>
@@ -37,8 +58,8 @@
         <div class="nav-item px-3">
             <NavLink class="nav-link p-0" href="categories">
                 <div class="d-flex align-items-center py-2 px-3 gap-3">
-                    <i class="bi bi-tags fs-5 lh-1"></i>
-                    <span class="fs-6 pb-1">Manage Categories</span>
+                    <i class="bi bi-tags fs-5 lh-1 brand-icon"></i>
+                    <span class="fs-6 pb-1 nav-text">Manage Categories</span>
                 </div>
             </NavLink>
         </div>
@@ -46,13 +67,14 @@
         <div class="nav-item px-3">
             <NavLink class="nav-link p-0" href="about">
                 <div class="d-flex align-items-center py-2 px-3 gap-3">
-                    <i class="bi bi-info-circle-fill fs-5 lh-1"></i>
-                    <span class="fs-6 pb-1">About</span>
+                    <i class="bi bi-info-circle fs-5 lh-1 brand-icon"></i>
+                    <span class="fs-6 pb-1 nav-text">About</span>
                 </div>
             </NavLink>
         </div>
 
     </nav>
+
 </div>
 
 @code {
