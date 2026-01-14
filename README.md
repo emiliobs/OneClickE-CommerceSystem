@@ -9,6 +9,10 @@
 ## Product Details
 <img width="2546" height="1352" alt="image" src="https://github.com/user-attachments/assets/162f5ba8-8293-44dd-af3f-46c16c05891d" />
 
+## Checkout
+<img width="2551" height="1354" alt="image" src="https://github.com/user-attachments/assets/401919d2-4837-4116-be4b-54591799cf13" />
+
+
 ## My Cart
 <img width="2558" height="1351" alt="image" src="https://github.com/user-attachments/assets/c6f03420-7d2c-4d45-94ef-7c24b06633d6" />
 
