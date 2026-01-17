@@ -6,4 +6,6 @@ public interface IOrderRepository
 {
     // Creates an order based on the user's current cart
     Task<Order> CreateOrderAsync(Order order);
+
+    Task<Order?> GetOrderByIdAsync(int id);
 }
