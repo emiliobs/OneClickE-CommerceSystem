@@ -1,6 +1,6 @@
 # 🛒 OneClick E-Commerce System
 
-Welcome to **OneClick**, a modern, full-stack e-commerce solution built with **.NET 8** and **Blazor WebAssembly**. This platform provides a seamless shopping experience with a robust, secure, and scalable backend architecture.
+Welcome to **OneClick**, a modern, full-stack e-commerce solution built with **.NET 10** and **Blazor WebAssembly**. This platform provides a seamless shopping experience with a robust, secure, and scalable backend architecture.
 
 ---
 
@@ -42,7 +42,7 @@ Welcome to **OneClick**, a modern, full-stack e-commerce solution built with **.
 
 ## 💻 Technologies Used
 * **Frontend:** Blazor WebAssembly, HTML5, CSS3, Bootstrap
-* **Backend:** ASP.NET Core Web API (.NET 8)
+* **Backend:** ASP.NET Core Web API (.NET 10)
 * **Database:** Azure SQL Database, Entity Framework Core
 * **Architecture:** N-Layer, Repository Pattern
 
