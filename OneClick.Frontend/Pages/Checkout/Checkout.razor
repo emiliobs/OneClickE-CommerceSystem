@@ -77,19 +77,33 @@
                         <h5 class="mb-0 text-white">Summary</h5>
                     </div>
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="text-secondary">Subtotal</span>
-                            <span class="text-white">Calculated at Checkout</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="text-secondary">Shipping</span>
-                            <span class="text-success">Free</span>
-                        </div>
-                        <hr class="border-secondary">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <span class="fs-5 fw-bold">Total</span>
-                            <span class="fs-4 fw-bold text-danger">See Invoice</span>
-                        </div>
+                        @*  Show a loading spinner while fetch cart data *@
+                        @if (isLoadingSummary)
+                        {
+                            <div class="text-center py-4">
+                                <span class="spinner-border text-secondary" role="status" aria-hidden="true"></span>
+                                <span class="ms-2 text-secondary">Calculating totals.....</span>
+                            </div>
+                        }
+                        else
+                        {
+                           @*  Once load, show the real dynamic varables *@
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-secondary">Subtotal</span>
+                                <span class="text-secondary">Subtotal (@totalItems items)</span>
+                                <span class="text-white">£@cartTotal.ToString("0.00")</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-secondary">Shipping</span>
+                                <span class="text-success">Free</span>
+                            </div>
+                            <hr class="border-secondary">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <span class="fs-5 fw-bold">Total</span>
+                                <span class="fs-4 fw-bold text-danger">£@cartTotal.ToString("0.00")</span>
+                            </div>
+                        }
+                        
                         
                         <button type="submit" class="btn btn-success w-100 py-3 fw-bold fs-5 shadow" disabled="@isProcessing">
                             @if (isProcessing)

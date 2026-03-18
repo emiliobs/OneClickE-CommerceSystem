@@ -18,18 +18,56 @@ public partial class Checkout
     [Inject]
     public AlertService AlertService { get; set; } = null!;
 
+    [Inject]
+    public ICartService CartService { get; set; } = null;
+
     // State variables
     protected Order order = new Order();
 
     protected bool isProcessing = false;
 
+    // State varaibles for the Summary Panel
+    private decimal cartTotal = 0;
+
+    private int totalItems = 0;
+    private bool isLoadingSummary = false;
+
     // Hardcoded user for now (will change when we add Authentication)
     private int currentUserId = 1;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         // Assign the user ID to the order when the page loads
         order.UserId = currentUserId;
+
+        await LoadSummaryAsync();
+    }
+
+    // Method to calclulate the total price ans item count for the summary panel
+    private async Task LoadSummaryAsync()
+    {
+        try
+        {
+            var cartItems = await CartService.GetCartItemsAsync(currentUserId);
+
+            if (cartItems != null && cartItems.Any())
+            {
+                // Sum the queanity of all items to get the total item count
+                totalItems = cartItems.Sum(item => item.Quantity);
+
+                // Sum the quantity price (Price * quantity for each item)
+                cartTotal = cartItems.Sum(item => item.Product!.Price * item.Quantity);
+            }
+        }
+        catch (Exception ex)
+        {
+            await AlertService.ShowErrorAlert("[Checkout]  Error loading cart summary: ", ex.Message);
+        }
+        finally
+        {
+            // Stop the loading indicator for the summary panel
+            isLoadingSummary = false;
+        }
     }
 
     // Handler for the form submission
