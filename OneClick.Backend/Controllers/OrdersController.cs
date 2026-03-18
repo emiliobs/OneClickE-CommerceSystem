@@ -32,9 +32,13 @@ public class OrdersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<int>> CreateOrderAsync([FromBody] Order order)
     {
-        if (order is null || !ModelState.IsValid)
+        // Check if the model is valid manually to send a clean message
+        if (!ModelState.IsValid)
         {
-            return BadRequest("Invalid order data.");
+            // Extract all validation error message into a single string
+            var errors = string.Join("; ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+
+            return BadRequest($"Validation failed: {errors}");
         }
 
         try
@@ -47,7 +51,13 @@ public class OrdersController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Error creating order: {ex.Message}");
+            // Capture inner database exception if they exist for more detailed error messages
+            var actualError = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+
+            // Log it in the backend console
+            Console.WriteLine($"OrcerController Cirtical Error: {actualError}");
+
+            return StatusCode(500, $"Error creating order: {actualError}");
         }
     }
 }

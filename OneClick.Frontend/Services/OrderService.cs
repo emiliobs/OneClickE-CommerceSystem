@@ -1,4 +1,5 @@
 ﻿using OneClick.Shared.Entities;
+using System.Net.Http.Json;
 
 namespace OneClick.Frontend.Services;
 
@@ -11,13 +12,52 @@ public class OrderService : IOrderService
         this._httpClient = httpClient;
     }
 
-    public Task<Order> GetOrderByIdAsync(int id)
+    public async Task<int> PlaceOrderAsync(Order order)
     {
-        throw new NotImplementedException();
+        try
+        {
+            // Send the order object to the backend OrdersController
+            var response = await _httpClient.PostAsJsonAsync("api/Orders", order);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // If successful, the backend returns the ID of the new order
+                return await response.Content.ReadFromJsonAsync<int>();
+            }
+            else
+            {
+                // If it fails, read the error message from the server
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Error placing order: {errorMessage}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[OrderService] Exception in PlaceOrderAsync: {ex.Message}");
+            throw;
+        }
     }
 
-    public Task<int> PlaceOrderAsync(Order order)
+    public async Task<Order?> GetOrderByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            // Get the order details by ID
+            var response = await _httpClient.GetAsync($"api/Orders/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<Order>();
+            }
+            else
+            {
+                throw new Exception($"Error getting order details. Status code: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[OrderService] Exception in GetOrderByIdAsync: {ex.Message}");
+            throw;
+        }
     }
 }

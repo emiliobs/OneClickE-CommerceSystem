@@ -11,13 +11,16 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 // Configure HttpClient for backend API
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri("https://oneclickapi.runasp.net")
+    //BaseAddress = new Uri("https://oneclickapi.runasp.net")
+    BaseAddress = new Uri("https://localhost:7009/")
 });
 
 // Register services with interface
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
 // This tells Blazor: "When a page asks for SweetAlertService, give them this class."
 builder.Services.AddScoped<AlertService>();
 builder.Services.AddSweetAlert2();

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -7,7 +8,7 @@
 namespace OneClick.Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialOneClick : Migration
+    public partial class AddDetailedShippingInfo : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -75,7 +76,11 @@ namespace OneClick.Backend.Migrations
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ShippingAddress = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ShippingName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ShippingPhone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    ShippingAddress = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Postcode = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
