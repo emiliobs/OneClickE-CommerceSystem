@@ -8,4 +8,7 @@ public interface IOrderRepository
     Task<Order> CreateOrderAsync(Order order);
 
     Task<Order?> GetOrderByIdAsync(int id);
+
+    // Method to get all orders for a specific user by their user ID
+    Task<IEnumerable<Order?>> GetOrdersByUserIdAsync(int userId);
 }

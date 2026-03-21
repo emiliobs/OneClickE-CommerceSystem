@@ -9,4 +9,7 @@ public interface IOrderService
 
     // Retrieves an order by its ID (useful for confirmation page)
     Task<Order> GetOrderByIdAsync(int id);
+
+    // Retrieves all orders for a specific user by their user ID (useful for order history page)
+    Task<IEnumerable<Order>> GetOrdersByUsersIdAsync(int userId);
 }

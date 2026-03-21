@@ -60,4 +60,29 @@ public class OrderService : IOrderService
             throw;
         }
     }
+
+    public async Task<IEnumerable<Order>> GetOrdersByUsersIdAsync(int userId)
+    {
+        try
+        {
+            // Call the new API endpoint we just created in the controller to get orders by user ID
+            var response = await _httpClient.GetAsync($"api/orders/user/{userId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var orders = await response.Content.ReadFromJsonAsync<IEnumerable<Order>>();
+
+                return orders ?? new List<Order>(); // Return empty list if null
+            }
+            else
+            {
+                throw new Exception($"Failed to fetch order history. Status: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Order Services. Exception in GetOrdersByUserIdAsync: {ex.Message}");
+            throw;
+        }
+    }
 }

@@ -97,4 +97,22 @@ public class OrderRepository : IOrderRepository
             throw;
         }
     }
+
+    public async Task<IEnumerable<Order?>> GetOrdersByUserIdAsync(int userId)
+    {
+        try
+        {
+            // Fetch all orders for the user, newest first
+            return await _context.Orders
+                .Include(o => o.OrderItems) // Include items to show how many products they bought.
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Orders Repository Error fetching user orders: {ex.Message}");
+            throw;
+        }
+    }
 }

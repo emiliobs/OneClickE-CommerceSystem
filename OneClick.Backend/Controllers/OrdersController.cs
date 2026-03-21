@@ -29,6 +29,22 @@ public class OrdersController : ControllerBase
         return Ok(order);
     }
 
+    [HttpGet("user/{userId:int}")]
+    public async Task<ActionResult<IEnumerable<Order>>> GetOrdersByUserIdAsync(int userId)
+    {
+        try
+        {
+            // Fetch the list of orders from the repository based on the user ID
+            var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
+            return Ok(orders);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Orders Controller. Error getting user orders: {ex.Message}");
+            return StatusCode(500, "Error retrieving order history.");
+        }
+    }
+
     [HttpPost]
     public async Task<ActionResult<int>> CreateOrderAsync([FromBody] Order order)
     {
