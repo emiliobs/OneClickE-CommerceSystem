@@ -1,29 +1,25 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
-namespace OneClick.Shared.Entities
+namespace OneClick.Shared.Entities;
+
+// Inheriting from IdentityUser<int> provides the integer ID, Email, and Password securely
+public class User : IdentityUser<int>
 {
-    public class User
-    {
-        public int Id { get; set; }
+    [Required(ErrorMessage = "First name is required.")]
+    [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "The first name must contain only letters.")]
+    public string FirstName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Name is required.")]
-        // This regex allows alphabetic characters (a-z, A-Z) and spaces, but no numbers.
-        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "The name must contain only letters.")]
-        public string Name { get; set; } = string.Empty;
+    // --- NEW: Last Name property with identical validation ---
+    [Required(ErrorMessage = "Last name is required.")]
+    [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "The last name must contain only letters.")]
+    public string LastName { get; set; } = string.Empty;
 
-        // Validation: Ensure it is a valid email format
-        [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Invalid email format.")]
-        public string Email { get; set; } = string.Empty;
+    // Keep the Role property for authorization later
+    public string Role { get; set; } = "Customer";
 
-        // Note: In a real app, never store plain passwords. This stores the Hash.
-        public string PasswordHash { get; set; } = string.Empty;
+    // Inverse relationships for Entity Framework
+    public ICollection<Order>? Orders { get; set; }
 
-        public string Role { get; set; } = "Customer"; // "Admin" or "Customer"
-
-        //Relación inversa (Un usuario tiene muchas ordenes y items)
-        public ICollection<Order>? Orders { get; set; }
-
-        public ICollection<CartItem>? CartItems { get; set; }
-    }
+    public ICollection<CartItem>? CartItems { get; set; }
 }
