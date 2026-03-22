@@ -105,6 +105,7 @@ public class OrderRepository : IOrderRepository
             // Fetch all orders for the user, newest first
             return await _context.Orders
                 .Include(o => o.OrderItems) // Include items to show how many products they bought.
+                .ThenInclude(p => p.Product) // Firts, load the list
                 .Where(o => o.UserId == userId)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();

@@ -53,7 +53,7 @@
                                         <span class="badge bg-warning text-dark">@order.OrderStatus</span>
                                     </td>
                                     <td class="py-3 text-end">
-                                        <button class="btn btn-sm btn-outline-light">
+                                        <button class="btn btn-sm btn-outline-light" @onclick="() => ShowDetails(order)">
                                             <i class="bi bi-eye"></i> Details
                                         </button>
                                     </td>
@@ -66,3 +66,60 @@
         </div>
     </div>
 </div>
+
+@if (selectedOrder != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.7);">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content shadow-lg" style="background-color: #232342; border: 1px solid #dc3545;">
+                
+                <div class="modal-header border-0 bg-danger text-white">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-cart-check me-2"></i>Order #@selectedOrder.Id Details
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseDetails"></button>
+                </div>
+                
+                <div class="modal-body p-4 text-white">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-end">Unit Price</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (selectedOrder.OrderItems != null)
+                                {
+                                    @foreach (var item in selectedOrder.OrderItems)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @* Show product name if available, otherwise show ID *@
+                                                @(item.Product?.Name ?? $"Product #{item.ProductId}")
+                                            </td>
+                                            <td class="text-center">@item.Quantity</td>
+                                            <td class="text-end">£@item.Price.ToString("0.00")</td>
+                                            <td class="text-end text-success fw-bold">
+                                                £@((item.Quantity * item.Price).ToString("0.00"))
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="modal-footer border-0 d-flex justify-content-between">
+                    <h4 class="fw-bold mb-0">Total: <span class="text-danger">£@selectedOrder.TotalAmount.ToString("0.00")</span></h4>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseDetails">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}

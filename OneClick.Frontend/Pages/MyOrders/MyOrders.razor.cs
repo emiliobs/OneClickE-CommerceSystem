@@ -21,6 +21,9 @@ public partial class MyOrders
     // Harcode user ID for the current simulation
     private int currentUserID = 1;
 
+    // Holds the order that the user wants to see in detail
+    protected Order? selectedOrder;
+
     // This method runs automatically when the pasge loads
     protected override async Task OnInitializedAsync()
     {
@@ -49,5 +52,17 @@ public partial class MyOrders
             // Always stop laoding spinner, regardless of success or failure
             isLoading = false;
         }
+    }
+
+    // Method to open the modal
+    protected void ShowDetails(Order order)
+    {
+        selectedOrder = order;
+    }
+
+    //  Methos to close the modal
+    protected void CloseDetails()
+    {
+        selectedOrder = null;
     }
 }
