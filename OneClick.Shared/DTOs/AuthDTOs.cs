@@ -27,3 +27,6 @@ public record UserLoginDTO
     [Required(ErrorMessage = "Password is required")]
     string Password
 );
+
+// This record is used to cleanly reeive the token from the API
+public record AuthResponseDTO(string Token, DateTime Expiration, string message);
