@@ -42,7 +42,7 @@ public partial class MyOrders
         }
         catch (Exception ex)
         {
-            SweetAlertService.ShowErrorAlert("My Orders Error loading order history: ", $"{ex.Message}");
+            await SweetAlertService.ShowErrorAlert("My Orders Error loading order history: ", $"{ex.Message}");
 
             // If it fails, Initialize as an empty list to avoid null reference error in the HTML
             orders = new List<Order>();

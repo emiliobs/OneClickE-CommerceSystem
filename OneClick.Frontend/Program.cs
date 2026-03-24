@@ -20,6 +20,8 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+// Tell Blazor to use AuthService whenever a component asks for IAuthService
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // This tells Blazor: "When a page asks for SweetAlertService, give them this class."
 builder.Services.AddScoped<AlertService>();
