@@ -10,11 +10,25 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// Configure HttpClient for backend API
-builder.Services.AddScoped(sp => new HttpClient
+// 1. Register the JwtInterceptor so Blazor can create it
+builder.Services.AddTransient<JwtInterceptor>();
+
+// 2. Register the HttpClient and wrap it with our Interceptor
+builder.Services.AddScoped(sp =>
 {
-    //BaseAddress = new Uri("https://oneclickapi.runasp.net")
-    BaseAddress = new Uri("https://localhost:7009/")
+    // Get the interceptor we just registered
+    var interceptor = sp.GetRequiredService<JwtInterceptor>();
+
+    // Assign the default message handler to let requests actually go out
+    interceptor.InnerHandler = new HttpClientHandler();
+
+    // Return the custom HttpClient pointing to your API
+    return new HttpClient(interceptor)
+    {
+        // IMPORTANT: Make sure this is your correct Backend port!
+        //BaseAddress = new Uri("https://oneclickapi.runasp.net")
+        BaseAddress = new Uri("https://localhost:7009/")
+    };
 });
 
 // Register services with interface
