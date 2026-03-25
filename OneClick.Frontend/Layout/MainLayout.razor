@@ -1,5 +1,10 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using OneClick.Frontend.AuthProviders
+@inherits LayoutComponentBase
 @inject IJSRuntime JSRuntime
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject NavigationManager _NavigationManager
+@inject AlertService _SweetAlertService
 
 
 
@@ -35,18 +40,32 @@
 
             <div style="border-left: 1px solid rgba(255,255,255,0.3); height: 20px;"></div>
 
-            <div class="d-flex align-items-center text-white gap-3">
-                <a href="/login" class="text-white text-decoration-none d-flex align-items-center btn btn-outline-dark border-0">
-                    <span class="me-2 fw-bold">Login</span>
-                    <i class="bi bi-box-arrow-in-right fs-4"></i>
-                </a>
-            </div>
+            <AuthorizeView>
+                <Authorized>
+                    <div class="d-flex align-items-center text-white gap-3">
+                       <span class="me-2 fw-bold">Hi, @context.User.Identity?.Name!</span>
+                        <button @onclick="LogoutAsync" class="nav-link text-white d-flex align-items-center border-0 bg-transparent" style="cursor: pointer;">
+                            <span class="me-2 fw-bold">Logout</span>
+                            <i class="bi bi-box-arrow-right fs-4"></i>
+                       </button>
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    <div class="d-flex align-items-center text-white gap-3">
+                        <a href="/login" class="text-white text-decoration-none d-flex align-items-center border-0">
+                            <span class="me-2 fw-bold">Login</span>
+                            <i class="bi bi-box-arrow-in-right fs-4"></i>
+                        </a>
+                    </div>
 
 
-           @*  <div class="d-flex align-items-center text-white">
-                <span class="me-2 fw-bold">Admin</span>
-                <i class="bi bi-person-circle fs-4"></i>
-            </div> *@
+                    @*  <div class="d-flex align-items-center text-white">
+                            <span class="me-2 fw-bold">Admin</span>
+                             <i class="bi bi-person-circle fs-4"></i>
+                        </div> *@
+                </NotAuthorized>
+            </AuthorizeView>
+           
         </div>
     </div>
 
@@ -64,7 +83,7 @@
             <footer class="footer text-center m-0  text-muted">
                 <div class="container">
                     <span>
-                        &copy; 2026 London - <i class="bi bi-cursor fs-6 m-0"</i>OneClick E-Commerce System -
+                        &copy; 2026 London - <i class="bi bi-cursor fs-6 m-0"></i>OneClick E-Commerce System -
                         <i class="bi bi-code-slash"></i> By Emilio Barrera Built with
                         <i class="bi bi-heart-fill" style="color: #e74c3c;"></i>
                         
@@ -111,5 +130,25 @@
     private void ToggleSidebar()
     {
         _sidebarOpen = !_sidebarOpen;
+    }
+
+    private async Task LogoutAsync()
+    {
+        try
+        {
+            // Cast the provider to our custom to access the Logout method
+            var customAuthStateProvider = (CustomAuthenticationStateProvider)_AuthenticationStateProvider;
+
+            // Delete the token and notify the system
+            await customAuthStateProvider.MarkUserAsLoggedOut();
+
+            // Redirect the user back to thne home page or login page
+            _NavigationManager.NavigateTo("/", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            await _SweetAlertService.ShowErrorAlert($"MainLayout Error during logout process", $"{ex.Message}");
+
+        }
     }
 }

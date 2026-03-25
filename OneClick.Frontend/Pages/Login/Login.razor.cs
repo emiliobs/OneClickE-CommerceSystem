@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using OneClick.Frontend.AuthProviders;
 using OneClick.Frontend.Services;
 using OneClick.Shared.DTOs;
 
@@ -11,6 +13,10 @@ public partial class Login
 
     [Inject]
     public NavigationManager NavigationManager { get; set; } = default!;
+
+    // Inject th Authentication State Proovider
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
     [Inject]
     public AlertService SweetAlertService { get; set; } = default!;
@@ -31,10 +37,15 @@ public partial class Login
 
             if (result != null && !string.IsNullOrEmpty(result.Token))
             {
+                // Give the token to ouir Custom Guardian to save it in LocaStorage
+                var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthenticationStateProvider;
+                await customAuthStateProvider.MarkUserAsAuthenticated(result.Token);
+
                 Console.WriteLine($"Login Success token received: {result.Token}");
                 await SweetAlertService.ShowSuccessToast("Login Sucessfully. Welcome back to OneClick!");
 
-                // TODO: Save token and redirect
+                // Redirect the user automatically to the Home message
+                NavigationManager.NavigateTo("/");
             }
             else
             {

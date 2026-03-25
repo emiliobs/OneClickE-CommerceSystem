@@ -1,7 +1,9 @@
 using CurrieTechnologies.Razor.SweetAlert2;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using OneClick.Frontend;
+using OneClick.Frontend.AuthProviders;
 using OneClick.Frontend.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -26,5 +28,11 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // This tells Blazor: "When a page asks for SweetAlertService, give them this class."
 builder.Services.AddScoped<AlertService>();
 builder.Services.AddSweetAlert2();
+
+// Enable core authorization features in Blazor
+builder.Services.AddAuthorizationCore();
+
+// Tgell Blazor to user our Custom Guardian to manage the authentication state
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
 await builder.Build().RunAsync();
