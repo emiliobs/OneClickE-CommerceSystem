@@ -1,5 +1,8 @@
 ﻿@page "/products"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")] 
 
+<PageTitle>Product Management - OneClick</PageTitle>
 <style>
     .modal-color{
         background-color: rgba(0,0,0,0.6); backdrop-filter: blur(3px);

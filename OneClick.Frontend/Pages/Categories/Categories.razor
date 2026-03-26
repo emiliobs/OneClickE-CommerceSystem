@@ -1,6 +1,10 @@
 ﻿@page "/categories"
+@using Microsoft.AspNetCore.Authorization
 @using OneClick.Frontend.Services
 @using OneClick.Shared.Entities
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>Category Management - OneClick</PageTitle>
 
 <style>
     .modal-color {
