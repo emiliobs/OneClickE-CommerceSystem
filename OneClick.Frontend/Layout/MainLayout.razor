@@ -42,12 +42,17 @@
 
             <AuthorizeView>
                 <Authorized>
-                    <div class="d-flex align-items-center text-white gap-3">
-                       <span class="me-2 fw-bold">Hi, @context.User.Identity?.Name!</span>
-                        <button @onclick="LogoutAsync" class="nav-link text-white d-flex align-items-center border-0 bg-transparent" style="cursor: pointer;">
+                    <div class="d-flex align-items-center text-white gap-4">                       
+                        <a href="/profile" class="nav-link text-white d-flex align-items-center border-0 bg-transparent text-decoration-none action-hover" title="Go to My Profile">
+                            <span class="fw-bold me-1">Hi, @context.User.Identity!.Name</span>
+                            <i class="bi bi-person-circle fs-3 "></i>
+                        </a>
+
+                        <button @onclick="LogoutAsync" class="nav-link text-white d-flex align-items-center border-0 bg-transparent action-hover" style="cursor: pointer;" title="Logout">
                             <span class="me-2 fw-bold">Logout</span>
                             <i class="bi bi-box-arrow-right fs-4"></i>
-                       </button>
+                        </button>
+
                     </div>
                 </Authorized>
                 <NotAuthorized>
