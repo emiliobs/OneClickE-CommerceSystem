@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -80,37 +81,39 @@ public class UserController : ControllerBase
     {
         try
         {
-            // Find the user by Email
             var user = await _userManager.FindByNameAsync(loginDTO.Email);
 
-            // If user doesn't exist OR the password is wrong, reject them
             if (user is null || !await _userManager.CheckPasswordAsync(user, loginDTO.Password))
             {
-                return Unauthorized(new { Message = "Sorry!. Invalid email or password." });
+                return Unauthorized(new { Message = "Sorry! Invalid email or password." });
             }
 
-            // Create the "Claims" (the pieces of information hidden inside the token)
+            // ----- THE FIX: Pack ALL the data correctly into the Token! -----
             var authClaims = new List<Claim>
             {
               new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
               new Claim(ClaimTypes.Email, user.Email!),
-              new Claim(ClaimTypes.Name, user.FirstName),
-              new Claim(ClaimTypes.Role, user.Role), // I include the Role for blazor to check later!
+
+              // We keep this one so the Blazor Top Menu says "Hi, [FirstName]!"
+              new Claim(ClaimTypes.Name, user.FirstName ?? ""),
+
+              // We use the official JWT tags for First and Last name
+              new Claim(ClaimTypes.GivenName, user.FirstName ?? ""),
+              new Claim(ClaimTypes.Surname, user.LastName ?? ""),
+
+              new Claim(ClaimTypes.Role, user.Role ?? "Customer")
             };
 
-            // Get the secret key from appsettings.json
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
 
-            // Build the actual JWT Token
             var token = new JwtSecurityToken(
                   issuer: _configuration["Jwt:Issuer"],
                   audience: _configuration["Jwt:Audience"],
-                  expires: DateTime.Now.AddHours(3), // Token is valid for 3 hours
+                  expires: DateTime.Now.AddHours(3),
                   claims: authClaims,
                   signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
               );
 
-            // Return the Token to the user (Like them a hotel keycard)
             return Ok(new
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -120,8 +123,39 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"User Controller. Error during login: {ex.Message}");
-            return StatusCode(500, "An internal server arror ocurred while logging in.");
+            Console.WriteLine($"[UserController] Error during login: {ex.Message}");
+            return StatusCode(500, "An internal server error occurred while logging in.");
+        }
+    }
+
+    // GET: api/user/my-profile
+    [HttpGet("my-profile")]
+    [Authorize]
+    public IActionResult GetUserProfile() // Removed async Task since we don't use await here
+    {
+        try
+        {
+            // ----- THE FIX: Read the exact tags we packed during Login -----
+            var email = User.FindFirstValue(ClaimTypes.Email) ?? "";
+            var firstName = User.FindFirstValue(ClaimTypes.GivenName) ?? "";
+            var lastName = User.FindFirstValue(ClaimTypes.Surname) ?? "";
+            var role = User.FindFirstValue(ClaimTypes.Role) ?? "Customer";
+
+            // No more string splitting! We just map the DTO perfectly.
+            var profileData = new UserProfileDTO
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                Role = role,
+            };
+
+            return Ok(profileData);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[UserController] Error fetching profile: {ex.Message}");
+            return StatusCode(500, $"An internal server error occurred: {ex.Message}");
         }
     }
 }

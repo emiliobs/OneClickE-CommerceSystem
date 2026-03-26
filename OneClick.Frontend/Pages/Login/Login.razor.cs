@@ -14,7 +14,7 @@ public partial class Login
     [Inject]
     public NavigationManager NavigationManager { get; set; } = default!;
 
-    // Inject th Authentication State Proovider
+    // Inject the Authentication State Provider
     [Inject]
     public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
@@ -37,7 +37,7 @@ public partial class Login
 
             if (result != null && !string.IsNullOrEmpty(result.Token))
             {
-                // Give the token to ouir Custom Guardian to save it in LocaStorage
+                // Give the token to our Custom Guardian to save it in LocalStorage
                 var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthenticationStateProvider;
                 await customAuthStateProvider.MarkUserAsAuthenticated(result.Token);
 
@@ -55,7 +55,7 @@ public partial class Login
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[LoginView] Error during login process: {ex.Message}");
+            Console.WriteLine($"LoginView Error during login process: {ex.Message}");
 
             await SweetAlertService.ShowErrorAlert("LoginView Error during login process:", $"{ex.Message}");
         }
