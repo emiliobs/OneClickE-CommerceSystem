@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OneClick.Shared.DTOs;
 using OneClick.Shared.Entities;
@@ -156,6 +157,34 @@ public class UserController : ControllerBase
         {
             Console.WriteLine($"[UserController] Error fetching profile: {ex.Message}");
             return StatusCode(500, $"An internal server error occurred: {ex.Message}");
+        }
+    }
+
+    // GET: api/user/all
+    [HttpGet("GetAllUsers")]
+    [Authorize(Roles = "Admin")]// The LOck: Only administrator can use the user list
+    public async Task<IActionResult> GetAllUsers()
+    {
+        try
+        {
+            // Fetch all users directly from the Identity UserManager
+            var users = _userManager.Users.ToList();
+
+            // Map the database users to our safe DTO (we never send passwords to the frontend!)
+            var userList = users.Select(u => new UserProfileDTO
+            {
+                FirstName = u.FirstName ?? "",
+                LastName = u.LastName ?? "",
+                Email = u.Email ?? "",
+                Role = u.Role ?? "Customer"
+            }).ToList();
+
+            return Ok(userList);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[UserController] Error fetching all users: {ex.Message}");
+            return StatusCode(500, $"An internal server error occurred while fetching users: {ex.Message}");
         }
     }
 }

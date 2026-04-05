@@ -64,4 +64,19 @@ public class AlertService
             Color = "#fff"
         });
     }
+
+    // Method to show an info alert (useful for "Coming soon" or general info)
+    public async Task ShowInfoAlert(string title, string message)
+    {
+        await _sweetAlert.FireAsync(new SweetAlertOptions
+        {
+            Title = title,
+            Text = message,
+            Icon = SweetAlertIcon.Info,
+            ConfirmButtonText = "OK",
+            Background = "#1a1a2e", // Dark aesthetic matching your theme
+            Color = "#ffffff",
+            ConfirmButtonColor = "#0d6efd"
+        });
+    }
 }

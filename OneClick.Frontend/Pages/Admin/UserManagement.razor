@@ -1,0 +1,200 @@
+﻿@page "/admin/users"
+@using Microsoft.AspNetCore.Authorization
+@using OneClick.Shared.DTOs
+@using OneClick.Frontend.Components
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>User Management - OneClick</PageTitle>
+
+<style>
+    /* Blurred background for the modal to match categories */
+    .modal-color {
+        background-color: rgba(0,0,0,0.6);
+        backdrop-filter: blur(3px);
+    }
+</style>
+
+<div class="container py-4" style="color: white;">
+    
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+            <h2 class="fw-bold text-danger">
+                <i class="bi bi-people-fill me-2"></i>User Management
+            </h2>
+            <p class="text-muted">Manage your customer and admin accounts</p>
+        </div>
+        <button class="btn btn-danger shadow" @onclick="ShowAddForm">
+            <i class="bi bi-person-plus-fill me-1"></i>NEW CUSTOMER
+        </button>             
+    </div>    
+
+    <div class="card border-0 shadow-sm mb-4" style="background-color: #232342;">
+        <div class="card-body p-2">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-0 text-danger">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text"
+                       class="form-control bg-transparent border-0 text-white shadow-none"
+                       placeholder="Search users by name or email..."
+                       @bind="searchText"
+                       @bind:event="oninput"
+                       @onkeyup="FilterUsers" />
+            </div>
+        </div>
+    </div>
+
+    <hr class="border-secondary" />
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-danger" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-secondary">Loading users...</p>
+        </div>
+    }
+    else if (!filteredUsers.Any() && string.IsNullOrWhiteSpace(searchText))
+    {
+        <div class="alert alert-dark border-danger text-white" style="background-color: #232342;">
+            <div class="d-flex">
+                <div class="me-3">
+                    <i class="bi bi-info-circle text-danger" style="font-size: 1.5rem;"></i>
+                </div>
+                <div>
+                    <h5 class="alert-heading fw-bold">No users yet</h5>
+                    <p class="mb-0">Start by creating your first customer account.</p>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {        
+        <div class="card shadow-sm border-0" style="background-color: #232342;">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover table-striped mb-0 align-middle">
+                        <thead style="border-bottom: 2px solid #dc3545;">
+                            <tr>
+                                <th class="ps-4 text-secondary py-3">USER</th>
+                                <th class="text-secondary py-3">EMAIL</th>
+                                <th class="text-center text-secondary py-3">ROLE</th>
+                                <th class="text-end pe-4 text-secondary py-3" style="width: 150px;">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!PaginatedUsers.Any())
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center py-5 text-muted">
+                                        No users found matching "<strong>@searchText</strong>"
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var user in PaginatedUsers)
+                                {
+                                    <tr style="border-bottom: 1px solid #333;">
+                                        <td class="ps-4 py-3">
+                                            <span class="fw-bold text-white">@user.FirstName @user.LastName</span>
+                                        </td>
+                                        <td class="py-3 text-light">@user.Email</td>
+                                        <td class="text-center py-3">
+                                            <span class="badge @(user.Role == "Admin" ? "bg-danger" : "bg-primary") rounded-pill px-3 py-2">
+                                                @user.Role
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4 py-3">
+                                            <button class="btn btn-link text-warning p-0 me-3" title="Edit">
+                                                <i class="bi bi-pencil-fill fs-5"></i>
+                                            </button>
+                                            <button class="btn btn-link text-danger p-0" title="Delete">
+                                                <i class="bi bi-trash-fill fs-5"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }             
+                            }
+                        </tbody>
+                    </table>
+                </div> 
+                
+                <div class="p-3 border-top border-secondary d-flex justify-content-center">
+                    <Pagination CurrentPage="currentPage"
+                                TotalPages="TotalPages"
+                                SelectedPage="ChangePage" />
+                </div>
+            </div>
+        </div>
+    }
+
+    @if(showFormModal)
+    {
+        <div class="modal show d-block modal-color" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-white border-danger shadow-lg" style="background-color: #232342;">
+
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title fw-bold text-danger">
+                            <i class="bi bi-person-plus-fill me-2"></i> New Customer
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" @onclick="CloseFormModal"></button>
+                    </div>
+
+                    <EditForm Model="currentUser" OnValidSubmit="SaveUser">
+                        <DataAnnotationsValidator />
+
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label text-uppercase small text-muted">First Name</label>
+                                    <InputText class="form-control bg-dark text-white border-secondary shadow-none" 
+                                               placeholder="John" 
+                                               @bind-Value="currentUser.FirstName" />
+                                    <ValidationMessage For="@(() => currentUser.FirstName)" class="text-danger small" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-uppercase small text-muted">Last Name</label>
+                                    <InputText class="form-control bg-dark text-white border-secondary shadow-none" 
+                                               placeholder="Doe" 
+                                               @bind-Value="currentUser.LastName" />
+                                    <ValidationMessage For="@(() => currentUser.LastName)" class="text-danger small" />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label text-uppercase small text-muted">Email</label>
+                                    <InputText type="email" class="form-control bg-dark text-white border-secondary shadow-none" 
+                                               placeholder="john@example.com" 
+                                               @bind-Value="currentUser.Email" />
+                                    <ValidationMessage For="@(() => currentUser.Email)" class="text-danger small" />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label text-uppercase small text-muted">Password</label>
+                                    <InputText type="password" class="form-control bg-dark text-white border-secondary shadow-none" 
+                                               placeholder="******" 
+                                               @bind-Value="currentUser.Password" />
+                                    <ValidationMessage For="@(() => currentUser.Password)" class="text-danger small" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer border-secondary">
+                            <button type="button" class="btn btn-outline-light" @onclick="CloseFormModal" disabled="@isSaving">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-danger px-4" disabled="@isSaving">
+                                @if (isSaving)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                }
+                                Save User
+                            </button>                     
+                        </div>
+                    </EditForm>                      
+                </div>
+            </div>
+        </div>
+    }
+
+</div>

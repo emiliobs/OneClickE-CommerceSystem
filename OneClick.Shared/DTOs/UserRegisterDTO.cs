@@ -17,7 +17,7 @@ public class UserRegisterDTO
     [EmailAddress]
     public string Email { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Password must be at least 6 characters")]
-    [MinLength(6)]
+    [Required(ErrorMessage = "Password must be at least 3 characters")]
+    [MinLength(3)]
     public string Password { get; set; } = string.Empty;
 }
