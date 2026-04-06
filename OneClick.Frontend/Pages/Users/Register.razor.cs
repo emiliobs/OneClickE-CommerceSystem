@@ -5,7 +5,7 @@ using OneClick.Frontend.Services;
 using OneClick.Shared.DTOs;
 using System.Net.Http.Json;
 
-namespace OneClick.Frontend.Pages.Login;
+namespace OneClick.Frontend.Pages.Users;
 
 public partial class Register
 {

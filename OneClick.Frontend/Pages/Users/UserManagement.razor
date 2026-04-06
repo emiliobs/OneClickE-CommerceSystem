@@ -25,8 +25,8 @@
         </div>
         <button class="btn btn-danger shadow" @onclick="ShowAddForm">
             <i class="bi bi-person-plus-fill me-1"></i>NEW STAFF
-        </button>             
-    </div>    
+        </button>
+    </div>
 
     <div class="card border-0 shadow-sm mb-4" style="background-color: #232342;">
         <div class="card-body p-2">
@@ -70,7 +70,7 @@
         </div>
     }
     else
-    {        
+    {
         <div class="card shadow-sm border-0" style="background-color: #232342;">
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -107,19 +107,19 @@
                                             </span>
                                         </td>
                                         <td class="text-end pe-4 py-3">
-                                            <button class="btn btn-link text-warning p-0 me-3" title="Edit">
+                                            <button class="btn btn-link text-warning p-0 me-3" title="Edit Role" @onclick="() => OpenEditRoleModal(user)">
                                                 <i class="bi bi-pencil-fill fs-5"></i>
                                             </button>
-                                            <button class="btn btn-link text-danger p-0" title="Delete">
+                                            <button class="btn btn-link text-danger p-0" title="Delete User" @onclick="() => DeleteUserAsync(user.Email)">
                                                 <i class="bi bi-trash-fill fs-5"></i>
                                             </button>
                                         </td>
                                     </tr>
-                                }             
+                                }
                             }
                         </tbody>
                     </table>
-                </div> 
+                </div>
                 
                 <div class="p-3 border-top border-secondary d-flex justify-content-center">
                     <Pagination CurrentPage="currentPage"
@@ -130,7 +130,7 @@
         </div>
     }
 
-    @if(showFormModal)
+    @if (showFormModal)
     {
         <div class="modal show d-block modal-color" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
@@ -150,29 +150,29 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label text-uppercase small text-muted">First Name</label>
-                                    <InputText class="form-control bg-dark text-white border-secondary shadow-none" 
-                                               placeholder="John" 
+                                    <InputText class="form-control bg-dark text-white border-secondary shadow-none"
+                                               placeholder="John"
                                                @bind-Value="currentUser.FirstName" />
                                     <ValidationMessage For="@(() => currentUser.FirstName)" class="text-danger small" />
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-uppercase small text-muted">Last Name</label>
-                                    <InputText class="form-control bg-dark text-white border-secondary shadow-none" 
-                                               placeholder="Doe" 
+                                    <InputText class="form-control bg-dark text-white border-secondary shadow-none"
+                                               placeholder="Doe"
                                                @bind-Value="currentUser.LastName" />
                                     <ValidationMessage For="@(() => currentUser.LastName)" class="text-danger small" />
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label text-uppercase small text-muted">Email</label>
-                                    <InputText type="email" class="form-control bg-dark text-white border-secondary shadow-none" 
-                                               placeholder="john@example.com" 
+                                    <InputText type="email" class="form-control bg-dark text-white border-secondary shadow-none"
+                                               placeholder="john@example.com"
                                                @bind-Value="currentUser.Email" />
                                     <ValidationMessage For="@(() => currentUser.Email)" class="text-danger small" />
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label text-uppercase small text-muted">Password</label>
-                                    <InputText type="password" class="form-control bg-dark text-white border-secondary shadow-none" 
-                                               placeholder="******" 
+                                    <InputText type="password" class="form-control bg-dark text-white border-secondary shadow-none"
+                                               placeholder="******"
                                                @bind-Value="currentUser.Password" />
                                     <ValidationMessage For="@(() => currentUser.Password)" class="text-danger small" />
                                 </div>
@@ -189,9 +189,49 @@
                                     <span class="spinner-border spinner-border-sm me-2"></span>
                                 }
                                 Save User
-                            </button>                     
+                            </button>
                         </div>
-                    </EditForm>                      
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (showRoleModal)
+    {
+        <div class="modal show d-block modal-color" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-white border-warning shadow-lg" style="background-color: #232342;">
+                    
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title fw-bold text-warning">
+                            <i class="bi bi-shield-lock-fill me-2"></i> Edit User Role
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" @onclick="CloseRoleModal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p class="mb-3 text-secondary">Change access level for <strong>@selectedUserToEdit?.Email</strong></p>
+                        <div class="mb-3">
+                            <label class="form-label text-uppercase small text-muted">Select Role</label>
+                            <select class="form-select bg-dark text-white border-secondary shadow-none py-2" @bind="selectedRole">
+                                <option value="Customer">Customer</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-secondary">
+                        <button type="button" class="btn btn-outline-light" @onclick="CloseRoleModal" disabled="@isSaving">Cancel</button>
+                        <button type="button" class="btn btn-warning px-4 fw-bold" @onclick="SaveRoleAsync" disabled="@isSaving">
+                            @if (isSaving)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Update Role
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>

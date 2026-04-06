@@ -4,7 +4,7 @@ using OneClick.Frontend.AuthProviders;
 using OneClick.Frontend.Services;
 using OneClick.Shared.DTOs;
 
-namespace OneClick.Frontend.Pages.Login;
+namespace OneClick.Frontend.Pages.Users;
 
 public partial class Login
 {
