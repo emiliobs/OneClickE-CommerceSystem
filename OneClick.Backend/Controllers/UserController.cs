@@ -114,7 +114,10 @@ public class UserController : ControllerBase
               new Claim(ClaimTypes.GivenName, user.FirstName ?? ""),
               new Claim(ClaimTypes.Surname, user.LastName ?? ""),
 
-              new Claim(ClaimTypes.Role, user.Role ?? "Customer")
+              // We also include the Role claim so we can use it for authorization in the frontend and backend
+              new Claim(ClaimTypes.Role, user.Role ?? "Customer"),
+
+              new Claim("ImageUrl", user.ImageUrl ?? "") // Custom claim for the profile image URL
             };
 
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));

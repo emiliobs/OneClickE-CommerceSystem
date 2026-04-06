@@ -12,8 +12,8 @@ using OneClick.Backend.Data;
 namespace OneClick.Backend.Migrations
 {
     [DbContext(typeof(OneClickDbContext))]
-    [Migration("20260405224131_CloudinaryUserUrl")]
-    partial class CloudinaryUserUrl
+    [Migration("20260406133922_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -863,27 +863,6 @@ namespace OneClick.Backend.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "STATIC-CONCURRENCY-STAMP-1",
-                            Email = "emilio@yopmail.com",
-                            EmailConfirmed = true,
-                            FirstName = "Emilio",
-                            LastName = "Barrera",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "EMILIO@YOPMAIL.COM",
-                            NormalizedUserName = "EMILIO@YOPMAIL.COM",
-                            PasswordHash = "123456",
-                            PhoneNumberConfirmed = false,
-                            Role = "Admin",
-                            SecurityStamp = "STATIC-SECURITY-STAMP-1",
-                            TwoFactorEnabled = false,
-                            UserName = "emilio@yopmail.com"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

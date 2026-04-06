@@ -14,16 +14,10 @@ public class OneClickDbContext : IdentityDbContext<User, IdentityRole<int>, int>
 
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
-
-    // NOTE: DbSet<User> Users is removed because IdentityDbContext provides it automatically
     public DbSet<CartItem> CartItems { get; set; }
-
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
 
-    /// <summary>
-    /// Configures the database schema using Fluent API.
-    /// </summary>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // CRITICAL: Must call the base method first for Identity to build its tables
@@ -42,8 +36,6 @@ public class OneClickDbContext : IdentityDbContext<User, IdentityRole<int>, int>
         // Create Index to avoid duplicate category names
         modelBuilder.Entity<Category>().HasIndex(c => c.Name).IsUnique();
 
-        // NOTE: The custom User Email unique index was removed because Identity handles it automatically.
-
         modelBuilder.Entity<Product>().Property(p => p.Price).HasColumnType("decimal(18,2)");
         modelBuilder.Entity<OrderItem>().Property(oi => oi.Price).HasColumnType("decimal(18,2)");
         modelBuilder.Entity<Order>().Property(o => o.TotalAmount).HasColumnType("decimal(18,2)");
@@ -61,27 +53,6 @@ public class OneClickDbContext : IdentityDbContext<User, IdentityRole<int>, int>
          .WithMany(u => u.CartItems)
          .HasForeignKey(c => c.UserId)
          .OnDelete(DeleteBehavior.Cascade);
-
-        // SEED DATA: Create a test User automatically
-        // Updated to include UserName and Normalized values required by Identity
-        modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    Id = 1,
-                    FirstName = "Emilio",
-                    LastName = "Barrera",
-                    UserName = "emilio@yopmail.com",
-                    NormalizedUserName = "EMILIO@YOPMAIL.COM",
-                    Email = "emilio@yopmail.com",
-                    NormalizedEmail = "EMILIO@YOPMAIL.COM",
-                    EmailConfirmed = true,
-                    PasswordHash = "123456", // Note: A real login will require a proper hash later
-                    Role = "Admin",
-                    //Hardcoded stamps to prevent the "dynamic values" error
-                    SecurityStamp = "STATIC-SECURITY-STAMP-1",
-                    ConcurrencyStamp = "STATIC-CONCURRENCY-STAMP-1"
-                }
-            );
 
         // =========================================================================
         // 1. SEED CATEGORIES (18 Categories)

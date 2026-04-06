@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 // Note: OpenApi Models using statement removed to prevent .NET 10 conflicts
 using OneClick.Backend.Data;
 using OneClick.Backend.Repositories;
+using OneClick.Backend.Services;
 using OneClick.Shared.Entities;
 using System.Text;
 
@@ -57,6 +58,9 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
+// Register services
+builder.Services.AddScoped<IImageService, ImageService>();
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     // Handle circular references
@@ -100,5 +104,48 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// --- SEED ADMIN USER WITH PASSWORD "123" BYPASSING STRICT POLICIES ---
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<OneClick.Backend.Data.OneClickDbContext>();
+
+        // Check if the admin already exists
+        if (!context.Users.Any(u => u.Email == "admin@yopmail.com"))
+        {
+            var adminUser = new OneClick.Shared.Entities.User
+            {
+                FirstName = "Admin",
+                LastName = "Admin",
+                UserName = "admin@yopmail.com",
+                NormalizedUserName = "ADMIN@YOPMAIL.COM",
+                Email = "admin@yopmail.com",
+                NormalizedEmail = "ADMIN@YOPMAIL.COM",
+                EmailConfirmed = true,
+                Role = "Admin",
+                SecurityStamp = Guid.NewGuid().ToString(),
+                ConcurrencyStamp = Guid.NewGuid().ToString()
+            };
+
+            // Generate the secure hash dynamically for "123" bypassing strict policies
+            var hasher = new Microsoft.AspNetCore.Identity.PasswordHasher<OneClick.Shared.Entities.User>();
+            adminUser.PasswordHash = hasher.HashPassword(adminUser, "123");
+
+            // Save directly to the Database Context
+            context.Users.Add(adminUser);
+            context.SaveChanges();
+            Console.WriteLine("Admin user seeded successfully with password 123.");
+        }
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Error seeding admin user: {ex.Message}");
+}
+
+// Ensure app.Run() is the absolute last line in your Program.cs
+// app.Run();
 
 app.Run();

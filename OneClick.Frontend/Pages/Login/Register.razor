@@ -1,3 +1,141 @@
-﻿<h3>Register</h3>
+﻿@page "/register"
 
+<PageTitle>Register - OneClick</PageTitle>
 
+<style>
+    .avatar-box {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+        cursor: pointer;
+    }
+
+    .avatar-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 4px solid #dc3545;
+        border-radius: 50%;
+    }
+
+    .avatar-placeholder {
+        font-size: 4rem;
+        line-height: 110px;
+        color: #dc3545;
+        background-color: #1a1a2e;
+        border-radius: 50%;
+        border: 4px solid #dc3545;
+        display: block;
+    }
+
+    .avatar-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.6);
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        cursor: pointer;
+    }
+
+    .avatar-box:hover .avatar-overlay {
+        opacity: 1;
+    }
+</style>
+
+<div class="container py-5 d-flex justify-content-center align-items-center" style="min-height: 85vh; color: white;">
+    <div class="card border-0 shadow-lg p-5" style="background-color: #232342; width: 100%; max-width: 550px; border-top: 4px solid #dc3545 !important;">
+        
+        <div class="text-center mb-4">
+            <h2 class="fw-bold mt-2 text-white">Create Account</h2>
+            <p class="text-secondary">Join OneClick E-Commerce today</p>
+        </div>
+
+        <EditForm Model="registerModel" OnValidSubmit="HandleRegistration">
+            <DataAnnotationsValidator />
+
+            <div class="text-center mb-4">
+                <div class="avatar-box">
+                    @if (!string.IsNullOrEmpty(_imagePreviewUrl))
+                    {
+                        <img src="@_imagePreviewUrl" class="avatar-image" alt="Profile Picture" />
+                    }
+                    else
+                    {
+                        <i class="bi bi-person-circle avatar-placeholder"></i>
+                    }
+
+                    <label for="profileImageInput" class="avatar-overlay">
+                        <i class="bi bi-camera-fill fs-2"></i>
+                    </label>
+                    <InputFile id="profileImageInput" OnChange="OnFilesSelected" class="d-none" accept="image/png,image/jpeg" />
+                </div>
+                <small class="text-secondary mt-2 d-block">Upload Profile Photo (Optional)</small>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label text-secondary small text-uppercase fw-bold">First Name</label>
+                    <InputText class="form-control bg-dark text-white border-secondary shadow-none py-2"
+                               placeholder="John"
+                               @bind-Value="registerModel.FirstName" />
+                    <ValidationMessage For="@(() => registerModel.FirstName)" class="text-danger small mt-1 d-block" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-secondary small text-uppercase fw-bold">Last Name</label>
+                    <InputText class="form-control bg-dark text-white border-secondary shadow-none py-2"
+                               placeholder="Doe"
+                               @bind-Value="registerModel.LastName" />
+                    <ValidationMessage For="@(() => registerModel.LastName)" class="text-danger small mt-1 d-block" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label text-secondary small text-uppercase fw-bold">Email Address</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-secondary">
+                        <i class="bi bi-envelope"></i>
+                    </span>
+                    <InputText type="email" class="form-control bg-dark text-white border-secondary shadow-none py-2"
+                               placeholder="name@example.com"
+                               @bind-Value="registerModel.Email" />
+                </div>
+                <ValidationMessage For="@(() => registerModel.Email)" class="text-danger small mt-1 d-block" />
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label text-secondary small text-uppercase fw-bold">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-secondary">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                    <InputText type="password" class="form-control bg-dark text-white border-secondary shadow-none py-2"
+                               placeholder="••••••••"
+                               @bind-Value="registerModel.Password" />
+                </div>
+                <ValidationMessage For="@(() => registerModel.Password)" class="text-danger small mt-1 d-block" />
+            </div>
+
+            <button type="submit" class="btn btn-danger w-100 py-3 rounded-pill shadow mb-4 fw-bold fs-5" disabled="@isRegistering">
+                @if (isRegistering)
+                {
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                }
+                <i class="bi bi-person-plus-fill me-1"></i> Register Now
+            </button>
+            
+            <div class="text-center mt-2 pt-3 border-top border-secondary">
+                <span class="text-secondary">Already have an account? </span>
+                <a href="/login" class="text-danger text-decoration-none fw-bold">Login here</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
