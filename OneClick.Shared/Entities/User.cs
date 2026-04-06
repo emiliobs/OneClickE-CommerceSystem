@@ -21,5 +21,7 @@ public class User : IdentityUser<int>
     // Inverse relationships for Entity Framework
     public ICollection<Order>? Orders { get; set; }
 
+    public string? ImageUrl { get; set; }
+
     public ICollection<CartItem>? CartItems { get; set; }
 }

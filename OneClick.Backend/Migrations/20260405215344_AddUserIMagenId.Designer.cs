@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OneClick.Backend.Data;
 
@@ -11,9 +12,11 @@ using OneClick.Backend.Data;
 namespace OneClick.Backend.Migrations
 {
     [DbContext(typeof(OneClickDbContext))]
-    partial class OneClickDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260405215344_AddUserIMagenId")]
+    partial class AddUserIMagenId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -805,8 +808,8 @@ namespace OneClick.Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("ImageId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LastName")
                         .IsRequired()

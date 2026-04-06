@@ -20,4 +20,6 @@ public class UserRegisterDTO
     [Required(ErrorMessage = "Password must be at least 3 characters")]
     [MinLength(3)]
     public string Password { get; set; } = string.Empty;
+
+    public string? ImageBase64 { get; set; }
 }

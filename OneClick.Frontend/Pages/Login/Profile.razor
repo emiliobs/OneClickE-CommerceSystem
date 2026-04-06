@@ -5,14 +5,82 @@
 
 <PageTitle>My Dashboard - OneClick</PageTitle>
 
+<style>
+    .avatar-box {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+    }
+
+    .avatar-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 4px solid #dc3545;
+        border-radius: 50%;
+    }
+
+    .avatar-placeholder {
+        font-size: 5rem;
+        line-height: 150px;
+        color: #dc3545;
+        background-color: #f8f9fa;
+        border-radius: 50%;
+        border: 4px solid #dc3545;
+        display: block;
+    }
+
+    .avatar-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.7);
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        cursor: pointer;
+    }
+
+    .avatar-box-editable:hover .avatar-overlay {
+        opacity: 1;
+    }
+</style>
+
 <div class="container mt-4 fade-in">
     <div class="row">
+        
         <div class="col-md-4 mb-4">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body text-center p-4">
+                    
                     <div class="mb-3">
-                        <i class="bi bi-person-circle text-danger" style="font-size: 5rem;"></i>
+                        <div class="avatar-box @(isEditing ? "avatar-box-editable" : "") mb-3">
+                            @if (!string.IsNullOrEmpty(_imagePreviewUrl))
+                            {
+                                <img src="@_imagePreviewUrl" class="avatar-image" alt="Profile Picture" />
+                            }
+                            else
+                            {
+                                <i class="bi bi-person-circle avatar-placeholder"></i>
+                            }
+
+                            @if (isEditing)
+                            {
+                                <label for="profileImageInput" class="avatar-overlay">
+                                    <i class="bi bi-camera-fill fs-1"></i>
+                                </label>
+                                <InputFile id="profileImageInput" OnChange="OnFilesSelected" class="d-none" accept="image/png,image/jpeg" />
+                            }
+                        </div>
                     </div>
+
                     @if (userProfile != null)
                     {
                         <h4 class="fw-bold mb-1">@userProfile.FirstName @userProfile.LastName</h4>
@@ -33,6 +101,7 @@
 
         <div class="col-md-8">
             <div class="card shadow-sm border-0">
+                
                 <div class="card-header bg-transparent border-bottom-0 pt-4 pb-0">
                     <ul class="nav nav-tabs border-bottom-0" role="tablist">
                         <li class="nav-item" role="presentation">
@@ -57,24 +126,70 @@
                             
                             @if (userProfile != null)
                             {
-                                <div class="row mb-3">
-                                    <div class="col-sm-4 text-muted">First Name</div>
-                                    <div class="col-sm-8 fw-bold">@userProfile.FirstName</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4 text-muted">Last Name</div>
-                                    <div class="col-sm-8 fw-bold">@userProfile.LastName</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4 text-muted">Email Address</div>
-                                    <div class="col-sm-8 fw-bold">@userProfile.Email</div>
-                                </div>
-                                
-                                <div class="mt-5">
-                                    <button class="btn btn-outline-danger" disabled>
-                                        <i class="bi bi-pencil-square me-2"></i> Edit Profile
-                                    </button>
-                                </div>
+                                @if (!isEditing)
+                                {
+                                    <div class="row mb-3">
+                                        <div class="col-sm-4 text-muted">First Name</div>
+                                        <div class="col-sm-8 fw-bold">@userProfile.FirstName</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-4 text-muted">Last Name</div>
+                                        <div class="col-sm-8 fw-bold">@userProfile.LastName</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-4 text-muted">Email Address</div>
+                                        <div class="col-sm-8 fw-bold">@userProfile.Email</div>
+                                    </div>
+                                    
+                                    <div class="mt-5">
+                                        <button class="btn btn-outline-danger" @onclick="ToggleEditMode">
+                                            <i class="bi bi-pencil-square me-2"></i> Edit Profile
+                                        </button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <EditForm Model="userProfile" OnValidSubmit="SaveProfile">
+                                        <DataAnnotationsValidator />
+
+                                        <div class="row mb-3 align-items-center">
+                                            <div class="col-sm-4 text-muted fw-bold">First Name</div>
+                                            <div class="col-sm-8">
+                                                <InputText class="form-control shadow-none" @bind-Value="userProfile.FirstName" />
+                                                <ValidationMessage For="@(() => userProfile.FirstName)" class="text-danger small" />
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mb-3 align-items-center">
+                                            <div class="col-sm-4 text-muted fw-bold">Last Name</div>
+                                            <div class="col-sm-8">
+                                                <InputText class="form-control shadow-none" @bind-Value="userProfile.LastName" />
+                                                <ValidationMessage For="@(() => userProfile.LastName)" class="text-danger small" />
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mb-4 align-items-center">
+                                            <div class="col-sm-4 text-muted fw-bold">Email Address</div>
+                                            <div class="col-sm-8">
+                                                <input type="email" class="form-control bg-light text-muted shadow-none" value="@userProfile.Email" disabled />
+                                                <small class="text-muted"><i class="bi bi-lock-fill"></i> Emails cannot be changed.</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-5 d-flex gap-2">
+                                            <button type="submit" class="btn btn-danger px-4" disabled="@isSaving">
+                                                @if (isSaving)
+                                                {
+                                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                                }
+                                                <i class="bi bi-save me-1"></i> Save
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary px-4" @onclick="ToggleEditMode" disabled="@isSaving">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </EditForm>
+                                }
                             }
                         </div>
 
