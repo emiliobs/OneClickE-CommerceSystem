@@ -262,4 +262,83 @@ public class UserController : ControllerBase
             return StatusCode(500, $"An internal server error occurred while fetching users: {ex.Message}");
         }
     }
+
+    // PUT: api/user/change-role
+    [HttpPut("change-role")]
+    [Authorize(Roles = "Admin")] // The Lock: Only administrator can change user roles
+    public async Task<IActionResult> ChangeUserRole([FromBody] UserRoleDTO userRoleDTO)
+    {
+        try
+        {
+            // We can read the email from the DTO to identify which user's role we want to change
+            var user = await _userManager.FindByEmailAsync(userRoleDTO.Email);
+            if (user is null)
+            {
+                return NotFound("User not fount.");
+            }
+
+            // Safety check to prevent an admin from changing their own role, which could lock them out of the system
+            var currrenAdminEmail = User.FindFirstValue(ClaimTypes.Email);
+            if (user.Email == currrenAdminEmail)
+            {
+                return BadRequest("Security protocol: You cannot change your own role.");
+            }
+
+            // Update the user's role with the new value from the DTO
+            user.Role = userRoleDTO.Role;
+            var result = await _userManager.UpdateAsync(user);
+
+            // We check if the update was successful and return the appropriate response
+            if (result.Succeeded)
+            {
+                return Ok(new { Message = $"User role updated successfully to {userRoleDTO.Role}!" });
+            }
+
+            return BadRequest(new { Errors = result.Errors.Select(e => e.Description) });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"UserCOntroller Error changing role: {ex.Message}");
+            return StatusCode(500, $"An internal server error occurred while changing user role: {ex.Message}");
+        }
+    }
+
+    // DELETE: api/user/delete/{email}
+    [HttpDelete("delete/{email}")] // We can identify the user to delete by their email, which is unique in our system
+    [Authorize(Roles = "Admin")]// The Lock: Only administrator can delete users
+    public async Task<IActionResult> DeleteUser(string email)
+    {
+        try
+        {
+            // We find the user by their email, and if they exist, we delete them from the database
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user is null)
+            {
+                return NotFound("User not found.");
+            }
+
+            // Safety check to prevent an admin from deleting their own account, which could lock them out of the system
+            var currentAdminEmail = User.FindFirstValue(ClaimTypes.Email);
+            if (user.Email == currentAdminEmail)
+            {
+                return BadRequest("Security protocol: You cannot delete your own account.");
+            }
+
+            // We proceed to delete the user and check if the operation was successful
+            var result = await _userManager.DeleteAsync(user);
+            // We check if the deletion was successful and return the appropriate response
+            if (result.Succeeded)
+            {
+                return Ok(new { Message = "User deleted successfully!" });
+            }
+
+            // If deletion fails for some reason, we return the specific errors
+            return BadRequest(new { Errors = result.Errors.Select(e => e.Description) });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"User COntroller Error deleting user: {ex.Message}");
+            return StatusCode(500, $"An internal server error occurred while deleting the user: {ex.Message}");
+        }
+    }
 }
