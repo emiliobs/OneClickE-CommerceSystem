@@ -34,6 +34,15 @@
                 </div>
 
                 <div class="nav-item px-3">
+                    <NavLink class="nav-link p-0" href="/admin/orders">
+                        <div class="d-flex align-items-center py-2 px-3 gap-3">
+                            <i class="bi bi-clipboard-check-fill fs-5 lh-1 brand-icon"></i>
+                            <span class="fs-6 pb-1 nav-text">Manage Orders</span>
+                        </div>
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
                     <NavLink class="nav-link p-0" href="/admin/users">
                         <div class="d-flex align-items-center py-2 px-3 gap-3">
                             <i class="bi bi-people-fill lh-1 brand-icon"></i>
@@ -45,15 +54,19 @@
             </Authorized>
         </AuthorizeView>
         
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link p-0" href="my-orders">
-                <div class="d-flex align-items-center py-2 px-3 gap-3">
-                    <i class="bi bi-receipt fs-5 lh-1 brand-icon"></i>
-                    <span class="fs-6 pb-1 nav-text">My Orders</span>
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link p-0" href="my-orders">
+                        <div class="d-flex align-items-center py-2 px-3 gap-3">
+                            <i class="bi bi-receipt fs-5 lh-1 brand-icon"></i>
+                            <span class="fs-6 pb-1 nav-text">My Orders</span>
+                        </div>
+                    </NavLink>
                 </div>
-            </NavLink>
-        </div>
+            </Authorized>
+        </AuthorizeView>
+        
 
         <div class="nav-item px-3">
             <NavLink class="nav-link p-0" href="about">

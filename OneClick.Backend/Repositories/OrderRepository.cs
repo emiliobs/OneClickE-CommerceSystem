@@ -116,4 +116,43 @@ public class OrderRepository : IOrderRepository
             throw;
         }
     }
+
+    public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+    {
+        try
+        {
+            return await _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Orders Repository error fetching all orders: {ex.Message}");
+            throw;
+        }
+    }
+
+    public async Task<bool> UpdateOrderStatusAsync(int orderId, string newStatus)
+    {
+        try
+        {
+            var order = await _context.Orders.FindAsync(orderId);
+            if (order == null)
+            {
+                return false;
+            }
+
+            order.OrderStatus = newStatus;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Orders repository error updating status: {ex.Message}");
+            throw;
+        }
+    }
 }

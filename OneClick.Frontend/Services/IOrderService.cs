@@ -12,4 +12,8 @@ public interface IOrderService
 
     // Retrieves all orders for a specific user by their user ID (useful for order history page)
     Task<IEnumerable<Order>> GetOrdersByUsersIdAsync(int userId);
+
+    Task<IEnumerable<Order>> GetAllOrdersAsync();
+
+    Task<bool> UpdateOrderStatusAsync(int orderId, string newStatus);
 }

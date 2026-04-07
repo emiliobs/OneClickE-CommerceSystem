@@ -1,49 +1,64 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.Authorization;
 using OneClick.Frontend.Services;
 using OneClick.Shared.Entities;
+using System.Security.Claims;
 
 namespace OneClick.Frontend.Pages.Checkout;
 
-public partial class Checkout
+public partial class Checkout : ComponentBase
 {
-    // Inject the necessary services
-    [Inject]
-    public IOrderService OrderService { get; set; } = null!;
+    [Inject] public IOrderService OrderService { get; set; } = null!;
+    [Inject] public NavigationManager Navigation { get; set; } = null!;
+    [Inject] public AlertService AlertService { get; set; } = null!;
+    [Inject] public ICartService CartService { get; set; } = null!;
 
-    [Inject]
-    public NavigationManager Navigation { get; set; } = null!;
+    // NEW: Inject the Authentication State Provider to read the JWT Token safely
+    [Inject] public AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
 
-    // Inject our custom AlertService
-    [Inject]
-    public AlertService AlertService { get; set; } = null!;
-
-    [Inject]
-    public ICartService CartService { get; set; } = null;
-
-    // State variables
     protected Order order = new Order();
-
     protected bool isProcessing = false;
-
-    // State varaibles for the Summary Panel
     private decimal cartTotal = 0;
-
     private int totalItems = 0;
     private bool isLoadingSummary = false;
 
-    // Hardcoded user for now (will change when we add Authentication)
-    private int currentUserId = 1;
+    // We start at 0, and let the Token give us the real ID
+    private int currentUserId = 0;
 
     protected override async Task OnInitializedAsync()
     {
-        // Assign the user ID to the order when the page loads
-        order.UserId = currentUserId;
+        isLoadingSummary = true;
 
-        await LoadSummaryAsync();
+        // 1. Get the current authenticated user's state
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            // 2. Extract the ID safely (checking the most common claim types)
+            var idClaim = user.FindFirst(ClaimTypes.NameIdentifier) ?? user.FindFirst("id") ?? user.FindFirst("UserId");
+
+            if (idClaim != null && int.TryParse(idClaim.Value, out int parsedId))
+            {
+                // 3. Assign the REAL user ID to the order
+                currentUserId = parsedId;
+                order.UserId = currentUserId;
+
+                await LoadSummaryAsync();
+            }
+            else
+            {
+                await AlertService.ShowErrorAlert("Auth Error", "Could not identify your user session.");
+                Navigation.NavigateTo("/login");
+            }
+        }
+        else
+        {
+            // If they are not logged in, they shouldn't be in the checkout!
+            Navigation.NavigateTo("/login");
+        }
     }
 
-    // Method to calclulate the total price ans item count for the summary panel
     private async Task LoadSummaryAsync()
     {
         try
@@ -52,49 +67,41 @@ public partial class Checkout
 
             if (cartItems != null && cartItems.Any())
             {
-                // Sum the queanity of all items to get the total item count
                 totalItems = cartItems.Sum(item => item.Quantity);
-
-                // Sum the quantity price (Price * quantity for each item)
                 cartTotal = cartItems.Sum(item => item.Product!.Price * item.Quantity);
             }
         }
         catch (Exception ex)
         {
-            await AlertService.ShowErrorAlert("[Checkout]  Error loading cart summary: ", ex.Message);
+            await AlertService.ShowErrorAlert("[Checkout] Error loading cart summary: ", ex.Message);
         }
         finally
         {
-            // Stop the loading indicator for the summary panel
             isLoadingSummary = false;
         }
     }
 
-    // Handler for the form submission
     protected async Task ProcessCheckout()
     {
-        // Show loading indicator on the button
+        if (currentUserId == 0) return; // Extra security check
+
         isProcessing = true;
 
         try
         {
-            // Send the order to the backend
+            // IMPORTANT: Check your IOrderService interface. If you named the method CreateOrderAsync,
+            // make sure to use CreateOrderAsync here instead of PlaceOrderAsync!
             int newOrderId = await OrderService.PlaceOrderAsync(order);
 
-            // If successful, show a success toast notification
             await AlertService.ShowSuccessToast($"Order #{newOrderId} placed successfully!");
-
-            // Redirect the user to the Home page
             Navigation.NavigateTo("/");
         }
         catch (Exception ex)
         {
-            // If there is an error (e.g., empty cart), show an error alert
             await AlertService.ShowErrorAlert("Order Failed", ex.Message);
         }
         finally
         {
-            // Stop the loading indicator
             isProcessing = false;
         }
     }

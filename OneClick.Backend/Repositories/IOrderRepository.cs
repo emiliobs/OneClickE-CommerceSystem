@@ -11,4 +11,8 @@ public interface IOrderRepository
 
     // Method to get all orders for a specific user by their user ID
     Task<IEnumerable<Order?>> GetOrdersByUserIdAsync(int userId);
+
+    Task<IEnumerable<Order>> GetAllOrdersAsync();
+
+    Task<bool> UpdateOrderStatusAsync(int orderId, string newStatus);
 }

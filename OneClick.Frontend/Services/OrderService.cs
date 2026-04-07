@@ -70,8 +70,11 @@ public class OrderService : IOrderService
 
             if (response.IsSuccessStatusCode)
             {
+                // If the call is successful, we read the list of orders from the response
                 var orders = await response.Content.ReadFromJsonAsync<IEnumerable<Order>>();
 
+                // If the orders variable is null (which can happen if the user has no orders), we return
+                // an empty list instead to avoid null reference issues in the UI
                 return orders ?? new List<Order>(); // Return empty list if null
             }
             else
@@ -83,6 +86,49 @@ public class OrderService : IOrderService
         {
             Console.WriteLine($"Order Services. Exception in GetOrdersByUserIdAsync: {ex.Message}");
             throw;
+        }
+    }
+
+    public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+    {
+        try
+        {
+            // Calling the secure admin endpoint we created in the Controller
+            var result = await _httpClient.GetFromJsonAsync<IEnumerable<Order>>("api/orders/GetAllOrders");
+
+            // If the result is null, we return an empty list to avoid null reference issues in the UI
+            return result ?? new List<Order>(); // Return empty list if null
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Order services error fetching all orders: {ex.Message}");
+
+            // In case of error, we return an empty list to avoid breaking the UI, but we log the error for debugging
+            return new List<Order>();
+        }
+    }
+
+    public async Task<bool> UpdateOrderStatusAsync(int orderId, string newStatus)
+    {
+        try
+        {
+            // Call the backend API to update the order status. We send the new status in the body of the request.
+            var response = await _httpClient.PutAsJsonAsync($"api/orders/update-status/{orderId}", newStatus);
+
+            // Return true if the update was successful, false otherwise
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Order service error updating order status: {ex.Message}");
+            return false;
         }
     }
 }
