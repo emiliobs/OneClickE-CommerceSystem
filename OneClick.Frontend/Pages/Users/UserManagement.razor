@@ -37,9 +37,8 @@
                 <input type="text"
                        class="form-control bg-transparent border-0 text-white shadow-none"
                        placeholder="Search users by name or email..."
-                       @bind="searchText"
-                       @bind:event="oninput"
-                       @onkeyup="FilterUsers" />
+                       value="@searchText"
+                       @oninput="FilterUsers" />
             </div>
         </div>
     </div>
@@ -110,7 +109,7 @@
                                             <button class="btn btn-link text-warning p-0 me-3" title="Edit Role" @onclick="() => OpenEditRoleModal(user)">
                                                 <i class="bi bi-pencil-fill fs-5"></i>
                                             </button>
-                                            <button class="btn btn-link text-danger p-0" title="Delete User" @onclick="() => DeleteUserAsync(user.Email)">
+                                            <button class="btn btn-link text-danger p-0" title="Delete User" @onclick="() => DeleteUserAsync(user.Email!)">
                                                 <i class="bi bi-trash-fill fs-5"></i>
                                             </button>
                                         </td>

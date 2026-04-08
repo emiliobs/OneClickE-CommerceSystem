@@ -6,17 +6,44 @@ namespace OneClick.Frontend.Pages.MyOrders;
 
 public partial class AdminOrders
 {
-    // Inject the service to fetch the data
+    // ================= SERVICES =================
+
     [Inject]
     public IOrderService OrderService { get; set; } = null!;
 
     [Inject]
     public AlertService SweetAlertService { get; set; } = default!;
 
-    // State variables for the UI
-    protected List<Order> allOrders = new List<Order>();
+    // ================= DATA =================
+
+    // All orders from API
+    protected List<Order> allOrders = new();
+
+    // Filtered orders (VISIBLE TO USER)
+    protected List<Order> filteredOrders = new();
+
+    // ================= UI STATE =================
 
     protected bool isLoading = true;
+
+    // Search text
+    private string searchText = "";
+
+    // ================= PAGINATION =================
+
+    private int currentPage = 1;
+    private int itemsPerPage = 7;
+
+    public int TotalPages =>
+        filteredOrders.Count == 0 ? 1 :
+        (int)Math.Ceiling((double)filteredOrders.Count / itemsPerPage);
+
+    public IEnumerable<Order> PaginatedOrders =>
+        filteredOrders
+            .Skip((currentPage - 1) * itemsPerPage)
+            .Take(itemsPerPage);
+
+    // ================= INITIALIZATION =================
 
     protected override async Task OnInitializedAsync()
     {
@@ -27,58 +54,92 @@ public partial class AdminOrders
     {
         try
         {
-            // Fetch all orders from the backend API
             isLoading = true;
 
-            // Fetch the orders from the backend API
             var orders = await OrderService.GetAllOrdersAsync();
-            // We convert the result to a list to ensure we have a concrete collection type for the UI
+
             allOrders = orders.ToList();
+
+            // IMPORTANT: initialize filtered list
+            filteredOrders = new List<Order>(allOrders);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Admin orders error loading ordes: {ex.Message}");
-            await SweetAlertService.ShowErrorAlert("Admin Orders Error: Could not load the global orders: ", $"{ex.Message}");
+            await SweetAlertService.ShowErrorAlert(
+                "Admin Orders Error",
+                ex.Message);
         }
         finally
         {
-            // We set isLoading to false in the finally block to ensure it happens regardless of success or failure
             isLoading = false;
         }
     }
 
+    // ================= FILTER LOGIC =================
+
+    private void FilterOrders(ChangeEventArgs e)
+    {
+        searchText = e.Value?.ToString() ?? "";
+
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            filteredOrders = new List<Order>(allOrders);
+        }
+        else
+        {
+            filteredOrders = allOrders.Where(o =>
+                (o.User?.FirstName ?? "").Contains(searchText, StringComparison.OrdinalIgnoreCase)
+                || (o.User?.LastName ?? "").Contains(searchText, StringComparison.OrdinalIgnoreCase)
+                || o.OrderStatus.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+                || o.Id.ToString().Contains(searchText))
+                .ToList();
+        }
+
+        // reset pagination after filtering
+        currentPage = 1;
+    }
+
+    // ================= PAGINATION =================
+
+    private void ChangePage(int newPage)
+    {
+        currentPage = newPage;
+    }
+
+    // ================= STATUS UPDATE =================
+
     private async Task ChangeStatusAsync(int orderId, string? newStatus)
     {
-        // We validate the input before sending the request to avoid unnecessary API calls and to provide immediate
-        // feedback to the user
         if (string.IsNullOrEmpty(newStatus))
-        {
             return;
-        }
 
         try
         {
-            // Call the backend API to update the order status. We send the new status in the body of the request.
             var success = await OrderService.UpdateOrderStatusAsync(orderId, newStatus);
 
             if (success)
             {
-                // If the update was successful, we update the status in our local list to reflect the change in the UI immediately
-                await SweetAlertService.ShowSuccessToast($"Status Updated Order {orderId} status has been updated to {newStatus}.");
-                await LoadAllOrdersAsync(); // Reload all orders to get the updated status
+                await SweetAlertService.ShowSuccessToast(
+                    $"Order {orderId} updated to {newStatus}");
+
+                await LoadAllOrdersAsync();
             }
             else
             {
-                // If the update failed, we show an error message to the user
-                await SweetAlertService.ShowErrorAlert($"Failed to update status for order {orderId}.", "Could not change the order status.");
+                await SweetAlertService.ShowErrorAlert(
+                    "Update Failed",
+                    "Could not change order status.");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Admin order error updatinf status: {ex.Message}");
-            await SweetAlertService.ShowErrorAlert($"Error updating order {orderId} status: ", $"{ex.Message}");
+            await SweetAlertService.ShowErrorAlert(
+                "System Error",
+                ex.Message);
         }
     }
+
+    // ================= BADGE COLORS =================
 
     protected string GetStatusBadgeClass(string status) => status switch
     {

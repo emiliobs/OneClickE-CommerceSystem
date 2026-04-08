@@ -7,6 +7,7 @@ namespace OneClick.Frontend.Pages.Users;
 
 public partial class UserManagement : ComponentBase
 {
+    // INJECTIONS (Services)
     [Inject]
     public HttpClient Http { get; set; } = default!;
 
@@ -16,36 +17,40 @@ public partial class UserManagement : ComponentBase
     // Data lists
     protected List<UserProfileDTO> users = new();
 
+    // Store only the users currently visible to the admin (filtered)
     protected List<UserProfileDTO> filteredUsers = new();
 
-    // UI States
+    // UI State Flags
     protected bool isLoading = true;
 
     protected bool showFormModal = false;
     protected bool isSaving = false;
+
+    // Search text variable
     protected string searchText = string.Empty;
 
-    // Form Model for creation
+    // Form Model for user creation
     protected UserRegisterDTO currentUser = new();
 
-    // Variables for edit Role Modal
+    // Variables for the Edit Role Modal
     protected bool showRoleModal = false;
 
     protected UserProfileDTO? selectedUserToEdit = null;
     protected string selectedRole = string.Empty;
 
-    // Pagination variables
+    // --- PAGINATION VARIABLES ---
     protected int currentPage = 1;
 
     protected int pageSize = 5; // Shows 5 users per page
 
     // Computed property to calculate total pages based on the filtered user list
-    protected int TotalPages => (int)Math.Ceiling((double)filteredUsers.Count / pageSize);
+    protected int TotalPages => filteredUsers.Count == 0 ? 1 : (int)Math.Ceiling((double)filteredUsers.Count / pageSize);
 
-    // Computed property to get only the items for the current page
+    // Computed property to get only the items for the current page chunk
     protected IEnumerable<UserProfileDTO> PaginatedUsers =>
         filteredUsers.Skip((currentPage - 1) * pageSize).Take(pageSize);
 
+    // Initialization method called when the component loads
     protected override async Task OnInitializedAsync()
     {
         await LoadUsersAsync();
@@ -55,17 +60,17 @@ public partial class UserManagement : ComponentBase
     {
         try
         {
-            // The interceptor will attach the token automatically
             isLoading = true;
 
             // Call the API to get all users using the official DTO
             var result = await Http.GetFromJsonAsync<List<UserProfileDTO>>("api/user/GetAllUsers");
 
-            // Check if the result is not null before assigning it to the users list
+            // Check if the result is not null before assigning it to the lists
             if (result != null)
             {
                 users = result;
-                filteredUsers = users; // Initially, filtered is the same as all users
+                // Initially, the filtered list is an exact copy of all users
+                filteredUsers = new List<UserProfileDTO>(users);
             }
         }
         catch (Exception ex)
@@ -75,23 +80,25 @@ public partial class UserManagement : ComponentBase
         }
         finally
         {
-            // Ensure that the loading state is turned off even if an error occurs
+            // Ensure that the loading state is turned off regardless of success or failure
             isLoading = false;
         }
     }
 
-    // Triggered when the user types in the search bar
-    protected void FilterUsers()
+    // ----- Search Logic (Matches Categories Pattern) -----
+    protected void FilterUsers(ChangeEventArgs e)
     {
-        // If the search text is empty, show all users
+        // Extract the typed text from the input event
+        searchText = e.Value?.ToString() ?? string.Empty;
+
+        // If the search text is empty, restore the full list
         if (string.IsNullOrWhiteSpace(searchText))
         {
-            // If the search text is empty, show all users
-            filteredUsers = users;
+            filteredUsers = new List<UserProfileDTO>(users);
         }
         else
         {
-            // Filter by first name, last name, or email ignoring casing
+            // Filter by first name, last name, or email (Case Insensitive)
             filteredUsers = users.Where(u =>
                 (u.FirstName != null && u.FirstName.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
                 (u.LastName != null && u.LastName.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
@@ -99,26 +106,27 @@ public partial class UserManagement : ComponentBase
             ).ToList();
         }
 
-        // Reset to first page when a new search is performed
+        // IMPORTANT: Always reset to the first page when a new search is performed
         currentPage = 1;
     }
 
-    // Triggered by the Pagination component
+    // Triggered by the Pagination component to navigate pages
     protected void ChangePage(int page)
     {
         currentPage = page;
     }
 
-    // Modal Controls
+    // ---- Add User Form Logic ----
     protected void ShowAddForm()
     {
-        currentUser = new UserRegisterDTO(); // Reset the form
+        // Reset the form model to be empty for a new user
+        currentUser = new UserRegisterDTO();
         showFormModal = true;
     }
 
     protected void CloseFormModal()
     {
-        // Reset the form and close the modal
+        // Hide the modal
         showFormModal = false;
     }
 
@@ -136,13 +144,14 @@ public partial class UserManagement : ComponentBase
             if (response.IsSuccessStatusCode)
             {
                 await AlertService.ShowSuccessToast("User created successfully!");
-
                 CloseFormModal();
-                await LoadUsersAsync(); // Reload the table to show the new user
+
+                // Reload the table to show the newly created user
+                await LoadUsersAsync();
             }
             else
             {
-                // If the response is not successful, read the error message from the response content
+                // Read the specific error message from the response content
                 var error = await response.Content.ReadAsStringAsync();
                 await AlertService.ShowErrorAlert("Registration Failed", error);
             }
@@ -154,39 +163,35 @@ public partial class UserManagement : ComponentBase
         }
         finally
         {
-            // Ensure that the saving state is turned off even if an error occurs
+            // Disable the saving spinner
             isSaving = false;
         }
     }
 
-    // EDIT ROLE LOGIC
-    // Open the Edit Role modal and set the selected user and role
+    // ---- Edit Role Logic ----
     protected void OpenEditRoleModal(UserProfileDTO userProfileDTO)
     {
-        // Set the selected user and pre-select their current role in the dropdown
+        // Set the selected user to edit
         selectedUserToEdit = userProfileDTO;
 
-        // Pre-select the current role
-        selectedRole = userProfileDTO.Role;
+        // Pre-select their current role in the dropdown safely
+        selectedRole = userProfileDTO.Role ?? "Customer";
 
-        // Open the modal
+        // Open the role modal
         showRoleModal = true;
     }
 
-    // Close the Edit Role modal and reset the selected user and role
     protected void CloseRoleModal()
     {
-        // Reset the selected user and role
+        // Reset the selected user and close the modal
         showRoleModal = false;
-
-        // Clear the selected user and role to reset the form state
         selectedUserToEdit = null;
     }
 
     // Submit handler for the Edit Role form
     protected async Task SaveRoleAsync()
     {
-        // Validate that a user is selected before attempting to save
+        // Validate that a user is actually selected before proceeding
         if (selectedUserToEdit is null)
         {
             return;
@@ -194,82 +199,80 @@ public partial class UserManagement : ComponentBase
 
         try
         {
-            // Set the saving state to true to disable the form and show a loading indicator
+            // Activate the saving spinner
             isSaving = true;
 
-            // Create the DTO to send to the API with the user's email and the new role
+            // Create the DTO with the user's email and their new role
             var roleUpdateDTO = new UserRoleDTO
             {
                 Email = selectedUserToEdit.Email,
                 Role = selectedRole
             };
 
-            // Call the API to update the user's role
+            // Call the API to update the role in the database
             var response = await Http.PutAsJsonAsync("api/user/change-role", roleUpdateDTO);
 
-            // Check if the response indicates success
             if (response.IsSuccessStatusCode)
             {
-                // Close the modal and reload the user list to reflect the updated role
-                await AlertService.ShowSuccessToast($"Role update successfully!");
+                await AlertService.ShowSuccessToast("Role updated successfully!");
                 CloseRoleModal();
-                // Reload the user list to reflect the updated role
+
+                // Reload the user list to reflect the updated role on the UI
                 await LoadUsersAsync();
             }
             else
             {
-                // If the response is not successful, read the error message from the response content
                 await AlertService.ShowErrorAlert("Action Denied", "You cannot change your own role.");
                 CloseRoleModal();
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"User Mangement Role save error: {ex.Message}");
-            await AlertService.ShowErrorAlert("Error", $"An unexpected error occurred while saving: {ex.Message}");
+            Console.WriteLine($"[UserManagement] Role save error: {ex.Message}");
+            await AlertService.ShowErrorAlert("Error", $"An unexpected error occurred: {ex.Message}");
         }
         finally
         {
-            // Ensure that the saving state is turned off even if an error occurs
+            // Disable the saving spinner
             isSaving = false;
         }
     }
 
-    // Delete user logic
+    // ---- Delete User Logic ----
     protected async Task DeleteUserAsync(string email)
     {
-        // Show a confirmation dialog before deleting the user
-        var isConfirmed = await AlertService.ConfirmAsync("Delete User", $"Are you sure want to permanentrly delete {email}.");
+        // Show a confirmation dialog to the admin before permanent deletion
+        var isConfirmed = await AlertService.ConfirmAsync(
+            "Delete User",
+            $"Are you sure you want to permanently delete {email}?"
+        );
 
-        // If the user cancels the action, exit the method without doing anything
+        // If the admin cancels, exit the method
         if (!isConfirmed)
         {
-            // User canceled the deletion, so we simply return without making any API calls
             return;
         }
 
-        // If the user confirms the deletion, proceed to call the API to delete the user
         try
         {
-            // Call the API to delete the user by email
+            // Call the API to delete the user using their email address
             var response = await Http.DeleteAsync($"api/user/delete/{email}");
 
-            // Check if the response indicates success
             if (response.IsSuccessStatusCode)
             {
                 await AlertService.ShowSuccessToast("User deleted successfully!");
-                await LoadUsersAsync(); // Reload the user list to reflect the deletion
+                // Reload the table so the deleted user disappears
+                await LoadUsersAsync();
             }
             else
             {
-                // If the response is not successful, read the error message from the response content
                 await AlertService.ShowErrorAlert("Deletion Failed", "Could not delete the user. Please try again.");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"User management Delete error: {ex.Message}");
-            await AlertService.ShowErrorAlert("Error", $"An unexpected error occurred while deleting: {ex.Message}");
+            Console.WriteLine($"[UserManagement] Delete error: {ex.Message}");
+            await AlertService.ShowErrorAlert("Error", $"An unexpected error occurred: {ex.Message}");
         }
     }
 }

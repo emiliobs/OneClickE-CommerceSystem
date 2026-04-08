@@ -1,36 +1,61 @@
 ﻿@page "/admin/orders"
 @using Microsoft.AspNetCore.Authorization
 @using OneClick.Shared.Entities
+@using OneClick.Frontend.Components @* FIX: THIS LINE IMPORTS THE PAGINATION COMPONENT *@
 @attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Global Order Management - OneClick</PageTitle>
 
 <div class="container py-4" style="color: white;">
-    <h2 class="fw-bold text-danger mb-4">
+
+    <h2 class="fw-bold text-danger mb-3">
         <i class="bi bi-box-seam-fill me-2"></i>Global Order Management
     </h2>
+
+    <div class="card bg-dark text-white mb-4 border-0 shadow-sm">
+        <div class="card-body p-2">
+            <div class="input-group">
+
+                <span class="input-group-text bg-transparent border-0 text-danger">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input type="text"
+                       class="form-control bg-transparent border-0 text-white shadow-none"
+                       placeholder="Search orders (customer or status)..."
+                       value="@searchText"
+                       @oninput="FilterOrders" />
+            </div>
+        </div>
+    </div>
+
+    <hr />
 
     @if (isLoading)
     {
         <div class="text-center py-5">
-            <div class="spinner-border text-danger" role="status"></div>
+            <div class="spinner-border text-danger"></div>
             <p class="mt-2 text-secondary">Loading all system orders...</p>
         </div>
     }
-    else if (!allOrders.Any())
+
+    else if (!filteredOrders.Any())
     {
         <div class="text-center py-5">
             <i class="bi bi-inbox text-secondary" style="font-size: 4rem;"></i>
             <h4 class="mt-3">No orders found</h4>
-            <p class="text-secondary">There are no orders in the system yet.</p>
+            <p class="text-secondary">No results match your search.</p>
         </div>
     }
+
     else
     {
         <div class="card shadow-sm border-0" style="background-color: #232342;">
             <div class="card-body p-0">
+
                 <div class="table-responsive">
                     <table class="table table-dark table-hover mb-0 align-middle">
+
                         <thead style="border-bottom: 2px solid #dc3545;">
                             <tr>
                                 <th class="ps-4 py-3 text-secondary text-uppercase small">ID</th>
@@ -41,41 +66,60 @@
                                 <th class="pe-4 py-3 text-secondary text-uppercase small text-end">Action</th>
                             </tr>
                         </thead>
+
                         <tbody>
-                            @foreach (var order in allOrders)
+
+                            @foreach (var order in PaginatedOrders)
                             {
                                 <tr style="border-bottom: 1px solid #333;">
+
                                     <td class="ps-4 py-3 fw-bold">#@order.Id</td>
-                                    
-                                    @* Display the user who made the order *@
+
                                     <td class="py-3">
-                                        @(order.User?.FirstName ?? "Unknown") @(order.User?.LastName ?? "User")
+                                        @(order.User?.FirstName ?? "Unknown")
+                                        @(order.User?.LastName ?? "User")
                                     </td>
-                                    
-                                    <td class="py-3 text-light">@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
-                                    <td class="py-3 fw-bold text-success">£@order.TotalAmount.ToString("0.00")</td>
-                                    
+
+                                    <td class="py-3 text-light">
+                                        @order.OrderDate.ToString("dd/MM/yyyy HH:mm")
+                                    </td>
+
+                                    <td class="py-3 fw-bold text-success">
+                                        £@order.TotalAmount.ToString("0.00")
+                                    </td>
+
                                     <td class="py-3 text-center">
-                                        <span class="badge @GetStatusBadgeClass(order.OrderStatus) rounded-pill px-3 py-2">
+                                        <span class="@GetStatusBadgeClass(order.OrderStatus) rounded-pill px-3 py-2">
                                             @order.OrderStatus
                                         </span>
                                     </td>
-                                    
+
                                     <td class="pe-4 py-3 text-end">
-                                        @* Dropdown to change the status directly from the table *@
+
                                         <select class="form-select form-select-sm bg-dark text-white border-secondary d-inline-block w-auto shadow-none"
                                                 @onchange="@(e => ChangeStatusAsync(order.Id, e.Value?.ToString()))">
+
                                             <option value="Pending" selected="@(order.OrderStatus == "Pending")">Pending</option>
                                             <option value="Shipped" selected="@(order.OrderStatus == "Shipped")">Shipped</option>
                                             <option value="Delivered" selected="@(order.OrderStatus == "Delivered")">Delivered</option>
                                             <option value="Cancelled" selected="@(order.OrderStatus == "Cancelled")">Cancelled</option>
+
                                         </select>
+
                                     </td>
                                 </tr>
                             }
+
                         </tbody>
                     </table>
                 </div>
+
+                <div class="p-2 border-top">
+                    <Pagination CurrentPage="currentPage"
+                                TotalPages="TotalPages"
+                                SelectedPage="ChangePage" />
+                </div>
+
             </div>
         </div>
     }

@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
-// Note: OpenApi Models using statement removed to prevent .NET 10 conflicts
 using OneClick.Backend.Data;
 using OneClick.Backend.Repositories;
 using OneClick.Backend.Services;
@@ -12,12 +10,10 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-// ----- DATABASE CONNECTION LOGIC -----
+// ----- DATABASE CONNECTION -----
 builder.Services.AddDbContext<OneClickDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString(name: "OneClickConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("OneClickConnection"));
 });
 
 // ----- IDENTITY CONFIGURATION -----
@@ -32,7 +28,7 @@ builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
 .AddEntityFrameworkStores<OneClickDbContext>()
 .AddDefaultTokenProviders();
 
-// ----- JWT AUTHENTICATION CONFIGURATION -----
+// ----- JWT AUTHENTICATION -----
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -52,100 +48,109 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Register repositories
+// Register repositories and services
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-
-// Register services
 builder.Services.AddScoped<IImageService, ImageService>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    // Handle circular references
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-    // Pretty print JSON in developer
-    options.JsonSerializerOptions.WriteIndented = builder.Environment.IsDevelopment();
 });
 
-// Enable API Explorer for Swagger
 builder.Services.AddEndpointsApiExplorer();
-
-// ----- UPDATED: SIMPLIFIED SWAGGER GEN -----
-// We removed the complex security definitions to bypass the version bug.
-// The API is perfectly secure, we just won't have the login button inside Swagger.
 builder.Services.AddSwaggerGen();
 
-// Add CORS Policy Service
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+// Pipeline configuration
 app.UseSwagger();
 app.UseSwaggerUI();
-
 app.UseHttpsRedirection();
-
-// Activate CORS Middleware
 app.UseCors("AllowAll");
-
-// ACTIVATE AUTHENTICATION (Must be before Authorization)
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
-// --- SEED ADMIN USER WITH PASSWORD "123" BYPASSING STRICT POLICIES ---
+// ----- SEED ADMIN USER AND 20 ORDERS -----
 try
 {
     using (var scope = app.Services.CreateScope())
     {
-        var context = scope.ServiceProvider.GetRequiredService<OneClick.Backend.Data.OneClickDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<OneClickDbContext>();
 
-        // Check if the admin already exists
-        if (!context.Users.Any(u => u.Email == "admin@yopmail.com"))
+        // Ensure Database is updated
+        context.Database.Migrate();
+
+        // 1. Check if Admin User exists
+        var adminEmail = "admin@yopmail.com";
+        var adminUser = context.Users.FirstOrDefault(u => u.Email == adminEmail);
+
+        if (adminUser == null)
         {
-            var adminUser = new OneClick.Shared.Entities.User
+            adminUser = new User
             {
-                FirstName = "Admin",
-                LastName = "Admin",
-                UserName = "admin@yopmail.com",
-                NormalizedUserName = "ADMIN@YOPMAIL.COM",
-                Email = "admin@yopmail.com",
-                NormalizedEmail = "ADMIN@YOPMAIL.COM",
+                FirstName = "Emilio Antonio",
+                LastName = "Barrera Sepulveda",
+                UserName = adminEmail,
+                NormalizedUserName = adminEmail.ToUpper(),
+                Email = adminEmail,
+                NormalizedEmail = adminEmail.ToUpper(),
                 EmailConfirmed = true,
                 Role = "Admin",
-                SecurityStamp = Guid.NewGuid().ToString(),
-                ConcurrencyStamp = Guid.NewGuid().ToString()
+                SecurityStamp = Guid.NewGuid().ToString()
             };
 
-            // Generate the secure hash dynamically for "123" bypassing strict policies
-            var hasher = new Microsoft.AspNetCore.Identity.PasswordHasher<OneClick.Shared.Entities.User>();
+            var hasher = new PasswordHasher<User>();
             adminUser.PasswordHash = hasher.HashPassword(adminUser, "123");
 
-            // Save directly to the Database Context
             context.Users.Add(adminUser);
+            context.SaveChanges(); // Save to get the actual User ID
+            Console.WriteLine("Admin user created.");
+        }
+
+        // 2. Check if Orders exist for this user
+        if (!context.Orders.Any())
+        {
+            var staticDate = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            // Add 20 Orders linked to the adminUser.Id
+            var orders = new List<Order>();
+            for (int i = 1; i <= 20; i++)
+            {
+                orders.Add(new Order
+                {
+                    UserId = adminUser.Id,
+                    OrderDate = staticDate.AddDays(i), // Incremental dates
+                    TotalAmount = 50.00m + (i * 10.50m),
+                    OrderStatus = "Pending",
+                    ShippingName = $"{adminUser.FirstName} {adminUser.LastName}",
+                    ShippingPhone = "987654321",
+                    ShippingAddress = $"Avenida Siempreviva {i}",
+                    City = "Santiago",
+                    Postcode = "123456"
+                });
+            }
+
+            context.Orders.AddRange(orders);
             context.SaveChanges();
-            Console.WriteLine("Admin user seeded successfully with password 123.");
+            Console.WriteLine("20 sample orders seeded successfully.");
         }
     }
 }
 catch (Exception ex)
 {
-    Console.WriteLine($"Error seeding admin user: {ex.Message}");
+    Console.WriteLine($"Error during manual seeding: {ex.Message}");
 }
-
-// Ensure app.Run() is the absolute last line in your Program.cs
-// app.Run();
 
 app.Run();
