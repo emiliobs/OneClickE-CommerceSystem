@@ -7,7 +7,7 @@ namespace OneClick.Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Customer")] // Allow both roles to access the controller
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryRepository _categoryRepository;
@@ -53,6 +53,8 @@ namespace OneClick.Backend.Controllers
         }
 
         [HttpPost]
+        // We restrict the creation of categories to Admin users only, as this is a management operation
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PostCategoryAsync(Category category)
         {
             try
@@ -73,6 +75,7 @@ namespace OneClick.Backend.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutCategoryAsync(int id, Category category)
         {
             try
@@ -105,6 +108,7 @@ namespace OneClick.Backend.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCategoryAsync(int id)
         {
             try

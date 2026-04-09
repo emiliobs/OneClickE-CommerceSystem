@@ -30,6 +30,7 @@ public partial class Login
     {
         try
         {
+            // Show the loading spinner
             isLoading = true;
 
             // CAll the authentication service

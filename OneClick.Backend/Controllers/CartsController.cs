@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OneClick.Backend.Repositories;
 using OneClick.Shared.Entities;
 
@@ -6,6 +7,7 @@ namespace OneClick.Backend.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Roles = "Admin,Customer")] // We require authentication for all endpoints in this controller, as cart operations should be tied to a user account
 public class CartsController : ControllerBase
 {
     private readonly ICartRepository _cartRepository;
@@ -20,7 +22,10 @@ public class CartsController : ControllerBase
     {
         try
         {
+            // In a real application, you would typically get the user ID from the authenticated user's claims rather than passing it as a parameter
             var result = await _cartRepository.GetCartItemsAsync(userId);
+
+            // If the cart is empty, we can return an empty list or a 404 depending on your design choice. Here we choose to return an empty list.
             return Ok(result);
         }
         catch (Exception ex)
@@ -34,13 +39,15 @@ public class CartsController : ControllerBase
     {
         try
         {
+            // Similar to GetCartItemsAsync, we would typically get the user ID from the authenticated user's claims in a real application
             var result = await _cartRepository.GetCartCountAsync(userId);
 
-            if (result == 0)
-            {
-                return NotFound($"CartItem with ID: {userId} not found");
-            }
+            //if (result == 0)
+            //{
+            //    return NotFound($"CartItem with ID: {userId} not found");
+            //}
 
+            // We return the count of items in the cart, which could be zero if the cart is empty
             return Ok(result);
         }
         catch (Exception ex)
@@ -64,8 +71,9 @@ public class CartsController : ControllerBase
                 return BadRequest("Invalid cart item");
             }
 
+            // In a real application, you would typically get the user ID from the authenticated user's claims rather than passing it in the CartItem object
             var result = await _cartRepository.AddToCartAsync(cartItem);
-
+            // We return the created cart item, which may include an assigned ID and any other properties set by the repository
             return Ok(result);
         }
         catch (Exception ex)
@@ -74,6 +82,7 @@ public class CartsController : ControllerBase
         }
     }
 
+    // We use a PUT method for updating the quantity of a cart item, as it is an idempotent operation that updates an existing resource
     [HttpPut("update-quantity/{userId:int}/{productId:int}/{newQuantity:int}")]
     public async Task<ActionResult<bool>> UpdateteCartItemQuantityAsync(int userId, int productId, int newQuantity)
     {

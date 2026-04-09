@@ -18,10 +18,15 @@ public partial class ProductDetailModal
     [Parameter]
     public EventCallback OnClose { get; set; }
 
+    // For simplicity, we hardcode the user ID here. In a real application, you would get this from the authentication context.
+    [Parameter]
+    public int UserId { get; set; }
+
     private bool isProcessing = false;
 
     private async Task HandledAddToCart()
     {
+        // Prevent multiple clicks
         if (Product == null)
         {
             return;
@@ -31,10 +36,11 @@ public partial class ProductDetailModal
 
         try
         {
+            // Create CartItem based on the product and user
             var cartItem = new CartItem
             {
                 ProductId = Product.Id,
-                UserId = 1, // Hardcoded for testing flow
+                UserId = UserId, // In a real app, get this from auth context
                 Quantity = 1
             };
 

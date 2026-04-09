@@ -101,16 +101,40 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
         if (keyValuePairs != null)
         {
+            // 1. Check for the Role claim (Support both long schema and short "role" name)
             keyValuePairs.TryGetValue(ClaimTypes.Role, out object? roles);
+            if (roles == null) keyValuePairs.TryGetValue("role", out roles);
+
             if (roles != null)
             {
-                var parsedRole = roles.ToString();
-                if (!string.IsNullOrEmpty(parsedRole))
+                if (roles.ToString()!.Trim().StartsWith("["))
                 {
-                    claims.Add(new Claim(ClaimTypes.Role, parsedRole));
+                    var parsedRoles = JsonSerializer.Deserialize<string[]>(roles.ToString()!);
+                    foreach (var parsedRole in parsedRoles!)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, parsedRole));
+                    }
                 }
+                else
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, roles.ToString()!));
+                }
+                // Clean up to avoid duplicates in the next AddRange
                 keyValuePairs.Remove(ClaimTypes.Role);
+                keyValuePairs.Remove("role");
             }
+
+            // 2. Check for the NameIdentifier (UserId) - Support short "sub" or long nameid
+            keyValuePairs.TryGetValue(ClaimTypes.NameIdentifier, out object? nameid);
+            if (nameid == null) keyValuePairs.TryGetValue("sub", out nameid);
+            if (nameid != null)
+            {
+                claims.Add(new Claim(ClaimTypes.NameIdentifier, nameid.ToString()!));
+                keyValuePairs.Remove(ClaimTypes.NameIdentifier);
+                keyValuePairs.Remove("sub");
+            }
+
+            // 3. Add the rest of the claims automatically
             claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString()!)));
         }
         return claims;
