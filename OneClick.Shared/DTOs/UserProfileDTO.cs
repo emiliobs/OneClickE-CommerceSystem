@@ -7,6 +7,10 @@ namespace OneClick.Shared.DTOs;
 
 public class UserProfileDTO
 {
+    // This DTO is used to transfer user profile data between the backend and frontend.
+    // It includes validation attributes to ensure that required fields are provided and that the email is in a valid format.
+    public int Id { get; set; }
+
     [Required(ErrorMessage = "First name is required.")]
     public string FirstName { get; set; } = null!;
 

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using OneClick.Frontend.Services;
 using OneClick.Shared.DTOs;
+using OneClick.Shared.Entities;
 using System.Net.Http.Json;
 
 namespace OneClick.Frontend.Pages.Users;
@@ -12,14 +13,39 @@ public partial class Profile
     [Inject] private AlertService SweetAlertService { get; set; } = default!;
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
 
+    // Injecting the OrderService allows us to fetch the user's orders if we want to display them on the profile page in the future.
+    [Inject] public IOrderService OrderService { get; set; } = default!;
+
     // Using the official DTO now!
     private UserProfileDTO? userProfile;
 
+    // This list is currently not populated, but it can be used in the future to display the user's recent orders or
+    // order history on the profile page.
+    private List<Order> userOrders = new List<Order>();
+
+    // These boolean flags are used to manage the UI state of the profile page, such as showing loading indicators,
+    // toggling edit mode, and disabling the save button while saving.
     private bool isLoading = true;
+
     private bool isEditing = false;
     private bool isSaving = false;
-
+    private bool isLoadingOrders = true;
     protected string? _imagePreviewUrl;
+
+    // Pagination properties for the orders list. This allows us to implement pagination if we decide to show the user's
+    // orders on the profile page.
+    private int currentPage = 1;
+
+    private int itemsPerPage = 5; // Show 5 orders per page for better readability, especially if the user has many orders.
+
+    // This property calculates the subset of orders to display based on the current page and items per page. It uses LINQ to skip the appropriate
+    // number of orders and take only the number of orders that should be displayed on the current page.
+    public IEnumerable<Order> PaginatedOrders => userOrders
+        .Skip((currentPage - 1) * itemsPerPage)
+        .Take(itemsPerPage);
+
+    // Propiedad calculada para el total de páginas
+    public int TotalPages => userOrders.Count == 0 ? 1 : (int)Math.Ceiling((double)userOrders.Count / itemsPerPage);
 
     protected override async Task OnInitializedAsync()
     {
@@ -31,7 +57,9 @@ public partial class Profile
     {
         try
         {
+            // Set loading state to true to show a loading indicator while fetching profile data
             isLoading = true;
+            isLoadingOrders = true; // Set orders loading state if we decide to load orders here in the future
 
             // The interceptor attaches the token automatically
             var result = await Http.GetFromJsonAsync<UserProfileDTO>("api/user/my-profile");
@@ -39,6 +67,11 @@ public partial class Profile
             {
                 userProfile = result;
                 _imagePreviewUrl = userProfile.ImageUrl; // Assuming the API returns a URL for the profile image
+
+                // Optionally, we could load the user's orders here if we want to show them on the profile page
+                var ordersResult = await OrderService.GetOrdersByUsersIdAsync(userProfile.Id);
+                // If the API call is successful, we populate the userOrders list with the retrieved orders
+                userOrders = ordersResult.ToList();
             }
         }
         catch (HttpRequestException ex)
@@ -54,7 +87,10 @@ public partial class Profile
         }
         finally
         {
+            // Reset loading states regardless of success or failure to ensure the UI updates correctly
             isLoading = false;
+            // Set orders loading state to false after attempting to load orders
+            isLoadingOrders = false;
         }
     }
 
@@ -161,5 +197,13 @@ public partial class Profile
             // Reset saving state regardless of success or failure
             isSaving = false;
         }
+    }
+
+    //  This method changes the current page for pagination. It updates the currentPage variable and calls
+    //  StateHasChanged to force a UI refresh so that the new page of orders is displayed.
+    private void ChangePage(int newPage)
+    {
+        currentPage = newPage;
+        StateHasChanged(); //
     }
 }

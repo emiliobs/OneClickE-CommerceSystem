@@ -170,6 +170,7 @@ public class UserController : ControllerBase
             // and we can fill it directly from the user entity or the claims
             var profileData = new UserProfileDTO
             {
+                Id = user.Id,// We can include the user ID if needed for future updates
                 FirstName = user.FirstName ?? "",
                 LastName = user.LastName ?? "",
                 Email = user.Email ?? "",
@@ -248,6 +249,7 @@ public class UserController : ControllerBase
             // Map the database users to our safe DTO (we never send passwords to the frontend!)
             var userList = users.Select(u => new UserProfileDTO
             {
+                Id = u.Id, // We can include the user ID if needed for future updates
                 FirstName = u.FirstName ?? "",
                 LastName = u.LastName ?? "",
                 Email = u.Email ?? "",
