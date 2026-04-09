@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using OneClick.Frontend.Services;
 using OneClick.Shared.Entities;
 
@@ -6,44 +7,21 @@ namespace OneClick.Frontend.Pages.MyOrders;
 
 public partial class AdminOrders
 {
-    // ================= SERVICES =================
+    [Inject] public IOrderService OrderService { get; set; } = null!;
+    [Inject] public AlertService SweetAlertService { get; set; } = default!;
+    [Inject] public IJSRuntime JSRuntime { get; set; } = default!;
 
-    [Inject]
-    public IOrderService OrderService { get; set; } = null!;
-
-    [Inject]
-    public AlertService SweetAlertService { get; set; } = default!;
-
-    // ================= DATA =================
-
-    // All orders from API
     protected List<Order> allOrders = new();
-
-    // Filtered orders (VISIBLE TO USER)
     protected List<Order> filteredOrders = new();
-
-    // ================= UI STATE =================
-
     protected bool isLoading = true;
-
-    // Search text
     private string searchText = "";
-
-    // ================= PAGINATION =================
+    protected Order? selectedOrder = null;
 
     private int currentPage = 1;
     private int itemsPerPage = 7;
 
-    public int TotalPages =>
-        filteredOrders.Count == 0 ? 1 :
-        (int)Math.Ceiling((double)filteredOrders.Count / itemsPerPage);
-
-    public IEnumerable<Order> PaginatedOrders =>
-        filteredOrders
-            .Skip((currentPage - 1) * itemsPerPage)
-            .Take(itemsPerPage);
-
-    // ================= INITIALIZATION =================
+    public int TotalPages => filteredOrders.Count == 0 ? 1 : (int)Math.Ceiling((double)filteredOrders.Count / itemsPerPage);
+    public IEnumerable<Order> PaginatedOrders => filteredOrders.Skip((currentPage - 1) * itemsPerPage).Take(itemsPerPage);
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,32 +33,20 @@ public partial class AdminOrders
         try
         {
             isLoading = true;
-
             var orders = await OrderService.GetAllOrdersAsync();
-
             allOrders = orders.ToList();
-
-            // IMPORTANT: initialize filtered list
             filteredOrders = new List<Order>(allOrders);
         }
         catch (Exception ex)
         {
-            await SweetAlertService.ShowErrorAlert(
-                "Admin Orders Error",
-                ex.Message);
+            await SweetAlertService.ShowErrorAlert("Admin Orders Error", ex.Message);
         }
-        finally
-        {
-            isLoading = false;
-        }
+        finally { isLoading = false; }
     }
-
-    // ================= FILTER LOGIC =================
 
     private void FilterOrders(ChangeEventArgs e)
     {
         searchText = e.Value?.ToString() ?? "";
-
         if (string.IsNullOrWhiteSpace(searchText))
         {
             filteredOrders = new List<Order>(allOrders);
@@ -91,55 +57,47 @@ public partial class AdminOrders
                 (o.User?.FirstName ?? "").Contains(searchText, StringComparison.OrdinalIgnoreCase)
                 || (o.User?.LastName ?? "").Contains(searchText, StringComparison.OrdinalIgnoreCase)
                 || o.OrderStatus.Contains(searchText, StringComparison.OrdinalIgnoreCase)
-                || o.Id.ToString().Contains(searchText))
-                .ToList();
+                || o.Id.ToString().Contains(searchText)).ToList();
         }
-
-        // reset pagination after filtering
         currentPage = 1;
     }
 
-    // ================= PAGINATION =================
+    private void ChangePage(int newPage) => currentPage = newPage;
 
-    private void ChangePage(int newPage)
+    protected async Task ShowDetails(int orderId)
     {
-        currentPage = newPage;
+        try
+        {
+            // Fetch fresh data from backend including User and Items
+            selectedOrder = await OrderService.GetOrderByIdAsync(orderId);
+        }
+        catch (Exception ex)
+        {
+            await SweetAlertService.ShowErrorAlert("Error", "Could not load order details.");
+        }
     }
 
-    // ================= STATUS UPDATE =================
+    protected void CloseDetails() => selectedOrder = null;
+
+    protected async Task PrintInvoiceAsync() => await JSRuntime.InvokeVoidAsync("print");
 
     private async Task ChangeStatusAsync(int orderId, string? newStatus)
     {
-        if (string.IsNullOrEmpty(newStatus))
-            return;
-
+        if (string.IsNullOrEmpty(newStatus)) return;
         try
         {
             var success = await OrderService.UpdateOrderStatusAsync(orderId, newStatus);
-
             if (success)
             {
-                await SweetAlertService.ShowSuccessToast(
-                    $"Order {orderId} updated to {newStatus}");
-
+                await SweetAlertService.ShowSuccessToast($"Order {orderId} updated to {newStatus}");
                 await LoadAllOrdersAsync();
-            }
-            else
-            {
-                await SweetAlertService.ShowErrorAlert(
-                    "Update Failed",
-                    "Could not change order status.");
             }
         }
         catch (Exception ex)
         {
-            await SweetAlertService.ShowErrorAlert(
-                "System Error",
-                ex.Message);
+            await SweetAlertService.ShowErrorAlert("System Error", ex.Message);
         }
     }
-
-    // ================= BADGE COLORS =================
 
     protected string GetStatusBadgeClass(string status) => status switch
     {

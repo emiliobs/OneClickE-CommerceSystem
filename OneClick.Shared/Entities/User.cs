@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace OneClick.Shared.Entities;
 
@@ -19,9 +20,11 @@ public class User : IdentityUser<int>
     public string Role { get; set; } = "Customer";
 
     // Inverse relationships for Entity Framework
+    [JsonIgnore] // Prevent circular references during JSON serialization
     public ICollection<Order>? Orders { get; set; }
 
     public string? ImageUrl { get; set; }
 
+    [JsonIgnore]// Prevent circular references during JSON serialization
     public ICollection<CartItem>? CartItems { get; set; }
 }

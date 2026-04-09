@@ -18,9 +18,11 @@ public class OrderRepository : IOrderRepository
         try
         {
             return await _context.Orders
-               .Include(o => o.OrderItems)
-               .ThenInclude(oi => oi.Product)
-               .FirstOrDefaultAsync(o => o.Id == id);
+                .Include(o => o.User)// Include user info to show name/email in order details
+               .Include(o => o.OrderItems)// Include order items to show what products were bought
+               .ThenInclude(oi => oi.Product) // Include product details for each order item (name, price, image)
+               .AsNoTracking()// No tracking since we are only reading data, improves performance
+               .FirstOrDefaultAsync(o => o.Id == id);// Fetch the order by ID, including related user and order item details
         }
         catch (Exception ex)
         {

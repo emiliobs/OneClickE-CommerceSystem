@@ -42,7 +42,9 @@ public partial class MyOrders : ComponentBase
 
     private async Task LoadOrderHistoryAsync()
     {
+        // We set loading to true at the start of the method to show a loading indicator while we fetch data
         isLoading = true;
+        // We call StateHasChanged to ensure the UI updates immediately to reflect the loading state
         StateHasChanged();
 
         try
@@ -110,9 +112,9 @@ public partial class MyOrders : ComponentBase
         currentPage = newPage;
     }
 
-    protected void ShowDetails(Order order)
+    protected async Task ShowDetails(Order order)
     {
-        selectedOrder = order;
+        selectedOrder = await OrderService.GetOrderByIdAsync(order.Id);
     }
 
     protected void CloseDetails()
@@ -122,7 +124,8 @@ public partial class MyOrders : ComponentBase
 
     protected async Task PrintInvoiceAsync()
     {
-        await JSRuntime.InvokeVoidAsync("window.print");
+        // In a real application, you would generate a printable invoice view here.
+        await JSRuntime.InvokeVoidAsync("print");
     }
 
     protected string GetStatusBadgeClass(string status) => status switch

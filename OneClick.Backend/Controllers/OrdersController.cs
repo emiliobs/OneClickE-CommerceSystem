@@ -26,14 +26,24 @@ public class OrdersController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Order>> GetOrderByIdAsync(int id)
     {
-        var order = await _orderRepository.GetOrderByIdAsync(id);
-
-        if (order is null)
+        try
         {
-            return NotFound($"Order with ID {id} not found.");
-        }
+            var order = await _orderRepository.GetOrderByIdAsync(id);
 
-        return Ok(order);
+            if (order is null)
+            {
+                return NotFound($"Order with ID {id} not found.");
+            }
+
+            Console.WriteLine($"Order ID: {id}, User Email: {order.User?.Email ?? "NULL"} ");
+
+            return Ok(order);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"OrderController Error getting order: {ex.Message}");
+            return StatusCode(500, $"Error retrieving order details: {ex.Message}");
+        }
     }
 
     // GET api/Orders/user/5
