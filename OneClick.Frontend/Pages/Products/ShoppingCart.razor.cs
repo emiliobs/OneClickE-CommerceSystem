@@ -135,16 +135,32 @@ public partial class ShoppingCart : ComponentBase
 
         if (confirmed)
         {
+            // Fetch the user ID securely before updating the database
             currentUserId = await GetCurrentUserIdAsync();
+            // Only proceed if we have a valid user ID
             if (currentUserId > 0)
             {
+                cartItems.Remove(cartItem); // Optimistically update the UI first
                 // Call the backend service using the dynamic User ID
-                await CartService.DeleteItemAsync(currentUserId, cartItem.ProductId);
+                StateHasChanged(); // Refresh the UI immediately for better UX
 
-                await SweetAlertService.ShowSuccessToast($"Item: {cartItem.Product!.Name} removed from cart successfully!");
-
-                // Refresh the cart list to show the new state
-                await LoadCart();
+                try
+                {
+                    // Now call the service to delete the item from the database
+                    await CartService.DeleteItemAsync(currentUserId, cartItem.ProductId);
+                    //  Show a success toast after deletion
+                    await SweetAlertService.ShowSuccessToast($"Item: {cartItem.Product!.Name} removed from cart successfully!");
+                    // Note: We could also handle errors here and revert the UI change if the delete fails, but for simplicity, we're assuming it works. In a production app,
+                    // you'd want to add error handling to revert the UI if the backend call fails.
+                    // Refresh the cart list to show the new state
+                    await LoadCart();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deleting item: {ex.Message}");
+                    await SweetAlertService.ShowErrorAlert("Error", $"Failed to remove item from cart. Please try again: {ex.Message}");
+                    await LoadCart(); // Reload the cart to ensure the UI is in sync with the database
+                }
             }
         }
         else
