@@ -23,7 +23,7 @@ public partial class MyOrders : ComponentBase
     protected Order? selectedOrder = null;
 
     private int currentPage = 1;
-    private int itemsPerPage = 7;
+    private int itemsPerPage = 10;
 
     public int TotalPages =>
         filteredOrders.Count == 0

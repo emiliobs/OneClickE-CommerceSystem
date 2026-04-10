@@ -6,6 +6,28 @@
 @inject NavigationManager _NavigationManager
 @inject AlertService _SweetAlertService
 
+<style>
+    /* Main wrapper to hold everything */
+    .page-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 80vh; /* Full height of the screen */
+    }
+
+    /* Content grows to fill space, pushing footer down */
+    .main-content {
+        flex: 1;
+    }
+
+    /* Footer stays at the bottom */
+    .footer-custom {
+        padding: 15px 0;
+        text-align: center;
+        background-color: transparent; /* Or your dark theme color */
+        width: 100%;
+    }
+</style>
+
 <div class="page">
 
     <div class="top-row px-4" style="justify-content: space-between; display: flex; align-items: center;">
@@ -91,14 +113,14 @@
         </div>
 
         <main>
-            <article class="content px-4">
+            <article class=" page-wrapper content px-4">
                 @Body
             </article>
 
-            <footer class="footer text-center m-0 text-muted">
+            <footer class="footer-custom">
                 <div class="container">
                     <span>
-                        &copy; 2026 London - <i class="bi bi-cursor fs-6 m-0"></i>OneClick E-Commerce System -
+                        &copy; 2026 London - <i class="bi bi-cursor fs-6 m-0 text-danger"></i>OneClick E-Commerce System -
                         <i class="bi bi-code-slash"></i> By Emilio Barrera Built with
                         <i class="bi bi-heart-fill" style="color: #e74c3c;"></i>
                     </span>

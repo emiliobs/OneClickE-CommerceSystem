@@ -21,7 +21,7 @@ public partial class AdminOrders
     // Pagination properties
     private int currentPage = 1;
 
-    private int itemsPerPage = 7;
+    private int itemsPerPage = 6;
 
     public int TotalPages => filteredOrders.Count == 0 ? 1 : (int)Math.Ceiling((double)filteredOrders.Count / itemsPerPage);
     public IEnumerable<Order> PaginatedOrders => filteredOrders.Skip((currentPage - 1) * itemsPerPage).Take(itemsPerPage);
