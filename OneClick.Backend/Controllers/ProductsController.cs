@@ -80,7 +80,7 @@ namespace OneClick.Backend.Controllers
         }
 
         [HttpPost]
-        [Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PostProductAsync(Product product)
         {
             try
@@ -106,7 +106,7 @@ namespace OneClick.Backend.Controllers
         }
 
         [HttpPut("{id:int}")]
-        [Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutProductAsync(int id, Product product)
         {
             try
@@ -143,7 +143,7 @@ namespace OneClick.Backend.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        [Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeletePorductsAsync(int id)
         {
             try
@@ -163,7 +163,7 @@ namespace OneClick.Backend.Controllers
         }
 
         [HttpPost("UploadImage")]
-        [Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
             // Validate that the file exist is not empty
