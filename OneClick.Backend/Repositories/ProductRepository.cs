@@ -107,4 +107,31 @@ public class ProductRepository : IProductRepository
             throw;
         }
     }
+
+    public async Task<bool> RestockProductAsync(int productId, int quantity)
+    {
+        try
+        {
+            // Log the input parameters for debugging
+            var product = await _context.Products.FindAsync(productId);
+
+            // Check if the product exists before attempting to restock
+            if (product is null)
+            {
+                return false;
+            }
+
+            // Log the current quantity before restocking
+            product.Qty += quantity;
+
+            // Log the new quantity after restocking
+            return await _context.SaveChangesAsync() > 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating stock in repository: {ex.Message}");
+            // In case of an error, we return false to indicate the restock operation failed
+            return false;
+        }
+    }
 }

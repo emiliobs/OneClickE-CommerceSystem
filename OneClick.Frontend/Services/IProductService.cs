@@ -25,4 +25,6 @@ public interface IProductService
     Task<bool> DeleteProductAsync(int id);
 
     Task<String> UploadImageAsync(MultipartFormDataContent content);
+
+    Task<bool> RestockProductAsync(int productId, int quantity);
 }

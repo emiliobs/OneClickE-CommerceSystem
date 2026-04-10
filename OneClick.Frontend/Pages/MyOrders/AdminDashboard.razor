@@ -1,3 +1,85 @@
-﻿<h3>AdminDashboard</h3>
+﻿@page "/admin/dashboard"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
 
+<PageTitle>Operations Dashboard - OneClick</PageTitle>
 
+<style>
+    /* Gradient KPI Cards */
+    .kpi-card { border: none; border-radius: 15px; color: white; transition: 0.3s; }
+    .bg-sales { background: linear-gradient(135deg, #FF69B4, #FF1493); }
+    .bg-pending { background: linear-gradient(135deg, #DA70D6, #9400D3); }
+    .bg-sold { background: linear-gradient(135deg, #f06292, #c2185b); }
+    .bg-low { background: linear-gradient(135deg, #FF7043, #D84315); }
+    
+    /* Critical Alert Styling */
+    .critical-alert { background-color: #FF5252; color: white; border-radius: 12px; border: none; }
+    .product-box { background: #1e1e2f; border-radius: 10px; border-left: 5px solid #4CAF50; padding: 15px; }
+</style>
+
+<div class="container py-4 fade-in">
+    <h2 class="text-white fw-bold mb-5 text-uppercase" style="letter-spacing: 2px;">Dashboard de Ventas</h2>
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5"><div class="spinner-border text-danger"></div></div>
+    }
+    else
+    {
+        @* Row of vibrant cards *@
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="card kpi-card bg-sales p-4 shadow-lg">
+                    <small class="text-uppercase fw-bold opacity-75">Ventas Totales</small>
+                    <h2 class="fw-bold mb-0">£@totalRevenue.ToString("N2")</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card kpi-card bg-pending p-4 shadow-lg">
+                    <small class="text-uppercase fw-bold opacity-75">Pedidos Pendientes</small>
+                    <h2 class="fw-bold mb-0">@pendingOrders</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card kpi-card bg-sold p-4 shadow-lg">
+                    <small class="text-uppercase fw-bold opacity-75">Productos Activos</small>
+                    <h2 class="fw-bold mb-0">@itemsSold</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card kpi-card bg-low p-4 shadow-lg">
+                    <small class="text-uppercase fw-bold opacity-75">Stock Bajo</small>
+                    <h2 class="fw-bold mb-0">@lowStockItems.Count</h2>
+                </div>
+            </div>
+        </div>
+
+        @if (lowStockItems.Any())
+        {
+            @* Critical Stock Warning Area *@
+            <div class="alert critical-alert p-4 d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="alert-heading fw-bold mb-1">Productos con Stock Crítico</h4>
+                    <p class="mb-0 small">@lowStockItems.Count productos requieren atención inmediata</p>
+                </div>
+                <div class="badge bg-white text-danger rounded-pill fs-5 px-3">@lowStockItems.Count</div>
+            </div>
+
+            <div class="row g-3 mb-5">
+                @foreach (var item in lowStockItems)
+                {
+                    <div class="col-md-4">
+                        <div class="product-box shadow-sm">
+                            <h6 class="text-white fw-bold">@item.Name</h6>
+                            <p class="text-danger small mb-2">@item.Qty unidades restantes</p>
+                            <button class="btn btn-success btn-sm w-100 rounded-pill shadow-sm" 
+                                    @onclick="() => HandleRestock(item)">
+                                <i class="bi bi-plus-lg me-1"></i> RESTOCK
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>

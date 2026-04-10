@@ -65,4 +65,22 @@ public class ProductService : IProductService
         var result = await response.Content.ReadFromJsonAsync<UploadResult>();
         return result!.Url;
     }
+
+    public async Task<bool> RestockProductAsync(int productId, int quantity)
+    {
+        try
+        {
+            //
+            var response = await _httpClient.PutAsJsonAsync($"api/products/restock/{productId}", quantity);
+
+            // Return true if the restock operation was successful (status code 200-299)
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Productio Service error: Restocking product: {productId}: {ex.Message}");
+            // Log the exception for debugging purposes
+            return false;
+        }
+    }
 }

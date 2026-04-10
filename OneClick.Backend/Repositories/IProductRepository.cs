@@ -17,4 +17,6 @@ public interface IProductRepository
     Task<Product> DeleteProductAsync(int id);
 
     Task<IEnumerable<Product>> GetLowStockProductsAsync(int threshold);
+
+    Task<bool> RestockProductAsync(int productId, int quantity);
 }

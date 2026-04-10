@@ -232,5 +232,34 @@ namespace OneClick.Backend.Controllers
                 return StatusCode(500, $"INternal  server error: {ex.Message}");
             }
         }
+
+        [HttpPut("restock/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Restock(int id, [FromBody] int quantity)
+        {
+            try
+            {
+                // Validate that the quantity is a positive integer
+                if (quantity <= 0)
+                {
+                    return BadRequest("Quantity must be  greater than zero.");
+                }
+
+                // Check if the product exist before attempting to restock
+                var success = await _productRepository.RestockProductAsync(id, quantity);
+
+                // If the restock operation was not successful, return a NotFound response
+                if (!success)
+                {
+                    return NotFound($"Product with ID {id} not found or update failed.");
+                }
+
+                return Ok("Stock updated successfully!");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }
