@@ -214,5 +214,23 @@ namespace OneClick.Backend.Controllers
                 return StatusCode(500, $"Interna server error: {ex.Message}");
             }
         }
+
+        [HttpGet("Low-stock/{threshold}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetLowStock(int threshold)
+        {
+            try
+            {
+                //  Validate that the threshold is a positive integer
+                var products = await _productRepository.GetLowStockProductsAsync(threshold);
+
+                // Return the list of low stock products to the frontend
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"INternal  server error: {ex.Message}");
+            }
+        }
     }
 }

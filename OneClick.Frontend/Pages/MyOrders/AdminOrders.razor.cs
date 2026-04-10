@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using OneClick.Frontend.Services;
+using OneClick.Shared.DTOs;
 using OneClick.Shared.Entities;
 
 namespace OneClick.Frontend.Pages.MyOrders;
@@ -17,7 +18,9 @@ public partial class AdminOrders
     private string searchText = "";
     protected Order? selectedOrder = null;
 
+    // Pagination properties
     private int currentPage = 1;
+
     private int itemsPerPage = 7;
 
     public int TotalPages => filteredOrders.Count == 0 ? 1 : (int)Math.Ceiling((double)filteredOrders.Count / itemsPerPage);

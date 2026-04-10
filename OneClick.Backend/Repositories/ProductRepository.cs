@@ -91,4 +91,20 @@ public class ProductRepository : IProductRepository
 
         return product;
     }
+
+    public async Task<IEnumerable<Product>> GetLowStockProductsAsync(int threshold)
+    {
+        try
+        {
+            // Log the threshold value for debugging
+            return await _context.Products
+                .Where(p => p.Qty <= threshold)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in product repository: {ex.Message}");
+            throw;
+        }
+    }
 }
