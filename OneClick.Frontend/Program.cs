@@ -26,8 +26,8 @@ builder.Services.AddScoped(sp =>
     return new HttpClient(interceptor)
     {
         // IMPORTANT: Make sure this is your correct Backend port!
-        //BaseAddress = new Uri("https://oneclickapi.runasp.net")
-        BaseAddress = new Uri("https://localhost:7009/")
+        BaseAddress = new Uri("https://oneclick.runasp.net")
+        //BaseAddress = new Uri("https://localhost:7009/")
     };
 });
 
