@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using OneClick.Frontend.Services;
 using OneClick.Shared.Entities;
 
@@ -10,7 +11,14 @@ public partial class ProductDetailModal
     public ICartService CartService { get; set; } = default!;
 
     [Inject]
+    public NavigationManager NavigationManager { get; set; } = default!;
+
+    [Inject]
     public AlertService SweetAlertService { get; set; } = default!;
+
+    //
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationStateTask { get; set; } = default!;
 
     [Parameter]
     public Product? Product { get; set; }
@@ -22,6 +30,7 @@ public partial class ProductDetailModal
     [Parameter]
     public int UserId { get; set; }
 
+    //
     private bool isProcessing = false;
 
     private async Task HandledAddToCart()
@@ -36,6 +45,24 @@ public partial class ProductDetailModal
 
         try
         {
+            // Check user authetication state first
+            var authState = await AuthenticationStateTask;
+
+            //
+            var user = authState.User;
+
+            // If the iseris not logged in, redirect them to the log=gin page initialy
+            if (user.Identity is null || !user.Identity.IsAuthenticated)
+            {
+                //
+                NavigationManager.NavigateTo("/Login");
+
+                //
+                await SweetAlertService.ShowErrorAlert("Login Required", "Please log in or register to start shopping.");
+
+                return;
+            }
+
             // Create CartItem based on the product and user
             var cartItem = new CartItem
             {

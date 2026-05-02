@@ -104,7 +104,7 @@ namespace OneClick.Backend.Controllers
 
         // POST: api/Products
         [HttpPost]
-        [Authorize("Admin")]// Only users with the "Admin" role can access this endpoint to create new products.
+        [Authorize(Roles = "Admin")]// Only users with the "Admin" role can access this endpoint to create new products.
         public async Task<IActionResult> PostProductAsync(Product product)
         {
             try
@@ -138,7 +138,7 @@ namespace OneClick.Backend.Controllers
 
         // PUT: api/Products/5
         [HttpPut("{id:int}")]
-        [Authorize("Admin")]// Only users with the "Admin" role can access this endpoint to update existing products.
+        [Authorize(Roles = "Admin")]// Only users with the "Admin" role can access this endpoint to update existing products.
         public async Task<IActionResult> PutProductAsync(int id, Product product)
         {
             try
@@ -190,7 +190,7 @@ namespace OneClick.Backend.Controllers
 
         // DELETE: api/Products/5
         [HttpDelete("{id:int}")]
-        [Authorize("Admin")]// Only users with the "Admin" role can access this endpoint to delete products.
+        [Authorize(Roles = "Admin")]// Only users with the "Admin" role can access this endpoint to delete products.
         public async Task<IActionResult> DeletePorductsAsync(int id)
         {
             try
@@ -219,7 +219,7 @@ namespace OneClick.Backend.Controllers
 
         // POST: api/Products/UploadImage
         [HttpPost("UploadImage")]
-        [Authorize("Admin")]// Only users with the "Admin" role can access this endpoint to upload product images.
+        [Authorize(Roles = "Admin")]// Only users with the "Admin" role can access this endpoint to upload product images.
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
             // Validate that the file exist is not empty
